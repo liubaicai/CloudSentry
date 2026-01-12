@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import logger from '../utils/logger';
+import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
@@ -179,7 +179,7 @@ export const usersController = {
       const { id } = req.params;
 
       // Prevent deleting yourself
-      if (req.user?.id === id) {
+      if (req.user?.userId === id) {
         return res.status(400).json({ error: 'Cannot delete your own account' });
       }
 

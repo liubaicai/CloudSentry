@@ -7,9 +7,15 @@ CloudSentry is a modern Security Event Management Platform built with TypeScript
 - 🔐 **User Authentication**: JWT-based authentication system with role-based access control
 - 📊 **Dashboard**: Real-time statistics and visualizations of security events
 - 🚨 **Threat List**: Advanced filtering and management of security events
+- 🔍 **Threat Details**: Detailed view and management of individual security events
+- 👥 **User Management**: Complete user account management with role-based access
 - 📈 **Aggregated Analysis**: Pattern detection and trend analysis (extensible)
 - 📤 **Alert Forwarding**: Configure rules to forward alerts to external systems (webhook, email, syslog)
 - ⚙️ **System Settings**: Configurable system parameters
+- 🌐 **Network Configuration**: Network interface and connectivity settings management
+- 🔧 **Operations Configuration**: Operational policies including retention, backup, and maintenance
+- 🔒 **Security Configuration**: Security policies and authentication settings
+- 💾 **Data Management**: Database statistics, export, backup, and maintenance tools
 - 🔌 **Syslog API**: RESTful API endpoint for receiving security events in bulk or individually
 
 ## Technology Stack
