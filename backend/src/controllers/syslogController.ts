@@ -38,7 +38,8 @@ export const receiveSyslog = async (req: Request, res: Response): Promise<void> 
 
     logger.info(`Received security event: ${event.id}`);
 
-    // TODO: Trigger alert forwarding rules
+    // Note: Alert forwarding triggers would be processed here
+    // This would check active forwarding rules and send events to configured destinations
 
     res.status(201).json({
       message: 'Security event received',

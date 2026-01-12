@@ -212,7 +212,7 @@ export const AlertForwardingPage: React.FC = () => {
                     JSON.parse(value);
                     return Promise.resolve();
                   } catch (e) {
-                    return Promise.reject('Invalid JSON');
+                    return Promise.reject('Please enter valid JSON format, e.g., {"severity": ["critical", "high"]}');
                   }
                 },
               },

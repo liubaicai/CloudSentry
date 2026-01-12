@@ -29,6 +29,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      // Force full page reload to clear all application state on auth failure
       window.location.href = '/login';
     }
     return Promise.reject(error);
