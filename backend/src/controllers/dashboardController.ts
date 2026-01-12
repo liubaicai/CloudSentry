@@ -65,15 +65,15 @@ export const getDashboardStats = async (req: AuthRequest, res: Response): Promis
         last7Days: events7d,
         last30Days: events30d,
       },
-      severityDistribution: severityStats.map((s) => ({
+      severityDistribution: severityStats.map((s: any) => ({
         severity: s.severity,
         count: s._count,
       })),
-      categoryDistribution: categoryStats.map((c) => ({
+      categoryDistribution: categoryStats.map((c: any) => ({
         category: c.category,
         count: c._count,
       })),
-      statusDistribution: statusStats.map((s) => ({
+      statusDistribution: statusStats.map((s: any) => ({
         status: s.status,
         count: s._count,
       })),
@@ -104,7 +104,7 @@ export const getTimeSeriesData = async (req: AuthRequest, res: Response): Promis
     // Group by date and severity
     const timeSeriesMap = new Map<string, Record<string, number>>();
 
-    events.forEach((event) => {
+    events.forEach((event: any) => {
       const dateKey = event.timestamp.toISOString().split('T')[0];
       if (!timeSeriesMap.has(dateKey)) {
         timeSeriesMap.set(dateKey, {});

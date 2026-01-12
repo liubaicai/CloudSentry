@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Tag, Input, Select, Button, Space, DatePicker, Modal, Form, message } from 'antd';
+import { Table, Card, Tag, Input, Select, Button, Space, Modal, message } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { eventsService } from '../services/eventsService';
 import { SecurityEvent } from '../types';
 import dayjs from 'dayjs';
 
-const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const severityColors: Record<string, string> = {
@@ -69,7 +68,7 @@ export const ThreatListPage: React.FC = () => {
     setPagination({ ...pagination, current: 1 });
   };
 
-  const handleUpdateStatus = async (id: string, status: string) => {
+  const handleUpdateStatus = async (id: string, status: SecurityEvent['status']) => {
     try {
       await eventsService.updateEvent(id, { status });
       message.success('Event status updated');
@@ -132,7 +131,7 @@ export const ThreatListPage: React.FC = () => {
           value={status}
           style={{ width: 120 }}
           size="small"
-          onChange={(value) => handleUpdateStatus(record.id, value)}
+          onChange={(value) => handleUpdateStatus(record.id, value as SecurityEvent['status'])}
         >
           <Option value="new">New</Option>
           <Option value="investigating">Investigating</Option>

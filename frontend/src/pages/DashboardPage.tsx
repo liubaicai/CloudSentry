@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Table, Tag, Spin } from 'antd';
 import {
   ArrowUpOutlined,
-  ArrowDownOutlined,
   WarningOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { dashboardService } from '../services/dashboardService';
-import { DashboardStats, SecurityEvent } from '../types';
+import { DashboardStats } from '../types';
 import dayjs from 'dayjs';
 
 const COLORS = ['#ff4d4f', '#ff7a45', '#ffa940', '#52c41a', '#1890ff'];
@@ -142,7 +141,7 @@ export const DashboardPage: React.FC = () => {
                   outerRadius={100}
                   label
                 >
-                  {stats.severityDistribution.map((entry, index) => (
+                  {stats.severityDistribution.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -165,7 +164,7 @@ export const DashboardPage: React.FC = () => {
                   outerRadius={100}
                   label
                 >
-                  {stats.categoryDistribution.map((entry, index) => (
+                  {stats.categoryDistribution.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
