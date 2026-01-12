@@ -70,3 +70,47 @@ model SystemSettings {
 
   @@map("system_settings")
 }
+
+model NetworkConfig {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  interface   String?  // Network interface name
+  ipAddress   String?
+  netmask     String?
+  gateway     String?
+  dnsServers  String[] @default([])
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("network_config")
+}
+
+model OperationsConfig {
+  id            String   @id @default(uuid())
+  category      String   // e.g., "retention", "backup", "maintenance"
+  key           String
+  value         Json
+  description   String?
+  enabled       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([category, key])
+  @@map("operations_config")
+}
+
+model SecurityConfig {
+  id          String   @id @default(uuid())
+  category    String   // e.g., "authentication", "encryption", "access_control"
+  key         String
+  value       Json
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([category, key])
+  @@map("security_config")
+}

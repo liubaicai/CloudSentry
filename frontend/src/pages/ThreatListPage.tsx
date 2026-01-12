@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Card, Tag, Input, Select, Button, Space, Modal, message } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { eventsService } from '../services/eventsService';
 import { SecurityEvent } from '../types';
 import dayjs from 'dayjs';
@@ -23,6 +24,7 @@ const statusColors: Record<string, string> = {
 };
 
 export const ThreatListPage: React.FC = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<SecurityEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -143,17 +145,27 @@ export const ThreatListPage: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      width: 100,
+      width: 150,
       render: (_: any, record: SecurityEvent) => (
-        <Button
-          type="link"
-          onClick={() => {
-            setSelectedEvent(record);
-            setDetailModalVisible(true);
-          }}
-        >
-          Details
-        </Button>
+        <Space>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => navigate(`/threats/${record.id}`)}
+          >
+            View
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              setSelectedEvent(record);
+              setDetailModalVisible(true);
+            }}
+          >
+            Quick View
+          </Button>
+        </Space>
       ),
     },
   ];
