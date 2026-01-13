@@ -1,6 +1,50 @@
 import api from './api';
 
 export const configService = {
+  // System Settings (key-value pairs)
+  settings: {
+    async getAll() {
+      const response = await api.get('/settings');
+      return response.data;
+    },
+    async update(key: string, value: any) {
+      const response = await api.post('/settings', { key, value });
+      return response.data;
+    },
+    async delete(key: string) {
+      const response = await api.delete(`/settings/${key}`);
+      return response.data;
+    },
+  },
+
+  // OpenAI Configuration
+  openai: {
+    async getAll() {
+      const response = await api.get('/openai-config');
+      return response.data;
+    },
+    async getActive() {
+      const response = await api.get('/openai-config/active');
+      return response.data;
+    },
+    async test() {
+      const response = await api.get('/openai-config/test');
+      return response.data;
+    },
+    async create(data: any) {
+      const response = await api.post('/openai-config', data);
+      return response.data;
+    },
+    async update(id: string, data: any) {
+      const response = await api.put(`/openai-config/${id}`, data);
+      return response.data;
+    },
+    async delete(id: string) {
+      const response = await api.delete(`/openai-config/${id}`);
+      return response.data;
+    },
+  },
+
   // Network Configuration
   network: {
     async getAll() {
