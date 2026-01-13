@@ -21,6 +21,12 @@ export interface SecurityEvent {
   assignedTo?: string;
   tags: string[];
   metadata?: any;
+  channelId?: string;
+  channel?: {
+    id: string;
+    name: string;
+    sourceIdentifier: string;
+  };
   createdAt: string;
   updatedAt: string;
 }

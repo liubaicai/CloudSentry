@@ -15,6 +15,8 @@ import { NetworkConfigPage } from './pages/NetworkConfigPage';
 import { OperationsConfigPage } from './pages/OperationsConfigPage';
 import { SecurityConfigPage } from './pages/SecurityConfigPage';
 import { DataManagementPage } from './pages/DataManagementPage';
+import ChannelManagementPage from './pages/ChannelManagementPage';
+import FieldMappingPage from './pages/FieldMappingPage';
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
               <Route path="threats/:id" element={<ThreatDetailPage />} />
               <Route path="analysis" element={<AnalysisPage />} />
               <Route path="alert-forwarding" element={<AlertForwardingPage />} />
+              <Route path="channels" element={<ChannelManagementPage />} />
+              <Route path="field-mappings" element={<FieldMappingPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="users" element={<UserManagementPage />} />
               <Route path="network" element={<NetworkConfigPage />} />
