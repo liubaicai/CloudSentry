@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
+import { openaiService } from '../services/openaiService';
 
 // Get all channels
 export const getAllChannels = async (req: Request, res: Response): Promise<void> => {
@@ -209,5 +210,124 @@ export const getChannelStats = async (req: Request, res: Response): Promise<void
   } catch (error) {
     logger.error('Failed to get channel stats:', error);
     res.status(500).json({ error: 'Failed to fetch channel statistics' });
+  }
+};
+
+// Generate AI field mappings for a channel
+export const generateAIMappings = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { sampleData } = req.body;
+
+    if (!sampleData) {
+      res.status(400).json({ error: 'Sample data is required' });
+      return;
+    }
+
+    const channel = await prisma.syslogChannel.findUnique({
+      where: { id },
+    });
+
+    if (!channel) {
+      res.status(404).json({ error: 'Channel not found' });
+      return;
+    }
+
+    // Check if OpenAI service is available
+    const available = await openaiService.isAvailable();
+    if (!available) {
+      res.status(503).json({ error: 'OpenAI service is not configured or available' });
+      return;
+    }
+
+    // First, try to find a compatible existing mapping
+    const compatibleMapping = await openaiService.findCompatibleMapping(
+      sampleData,
+      channel.sourceIdentifier
+    );
+
+    if (compatibleMapping) {
+      logger.info(`Using existing compatible mapping for channel: ${channel.id}`);
+      res.json({
+        message: 'Found compatible existing mapping',
+        mappings: compatibleMapping,
+        isNew: false,
+      });
+      return;
+    }
+
+    // Generate new mappings using AI
+    const mappings = await openaiService.generateFieldMappings(
+      sampleData,
+      channel.sourceIdentifier
+    );
+
+    // Save the generated mapping for future use
+    await openaiService.saveGeneratedMapping(
+      channel.sourceIdentifier,
+      sampleData,
+      mappings
+    );
+
+    logger.info(`Generated ${mappings.length} AI field mappings for channel: ${channel.id}`);
+    res.json({
+      message: 'AI field mappings generated successfully',
+      mappings,
+      isNew: true,
+    });
+  } catch (error) {
+    logger.error('Failed to generate AI mappings:', error);
+    res.status(500).json({ error: 'Failed to generate AI field mappings' });
+  }
+};
+
+// Apply AI-generated mappings to a channel
+export const applyAIMappings = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { mappings } = req.body;
+
+    if (!mappings || !Array.isArray(mappings)) {
+      res.status(400).json({ error: 'Mappings array is required' });
+      return;
+    }
+
+    const channel = await prisma.syslogChannel.findUnique({
+      where: { id },
+    });
+
+    if (!channel) {
+      res.status(404).json({ error: 'Channel not found' });
+      return;
+    }
+
+    // Create field mappings from AI suggestions
+    const createdMappings = [];
+    for (const mapping of mappings) {
+      const created = await prisma.fieldMapping.create({
+        data: {
+          channelId: id,
+          sourceField: mapping.sourceField,
+          targetField: mapping.targetField,
+          transformType: mapping.transformType || 'direct',
+          transformConfig: mapping.transformConfig,
+          description: mapping.description,
+          aiGenerated: true,
+          enabled: true,
+          priority: 10, // Give AI mappings higher priority
+        },
+      });
+      createdMappings.push(created);
+    }
+
+    logger.info(`Applied ${createdMappings.length} AI-generated mappings to channel: ${channel.id}`);
+    res.json({
+      message: 'AI field mappings applied successfully',
+      count: createdMappings.length,
+      mappings: createdMappings,
+    });
+  } catch (error) {
+    logger.error('Failed to apply AI mappings:', error);
+    res.status(500).json({ error: 'Failed to apply AI field mappings' });
   }
 };

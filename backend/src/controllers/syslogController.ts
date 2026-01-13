@@ -133,20 +133,40 @@ async function processSyslogMessage(
     metadata: mappedData.metadata || rawData.metadata || rawData,
   };
 
-  // Create security event
+  // Create security event with enhanced fields
   const event = await prisma.securityEvent.create({
     data: {
       timestamp: rawData.timestamp ? new Date(rawData.timestamp) : new Date(),
+      
+      // Enhanced threat fields
+      threatName: mappedData.threatName || rawData.threatName || rawData.threat_name,
+      threatLevel: mappedData.threatLevel || rawData.threatLevel || rawData.threat_level || finalData.severity,
       severity: finalData.severity,
       category: finalData.category,
+      
+      // Network information - enhanced fields
+      sourceIp: mappedData.sourceIp || rawData.sourceIp || rawData.src_ip || rawData.source_ip || finalData.source,
+      destinationIp: mappedData.destinationIp || rawData.destinationIp || rawData.dst_ip || rawData.destination_ip || finalData.destination,
+      sourcePort: mappedData.sourcePort || rawData.sourcePort || rawData.src_port || rawData.source_port,
+      destinationPort: mappedData.destinationPort || rawData.destinationPort || rawData.dst_port || rawData.destination_port || finalData.port,
+      protocol: finalData.protocol,
+      
+      // Legacy fields for backward compatibility
       source: finalData.source,
       destination: finalData.destination,
-      message: finalData.message,
-      rawLog: JSON.stringify(rawData),
-      protocol: finalData.protocol,
       port: finalData.port,
+      
+      // Content
+      message: finalData.message,
+      rawData: JSON.stringify(rawData),
+      rawLog: JSON.stringify(rawData),
+      
+      // Management
       tags: finalData.tags,
       metadata: finalData.metadata,
+      
+      // Source tracking
+      sourceChannel: rawData.sourceChannel || rawData.source_channel || sourceIdentifier,
       channelId: channelId,
     },
   });

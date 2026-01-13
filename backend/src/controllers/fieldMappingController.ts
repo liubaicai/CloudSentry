@@ -84,8 +84,14 @@ export const createFieldMapping = async (req: Request, res: Response): Promise<v
 
     // Validate targetField is a valid SecurityEvent field
     const validTargetFields = [
+      'threatName',
+      'threatLevel',
       'severity',
       'category',
+      'sourceIp',
+      'destinationIp',
+      'sourcePort',
+      'destinationPort',
       'source',
       'destination',
       'message',
@@ -162,8 +168,14 @@ export const updateFieldMapping = async (req: Request, res: Response): Promise<v
     // If targetField is being updated, validate it
     if (targetField) {
       const validTargetFields = [
+        'threatName',
+        'threatLevel',
         'severity',
         'category',
+        'sourceIp',
+        'destinationIp',
+        'sourcePort',
+        'destinationPort',
         'source',
         'destination',
         'message',

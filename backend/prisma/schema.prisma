@@ -23,31 +23,55 @@ model User {
 }
 
 model SecurityEvent {
-  id          String   @id @default(uuid())
-  timestamp   DateTime @default(now())
-  severity    String   // critical, high, medium, low, info
-  category    String   // malware, intrusion, policy_violation, etc.
-  source      String   // source IP or hostname
-  destination String?  // destination IP or hostname
-  message     String   @db.Text
-  rawLog      String   @db.Text
-  protocol    String?
-  port        Int?
-  status      String   @default("new") // new, investigating, resolved, false_positive
-  assignedTo  String?
-  tags        String[] @default([])
-  metadata    Json?    // Additional structured data
-  channelId   String?  // Link to syslog channel
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(uuid())
+  timestamp      DateTime @default(now())
+  
+  // Enhanced threat fields
+  threatName     String?  // Name of the threat/alert
+  threatLevel    String?  // Threat level (critical, high, medium, low, info) - alias for severity
+  severity       String   // critical, high, medium, low, info
+  category       String   // malware, intrusion, policy_violation, etc.
+  
+  // Network information
+  sourceIp       String   // Source IP address
+  destinationIp  String?  // Destination IP address
+  sourcePort     Int?     // Source port
+  destinationPort Int?    // Destination port (alias for port)
+  protocol       String?  // Network protocol
+  
+  // Legacy fields (kept for backward compatibility)
+  source         String   // source IP or hostname (alias for sourceIp)
+  destination    String?  // destination IP or hostname (alias for destinationIp)
+  port           Int?     // destination port (kept for backward compatibility)
+  
+  // Content
+  message        String   @db.Text
+  rawData        String   @db.Text // Raw original data (alias for rawLog)
+  rawLog         String   @db.Text // Legacy field
+  
+  // Management
+  status         String   @default("new") // new, investigating, resolved, false_positive
+  assignedTo     String?
+  tags           String[] @default([])
+  metadata       Json?    // Additional structured data
+  
+  // Source tracking
+  sourceChannel  String?  // Source channel name/identifier
+  channelId      String?  // Link to syslog channel
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  channel     SyslogChannel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  channel        SyslogChannel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
 
   @@index([timestamp])
   @@index([severity])
+  @@index([threatLevel])
   @@index([category])
   @@index([status])
   @@index([channelId])
+  @@index([sourceIp])
+  @@index([destinationIp])
   @@map("security_events")
 }
 
@@ -148,6 +172,7 @@ model FieldMapping {
   enabled         Boolean  @default(true)
   priority        Int      @default(0) // Higher priority mappings are applied first
   description     String?
+  aiGenerated     Boolean  @default(false) // Whether this mapping was AI-generated
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -155,4 +180,33 @@ model FieldMapping {
 
   @@index([channelId])
   @@map("field_mappings")
+}
+
+model OpenAIConfig {
+  id          String   @id @default(uuid())
+  baseUrl     String   @default("https://api.openai.com/v1") // OpenAI compatible API base URL
+  apiKey      String   // API key for authentication
+  model       String   @default("gpt-3.5-turbo") // Model to use for generation
+  enabled     Boolean  @default(true)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("openai_config")
+}
+
+model AIGeneratedMapping {
+  id                String   @id @default(uuid())
+  channelPattern    String   // Pattern that identifies the channel (e.g., source identifier pattern)
+  sampleData        Json     // Sample data used to generate the mapping
+  generatedMappings Json     // The AI-generated field mappings
+  tested            Boolean  @default(false) // Whether this mapping has been tested
+  successCount      Int      @default(0) // Number of times this mapping was successfully applied
+  failureCount      Int      @default(0) // Number of times this mapping failed
+  lastUsedAt        DateTime? // Last time this mapping was used
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([channelPattern])
+  @@map("ai_generated_mappings")
 }
