@@ -95,11 +95,11 @@ async function main() {
 
   console.log('Created sample security events');
 
-  // Create sample alert forwarding rule
-  const rule = await prisma.alertForwardingRule.create({
-    data: {
-      name: 'Critical Alerts to Webhook',
-      description: 'Forward all critical security events to webhook',
+  // Create sample alert forwarding rules
+  const alertRules = [
+    {
+      name: '严重告警转发 Webhook',
+      description: '将所有严重和高危安全事件转发到Webhook',
       enabled: true,
       type: 'webhook',
       destination: 'https://webhook.site/your-webhook-id',
@@ -107,9 +107,63 @@ async function main() {
         severity: ['critical', 'high'],
       },
     },
-  });
+    {
+      name: '邮件通知 - 入侵检测',
+      description: '当检测到入侵事件时发送邮件通知',
+      enabled: true,
+      type: 'email',
+      destination: 'security-team@example.com',
+      conditions: {
+        category: ['intrusion', 'malware'],
+        severity: ['critical', 'high', 'medium'],
+      },
+    },
+    {
+      name: 'Syslog转发 - 全部事件',
+      description: '将所有安全事件转发到SIEM系统',
+      enabled: false,
+      type: 'syslog',
+      destination: 'siem.example.com:514',
+      conditions: {
+        severity: ['critical', 'high', 'medium', 'low', 'info'],
+      },
+    },
+    {
+      name: '钉钉告警通知',
+      description: '通过钉钉机器人推送高危告警',
+      enabled: true,
+      type: 'webhook',
+      destination: 'https://oapi.dingtalk.com/robot/send?access_token=xxx',
+      conditions: {
+        severity: ['critical'],
+      },
+    },
+    {
+      name: '企业微信告警',
+      description: '通过企业微信推送安全事件',
+      enabled: false,
+      type: 'webhook',
+      destination: 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx',
+      conditions: {
+        severity: ['critical', 'high'],
+        category: ['intrusion'],
+      },
+    },
+  ];
 
-  console.log('Created sample alert forwarding rule:', rule);
+  for (const ruleData of alertRules) {
+    await prisma.alertForwardingRule.upsert({
+      where: {
+        id: `seed-${ruleData.name.replace(/\s+/g, '-').toLowerCase()}`,
+      },
+      update: {},
+      create: {
+        ...ruleData,
+      },
+    });
+  }
+
+  console.log('Created sample alert forwarding rules');
 
   console.log('Seeding finished.');
 }
