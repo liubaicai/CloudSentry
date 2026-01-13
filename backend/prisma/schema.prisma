@@ -37,13 +37,17 @@ model SecurityEvent {
   assignedTo  String?
   tags        String[] @default([])
   metadata    Json?    // Additional structured data
+  channelId   String?  // Link to syslog channel
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  channel     SyslogChannel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
 
   @@index([timestamp])
   @@index([severity])
   @@index([category])
   @@index([status])
+  @@index([channelId])
   @@map("security_events")
 }
 
@@ -113,4 +117,42 @@ model SecurityConfig {
 
   @@unique([category, key])
   @@map("security_config")
+}
+
+model SyslogChannel {
+  id              String   @id @default(uuid())
+  name            String   // User-editable channel name
+  sourceIdentifier String  @unique // IP address or hostname that uniquely identifies the sender
+  description     String?
+  enabled         Boolean  @default(true)
+  eventCount      Int      @default(0) // Total events received from this channel
+  lastEventAt     DateTime? // Last time an event was received
+  metadata        Json?    // Additional channel information
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  fieldMappings   FieldMapping[]
+  securityEvents  SecurityEvent[]
+
+  @@index([sourceIdentifier])
+  @@map("syslog_channels")
+}
+
+model FieldMapping {
+  id              String   @id @default(uuid())
+  channelId       String?  // If null, applies to all channels as default
+  sourceField     String   // Field name in incoming syslog
+  targetField     String   // Field name in SecurityEvent table
+  transformType   String   @default("direct") // direct, regex, lookup, script
+  transformConfig Json?    // Configuration for transformation (regex pattern, lookup table, etc.)
+  enabled         Boolean  @default(true)
+  priority        Int      @default(0) // Higher priority mappings are applied first
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  channel         SyslogChannel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@map("field_mappings")
 }
