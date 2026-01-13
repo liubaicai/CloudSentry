@@ -24,7 +24,7 @@ export const AlertForwardingPage: React.FC = () => {
       const response = await api.get('/alert-forwarding');
       setRules(response.data.rules);
     } catch (error) {
-      message.error('Failed to load rules');
+      message.error('加载规则失败');
     } finally {
       setLoading(false);
     }
@@ -52,10 +52,10 @@ export const AlertForwardingPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/alert-forwarding/${id}`);
-      message.success('Rule deleted');
+      message.success('规则删除成功');
       loadRules();
     } catch (error) {
-      message.error('Failed to delete rule');
+      message.error('规则删除失败');
     }
   };
 
@@ -68,63 +68,75 @@ export const AlertForwardingPage: React.FC = () => {
 
       if (editingRule) {
         await api.patch(`/alert-forwarding/${editingRule.id}`, data);
-        message.success('Rule updated');
+        message.success('规则更新成功');
       } else {
         await api.post('/alert-forwarding', data);
-        message.success('Rule created');
+        message.success('规则创建成功');
       }
 
       setModalVisible(false);
       loadRules();
     } catch (error) {
-      message.error('Failed to save rule');
+      message.error('保存规则失败');
     }
   };
 
   const columns = [
     {
-      title: 'Name',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Type',
+      title: '类型',
       dataIndex: 'type',
       key: 'type',
+      render: (type: string) => {
+        const typeLabels: Record<string, string> = {
+          webhook: 'Webhook',
+          email: '邮件',
+          syslog: 'Syslog',
+        };
+        return typeLabels[type] || type;
+      },
     },
     {
-      title: 'Destination',
+      title: '目标地址',
       dataIndex: 'destination',
       key: 'destination',
       ellipsis: true,
     },
     {
-      title: 'Enabled',
+      title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
+      width: 80,
       render: (enabled: boolean) => (
-        <Switch checked={enabled} disabled />
+        <Switch checked={enabled} disabled size="small" />
       ),
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
+      width: 140,
       render: (_: any, record: AlertForwardingRule) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
+            size="small"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
-            Edit
+            编辑
           </Button>
           <Button
             type="link"
+            size="small"
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
           >
-            Delete
+            删除
           </Button>
         </Space>
       ),
@@ -132,12 +144,13 @@ export const AlertForwardingPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 12 }}>
       <Card
-        title="Alert Forwarding Rules"
+        title="告警转发规则"
+        size="small"
         extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Create Rule
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
+            创建规则
           </Button>
         }
       >
@@ -146,14 +159,17 @@ export const AlertForwardingPage: React.FC = () => {
           dataSource={rules}
           rowKey="id"
           loading={loading}
+          size="small"
         />
       </Card>
 
       <Modal
-        title={editingRule ? 'Edit Rule' : 'Create Rule'}
+        title={editingRule ? '编辑规则' : '创建规则'}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => form.submit()}
+        okText="保存"
+        cancelText="取消"
         width={600}
       >
         <Form
@@ -167,42 +183,42 @@ export const AlertForwardingPage: React.FC = () => {
           }}
         >
           <Form.Item
-            label="Name"
+            label="名称"
             name="name"
-            rules={[{ required: true, message: 'Please enter rule name' }]}
+            rules={[{ required: true, message: '请输入规则名称' }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Description"
+            label="描述"
             name="description"
           >
             <TextArea rows={2} />
           </Form.Item>
 
           <Form.Item
-            label="Type"
+            label="类型"
             name="type"
             rules={[{ required: true }]}
           >
             <Select>
               <Option value="webhook">Webhook</Option>
-              <Option value="email">Email</Option>
+              <Option value="email">邮件</Option>
               <Option value="syslog">Syslog</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            label="Destination"
+            label="目标地址"
             name="destination"
-            rules={[{ required: true, message: 'Please enter destination' }]}
+            rules={[{ required: true, message: '请输入目标地址' }]}
           >
-            <Input placeholder="e.g., https://webhook.site/xxx or email@example.com" />
+            <Input placeholder="例如：https://webhook.site/xxx 或 email@example.com" />
           </Form.Item>
 
           <Form.Item
-            label="Conditions (JSON)"
+            label="条件（JSON格式）"
             name="conditions"
             rules={[
               { required: true },
@@ -212,7 +228,7 @@ export const AlertForwardingPage: React.FC = () => {
                     JSON.parse(value);
                     return Promise.resolve();
                   } catch (e) {
-                    return Promise.reject('Please enter valid JSON format, e.g., {"severity": ["critical", "high"]}');
+                    return Promise.reject('请输入有效的JSON格式，例如：{"severity": ["critical", "high"]}');
                   }
                 },
               },
@@ -222,11 +238,11 @@ export const AlertForwardingPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label="Enabled"
+            label="启用"
             name="enabled"
             valuePropName="checked"
           >
-            <Switch />
+            <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>
         </Form>
       </Modal>

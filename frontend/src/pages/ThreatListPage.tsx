@@ -16,6 +16,21 @@ const severityColors: Record<string, string> = {
   info: 'green',
 };
 
+const severityLabels: Record<string, string> = {
+  critical: '严重',
+  high: '高危',
+  medium: '中危',
+  low: '低危',
+  info: '信息',
+};
+
+const statusLabels: Record<string, string> = {
+  new: '新建',
+  investigating: '调查中',
+  resolved: '已解决',
+  false_positive: '误报',
+};
+
 const statusColors: Record<string, string> = {
   new: 'blue',
   investigating: 'orange',
@@ -54,7 +69,7 @@ export const ThreatListPage: React.FC = () => {
         total: response.pagination.total,
       });
     } catch (error) {
-      message.error('Failed to load events');
+      message.error('加载事件失败');
     } finally {
       setLoading(false);
     }
@@ -73,87 +88,87 @@ export const ThreatListPage: React.FC = () => {
   const handleUpdateStatus = async (id: string, status: SecurityEvent['status']) => {
     try {
       await eventsService.updateEvent(id, { status });
-      message.success('Event status updated');
+      message.success('状态更新成功');
       loadEvents();
     } catch (error) {
-      message.error('Failed to update event');
+      message.error('状态更新失败');
     }
   };
 
   const columns = [
     {
-      title: 'Time',
+      title: '时间',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      width: 180,
+      width: 160,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
     },
     {
-      title: 'Severity',
+      title: '级别',
       dataIndex: 'severity',
       key: 'severity',
-      width: 100,
+      width: 80,
       render: (severity: string) => (
-        <Tag color={severityColors[severity]}>{severity.toUpperCase()}</Tag>
+        <Tag color={severityColors[severity]}>{severityLabels[severity] || severity.toUpperCase()}</Tag>
       ),
       filters: [
-        { text: 'Critical', value: 'critical' },
-        { text: 'High', value: 'high' },
-        { text: 'Medium', value: 'medium' },
-        { text: 'Low', value: 'low' },
-        { text: 'Info', value: 'info' },
+        { text: '严重', value: 'critical' },
+        { text: '高危', value: 'high' },
+        { text: '中危', value: 'medium' },
+        { text: '低危', value: 'low' },
+        { text: '信息', value: 'info' },
       ],
     },
     {
-      title: 'Category',
+      title: '类别',
       dataIndex: 'category',
       key: 'category',
-      width: 150,
+      width: 120,
     },
     {
-      title: 'Source',
+      title: '来源',
       dataIndex: 'source',
       key: 'source',
-      width: 150,
+      width: 120,
     },
     {
-      title: 'Message',
+      title: '消息',
       dataIndex: 'message',
       key: 'message',
       ellipsis: true,
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: 120,
+      width: 110,
       render: (status: string, record: SecurityEvent) => (
         <Select
           value={status}
-          style={{ width: 120 }}
+          style={{ width: 100 }}
           size="small"
           onChange={(value) => handleUpdateStatus(record.id, value as SecurityEvent['status'])}
         >
-          <Option value="new">New</Option>
-          <Option value="investigating">Investigating</Option>
-          <Option value="resolved">Resolved</Option>
-          <Option value="false_positive">False Positive</Option>
+          <Option value="new">新建</Option>
+          <Option value="investigating">调查中</Option>
+          <Option value="resolved">已解决</Option>
+          <Option value="false_positive">误报</Option>
         </Select>
       ),
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 130,
       render: (_: any, record: SecurityEvent) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
             size="small"
             onClick={() => navigate(`/threats/${record.id}`)}
           >
-            View
+            详情
           </Button>
           <Button
             type="link"
@@ -163,7 +178,7 @@ export const ThreatListPage: React.FC = () => {
               setDetailModalVisible(true);
             }}
           >
-            Quick View
+            快速查看
           </Button>
         </Space>
       ),
@@ -171,42 +186,42 @@ export const ThreatListPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card>
-        <Space style={{ marginBottom: 16, width: '100%' }} direction="vertical">
+    <div style={{ padding: 12 }}>
+      <Card size="small">
+        <Space style={{ marginBottom: 12, width: '100%' }} direction="vertical">
           <Space wrap>
             <Input
-              placeholder="Search events..."
+              placeholder="搜索事件..."
               prefix={<SearchOutlined />}
-              style={{ width: 300 }}
+              style={{ width: 250 }}
               onChange={(e) => handleSearch(e.target.value)}
               allowClear
             />
             <Select
-              placeholder="Severity"
-              style={{ width: 120 }}
+              placeholder="威胁级别"
+              style={{ width: 100 }}
               onChange={(value) => handleFilterChange('severity', value)}
               allowClear
             >
-              <Option value="critical">Critical</Option>
-              <Option value="high">High</Option>
-              <Option value="medium">Medium</Option>
-              <Option value="low">Low</Option>
-              <Option value="info">Info</Option>
+              <Option value="critical">严重</Option>
+              <Option value="high">高危</Option>
+              <Option value="medium">中危</Option>
+              <Option value="low">低危</Option>
+              <Option value="info">信息</Option>
             </Select>
             <Select
-              placeholder="Status"
-              style={{ width: 150 }}
+              placeholder="状态"
+              style={{ width: 100 }}
               onChange={(value) => handleFilterChange('status', value)}
               allowClear
             >
-              <Option value="new">New</Option>
-              <Option value="investigating">Investigating</Option>
-              <Option value="resolved">Resolved</Option>
-              <Option value="false_positive">False Positive</Option>
+              <Option value="new">新建</Option>
+              <Option value="investigating">调查中</Option>
+              <Option value="resolved">已解决</Option>
+              <Option value="false_positive">误报</Option>
             </Select>
             <Button icon={<ReloadOutlined />} onClick={loadEvents}>
-              Refresh
+              刷新
             </Button>
           </Space>
         </Space>
@@ -216,10 +231,11 @@ export const ThreatListPage: React.FC = () => {
           dataSource={events}
           rowKey="id"
           loading={loading}
+          size="small"
           pagination={{
             ...pagination,
             showSizeChanger: true,
-            showTotal: (total) => `Total ${total} events`,
+            showTotal: (total) => `共 ${total} 条事件`,
           }}
           onChange={(newPagination) => {
             setPagination({
@@ -232,12 +248,12 @@ export const ThreatListPage: React.FC = () => {
       </Card>
 
       <Modal
-        title="Event Details"
+        title="事件详情"
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            Close
+            关闭
           </Button>,
         ]}
         width={800}
@@ -245,17 +261,17 @@ export const ThreatListPage: React.FC = () => {
         {selectedEvent && (
           <div>
             <p><strong>ID:</strong> {selectedEvent.id}</p>
-            <p><strong>Timestamp:</strong> {dayjs(selectedEvent.timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
-            <p><strong>Severity:</strong> <Tag color={severityColors[selectedEvent.severity]}>{selectedEvent.severity.toUpperCase()}</Tag></p>
-            <p><strong>Category:</strong> {selectedEvent.category}</p>
-            <p><strong>Source:</strong> {selectedEvent.source}</p>
-            {selectedEvent.destination && <p><strong>Destination:</strong> {selectedEvent.destination}</p>}
-            {selectedEvent.protocol && <p><strong>Protocol:</strong> {selectedEvent.protocol}</p>}
-            {selectedEvent.port && <p><strong>Port:</strong> {selectedEvent.port}</p>}
-            <p><strong>Status:</strong> <Tag color={statusColors[selectedEvent.status]}>{selectedEvent.status}</Tag></p>
-            <p><strong>Message:</strong> {selectedEvent.message}</p>
-            <p><strong>Tags:</strong> {selectedEvent.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}</p>
-            <p><strong>Raw Log:</strong></p>
+            <p><strong>时间:</strong> {dayjs(selectedEvent.timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+            <p><strong>级别:</strong> <Tag color={severityColors[selectedEvent.severity]}>{severityLabels[selectedEvent.severity] || selectedEvent.severity.toUpperCase()}</Tag></p>
+            <p><strong>类别:</strong> {selectedEvent.category}</p>
+            <p><strong>来源:</strong> {selectedEvent.source}</p>
+            {selectedEvent.destination && <p><strong>目标:</strong> {selectedEvent.destination}</p>}
+            {selectedEvent.protocol && <p><strong>协议:</strong> {selectedEvent.protocol}</p>}
+            {selectedEvent.port && <p><strong>端口:</strong> {selectedEvent.port}</p>}
+            <p><strong>状态:</strong> <Tag color={statusColors[selectedEvent.status]}>{statusLabels[selectedEvent.status] || selectedEvent.status}</Tag></p>
+            <p><strong>消息:</strong> {selectedEvent.message}</p>
+            <p><strong>标签:</strong> {selectedEvent.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}</p>
+            <p><strong>原始日志:</strong></p>
             <pre style={{ background: '#f5f5f5', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300 }}>
               {selectedEvent.rawLog}
             </pre>

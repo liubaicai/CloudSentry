@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
 import { AuthProvider } from './contexts/AuthContext';
 import { PrivateRoute } from './components/PrivateRoute';
 import { MainLayout } from './components/MainLayout';
@@ -21,9 +22,21 @@ import FieldMappingPage from './pages/FieldMappingPage';
 function App() {
   return (
     <ConfigProvider
+      locale={zhCN}
       theme={{
         token: {
           colorPrimary: '#1890ff',
+          borderRadius: 4,
+          fontSize: 13,
+        },
+        components: {
+          Card: {
+            paddingLG: 16,
+          },
+          Table: {
+            cellPaddingBlock: 8,
+            cellPaddingInline: 12,
+          },
         },
       }}
     >

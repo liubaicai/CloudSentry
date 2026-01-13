@@ -23,7 +23,7 @@ export const UserManagementPage: React.FC = () => {
       const response = await usersService.getUsers();
       setUsers(response.users);
     } catch (error) {
-      message.error('Failed to load users');
+      message.error('加载用户失败');
     } finally {
       setLoading(false);
     }
@@ -47,17 +47,18 @@ export const UserManagementPage: React.FC = () => {
 
   const handleDelete = (user: User) => {
     Modal.confirm({
-      title: 'Delete User',
-      content: `Are you sure you want to delete user "${user.username}"?`,
-      okText: 'Delete',
+      title: '删除用户',
+      content: `确定要删除用户 "${user.username}" 吗？`,
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: async () => {
         try {
           await usersService.deleteUser(user.id);
-          message.success('User deleted successfully');
+          message.success('用户删除成功');
           loadUsers();
         } catch (error) {
-          message.error('Failed to delete user');
+          message.error('用户删除失败');
         }
       },
     });
@@ -67,21 +68,21 @@ export const UserManagementPage: React.FC = () => {
     try {
       if (editingUser) {
         await usersService.updateUser(editingUser.id, values);
-        message.success('User updated successfully');
+        message.success('用户更新成功');
       } else {
         await usersService.createUser(values);
-        message.success('User created successfully');
+        message.success('用户创建成功');
       }
       setModalVisible(false);
       loadUsers();
     } catch (error: any) {
-      message.error(error.response?.data?.error || 'Failed to save user');
+      message.error(error.response?.data?.error || '保存用户失败');
     }
   };
 
   const columns = [
     {
-      title: 'Username',
+      title: '用户名',
       dataIndex: 'username',
       key: 'username',
       render: (text: string) => (
@@ -92,39 +93,41 @@ export const UserManagementPage: React.FC = () => {
       ),
     },
     {
-      title: 'Email',
+      title: '邮箱',
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: 'Role',
+      title: '角色',
       dataIndex: 'role',
       key: 'role',
+      width: 100,
       render: (role: string) => (
         <Tag color={role === 'admin' ? 'red' : 'blue'}>
-          {role.toUpperCase()}
+          {role === 'admin' ? '管理员' : '普通用户'}
         </Tag>
       ),
     },
     {
-      title: 'Created At',
+      title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      width: 160,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 140,
       render: (_: any, record: User) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
             size="small"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
-            Edit
+            编辑
           </Button>
           <Button
             type="link"
@@ -133,7 +136,7 @@ export const UserManagementPage: React.FC = () => {
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record)}
           >
-            Delete
+            删除
           </Button>
         </Space>
       ),
@@ -141,12 +144,13 @@ export const UserManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 12 }}>
       <Card
-        title="User Management"
+        title="用户管理"
+        size="small"
         extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add User
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
+            添加用户
           </Button>
         }
       >
@@ -155,15 +159,17 @@ export const UserManagementPage: React.FC = () => {
           dataSource={users}
           rowKey="id"
           loading={loading}
+          size="small"
         />
       </Card>
 
       <Modal
-        title={editingUser ? 'Edit User' : 'Create User'}
+        title={editingUser ? '编辑用户' : '创建用户'}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => form.submit()}
-        okText="Save"
+        okText="保存"
+        cancelText="取消"
       >
         <Form
           form={form}
@@ -172,42 +178,42 @@ export const UserManagementPage: React.FC = () => {
         >
           <Form.Item
             name="username"
-            label="Username"
-            rules={[{ required: true, message: 'Please input username' }]}
+            label="用户名"
+            rules={[{ required: true, message: '请输入用户名' }]}
           >
-            <Input placeholder="Username" />
+            <Input placeholder="用户名" />
           </Form.Item>
 
           <Form.Item
             name="email"
-            label="Email"
+            label="邮箱"
             rules={[
-              { required: true, message: 'Please input email' },
-              { type: 'email', message: 'Please input valid email' },
+              { required: true, message: '请输入邮箱' },
+              { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
           >
-            <Input placeholder="Email" />
+            <Input placeholder="邮箱" />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="Password"
+            label="密码"
             rules={[
-              { required: !editingUser, message: 'Please input password' },
-              { min: 6, message: 'Password must be at least 6 characters' },
+              { required: !editingUser, message: '请输入密码' },
+              { min: 6, message: '密码至少6位' },
             ]}
           >
-            <Input.Password placeholder={editingUser ? 'Leave blank to keep current password' : 'Password'} />
+            <Input.Password placeholder={editingUser ? '留空保持原密码' : '密码'} />
           </Form.Item>
 
           <Form.Item
             name="role"
-            label="Role"
-            rules={[{ required: true, message: 'Please select role' }]}
+            label="角色"
+            rules={[{ required: true, message: '请选择角色' }]}
           >
-            <Select placeholder="Select role">
-              <Option value="user">User</Option>
-              <Option value="admin">Admin</Option>
+            <Select placeholder="选择角色">
+              <Option value="user">普通用户</Option>
+              <Option value="admin">管理员</Option>
             </Select>
           </Form.Item>
         </Form>

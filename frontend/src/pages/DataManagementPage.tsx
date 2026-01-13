@@ -30,7 +30,7 @@ export const DataManagementPage: React.FC = () => {
       const data = await configService.dataManagement.getStats();
       setStats(data);
     } catch (error) {
-      message.error('Failed to load statistics');
+      message.error('加载统计数据失败');
     } finally {
       setLoading(false);
     }
@@ -39,11 +39,11 @@ export const DataManagementPage: React.FC = () => {
   const handleDeleteOldEvents = async (values: any) => {
     try {
       const result = await configService.dataManagement.deleteOldEvents(values.days);
-      message.success(`Deleted ${result.count} events`);
+      message.success(`已删除 ${result.count} 条事件`);
       setDeleteModalVisible(false);
       loadStats();
     } catch (error: any) {
-      message.error(error.response?.data?.error || 'Failed to delete events');
+      message.error(error.response?.data?.error || '删除事件失败');
     }
   };
 
@@ -70,23 +70,25 @@ export const DataManagementPage: React.FC = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      message.success('Events exported successfully');
+      message.success('事件导出成功');
       setExportModalVisible(false);
     } catch (error: any) {
-      message.error(error.response?.data?.error || 'Failed to export events');
+      message.error(error.response?.data?.error || '导出事件失败');
     }
   };
 
   const handleBackup = async () => {
     Modal.confirm({
-      title: 'Create Backup',
-      content: 'Are you sure you want to create a database backup?',
+      title: '创建备份',
+      content: '确定要创建数据库备份吗？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
         try {
           const result = await configService.dataManagement.createBackup();
           message.info(result.message);
         } catch (error: any) {
-          message.error(error.response?.data?.error || 'Failed to create backup');
+          message.error(error.response?.data?.error || '创建备份失败');
         }
       },
     });
@@ -94,48 +96,50 @@ export const DataManagementPage: React.FC = () => {
 
   const handleMaintenance = async () => {
     Modal.confirm({
-      title: 'Run Database Maintenance',
-      content: 'This will optimize the database. Continue?',
+      title: '运行数据库维护',
+      content: '这将优化数据库，是否继续？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
         try {
           await configService.dataManagement.runMaintenance();
-          message.success('Database maintenance completed');
+          message.success('数据库维护完成');
         } catch (error: any) {
-          message.error(error.response?.data?.error || 'Failed to run maintenance');
+          message.error(error.response?.data?.error || '运行维护失败');
         }
       },
     });
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Card title={<><DatabaseOutlined /> Database Statistics</>} loading={loading}>
-          <Row gutter={16}>
+    <div style={{ padding: 12 }}>
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        <Card title={<><DatabaseOutlined /> 数据库统计</>} loading={loading} size="small">
+          <Row gutter={12}>
             <Col span={6}>
-              <Statistic title="Total Events" value={stats?.events.total} />
+              <Statistic title="事件总数" value={stats?.events.total} />
             </Col>
             <Col span={6}>
-              <Statistic title="Total Users" value={stats?.users.total} />
+              <Statistic title="用户总数" value={stats?.users.total} />
             </Col>
             <Col span={6}>
-              <Statistic title="Alert Rules" value={stats?.alertRules.total} />
+              <Statistic title="告警规则数" value={stats?.alertRules.total} />
             </Col>
             <Col span={6}>
-              <Statistic title="System Settings" value={stats?.settings.total} />
+              <Statistic title="系统设置数" value={stats?.settings.total} />
             </Col>
           </Row>
           {stats?.events.oldestTimestamp && (
-            <Row gutter={16} style={{ marginTop: 16 }}>
+            <Row gutter={12} style={{ marginTop: 12 }}>
               <Col span={12}>
                 <Statistic
-                  title="Oldest Event"
+                  title="最早事件"
                   value={dayjs(stats.events.oldestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
                 />
               </Col>
               <Col span={12}>
                 <Statistic
-                  title="Newest Event"
+                  title="最新事件"
                   value={dayjs(stats.events.newestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
                 />
               </Col>
@@ -143,78 +147,85 @@ export const DataManagementPage: React.FC = () => {
           )}
         </Card>
 
-        <Card title="Data Management Operations">
+        <Card title="数据管理操作" size="small">
           <Space wrap>
             <Button
               type="primary"
               icon={<DeleteOutlined />}
               onClick={() => setDeleteModalVisible(true)}
+              size="small"
             >
-              Delete Old Events
+              删除旧事件
             </Button>
             <Button
               type="default"
               icon={<ExportOutlined />}
               onClick={() => setExportModalVisible(true)}
+              size="small"
             >
-              Export Events
+              导出事件
             </Button>
             <Button
               type="default"
               icon={<SaveOutlined />}
               onClick={handleBackup}
+              size="small"
             >
-              Create Backup
+              创建备份
             </Button>
             <Button
               type="default"
               icon={<ToolOutlined />}
               onClick={handleMaintenance}
+              size="small"
             >
-              Run Maintenance
+              运行维护
             </Button>
           </Space>
         </Card>
       </Space>
 
       <Modal
-        title="Delete Old Events"
+        title="删除旧事件"
         open={deleteModalVisible}
         onCancel={() => setDeleteModalVisible(false)}
         onOk={() => form.submit()}
-        okText="Delete"
+        okText="删除"
+        cancelText="取消"
         okType="danger"
       >
         <Form form={form} layout="vertical" onFinish={handleDeleteOldEvents}>
           <Form.Item
             name="days"
-            label="Delete events older than (days)"
-            rules={[{ required: true, message: 'Please input number of days' }]}
+            label="删除超过多少天的事件"
+            rules={[{ required: true, message: '请输入天数' }]}
           >
-            <InputNumber min={1} style={{ width: '100%' }} placeholder="e.g., 90" />
+            <InputNumber min={1} style={{ width: '100%' }} placeholder="例如：90" />
           </Form.Item>
-          <p style={{ color: '#ff4d4f' }}>
-            Warning: This action cannot be undone. Events older than the specified number of days will be permanently deleted.
+          <p style={{ color: '#ff4d4f', fontSize: 13 }}>
+            警告：此操作不可撤销。超过指定天数的事件将被永久删除。
           </p>
         </Form>
       </Modal>
 
       <Modal
-        title="Export Events"
+        title="导出事件"
         open={exportModalVisible}
         onCancel={() => setExportModalVisible(false)}
         onOk={() => exportForm.submit()}
+        okText="导出"
+        cancelText="取消"
         width={600}
       >
         <Form form={exportForm} layout="vertical" onFinish={handleExportEvents}>
-          <Form.Item name="dateRange" label="Date Range">
+          <Form.Item name="dateRange" label="日期范围">
             <RangePicker style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="limit" label="Maximum Number of Events">
+          <Form.Item name="limit" label="最大事件数">
             <InputNumber min={1} max={100000} defaultValue={10000} style={{ width: '100%' }} />
           </Form.Item>
-          <p style={{ color: '#1890ff' }}>
-            Events will be exported as a JSON file. Large exports may take some time.
+          <p style={{ color: '#1890ff', fontSize: 13 }}>
+            事件将导出为JSON文件。大量导出可能需要一些时间。
           </p>
         </Form>
       </Modal>

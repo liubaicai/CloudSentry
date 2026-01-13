@@ -1,34 +1,34 @@
 import React from 'react';
 import { Card, Row, Col, Statistic } from 'antd';
-import { BarChartOutlined } from '@ant-design/icons';
+import { BarChartOutlined, BulbOutlined } from '@ant-design/icons';
 
 export const AnalysisPage: React.FC = () => {
   return (
-    <div style={{ padding: 24 }}>
-      <Card title="Aggregated Analysis" extra={<BarChartOutlined />}>
-        <Row gutter={16}>
+    <div style={{ padding: 12 }}>
+      <Card title="聚合分析" extra={<BarChartOutlined />} size="small">
+        <Row gutter={12}>
           <Col span={12}>
-            <Card>
+            <Card size="small">
               <Statistic
-                title="Analysis Feature"
-                value="Coming Soon"
+                title="分析功能"
+                value="即将推出"
                 prefix={<BarChartOutlined />}
               />
-              <p style={{ marginTop: 16 }}>
-                Advanced aggregation and correlation analysis of security events will be available here.
-                This includes pattern detection, anomaly detection, and threat intelligence correlation.
+              <p style={{ marginTop: 12, fontSize: 13, color: '#666' }}>
+                安全事件的高级聚合和关联分析功能将在此处提供。
+                包括模式检测、异常检测和威胁情报关联等功能。
               </p>
             </Card>
           </Col>
           <Col span={12}>
-            <Card>
+            <Card size="small">
               <Statistic
-                title="Threat Intelligence"
-                value="Coming Soon"
-                prefix={<BarChartOutlined />}
+                title="威胁情报"
+                value="即将推出"
+                prefix={<BulbOutlined />}
               />
-              <p style={{ marginTop: 16 }}>
-                Integration with threat intelligence feeds and IOC matching will be available here.
+              <p style={{ marginTop: 12, fontSize: 13, color: '#666' }}>
+                威胁情报源集成和IOC匹配功能将在此处提供。
               </p>
             </Card>
           </Col>

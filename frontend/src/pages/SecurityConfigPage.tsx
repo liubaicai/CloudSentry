@@ -3,6 +3,13 @@ import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select
 import { PlusOutlined, EditOutlined, DeleteOutlined, SafetyOutlined } from '@ant-design/icons';
 import { configService } from '../services/configService';
 
+const categoryLabels: Record<string, string> = {
+  authentication: '身份认证',
+  encryption: '加密',
+  access_control: '访问控制',
+  password_policy: '密码策略',
+};
+
 export const SecurityConfigPage: React.FC = () => {
   const [configs, setConfigs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +28,7 @@ export const SecurityConfigPage: React.FC = () => {
       const data = await configService.security.getAll(filterCategory || undefined);
       setConfigs(data);
     } catch (error) {
-      message.error('Failed to load security configurations');
+      message.error('加载安全配置失败');
     } finally {
       setLoading(false);
     }
@@ -45,17 +52,18 @@ export const SecurityConfigPage: React.FC = () => {
 
   const handleDelete = (config: any) => {
     Modal.confirm({
-      title: 'Delete Security Configuration',
-      content: `Are you sure you want to delete "${config.category}.${config.key}"?`,
-      okText: 'Delete',
+      title: '删除安全配置',
+      content: `确定要删除 "${config.category}.${config.key}" 吗？`,
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: async () => {
         try {
           await configService.security.delete(config.id);
-          message.success('Security configuration deleted');
+          message.success('安全配置删除成功');
           loadConfigs();
         } catch (error) {
-          message.error('Failed to delete configuration');
+          message.error('配置删除失败');
         }
       },
     });
@@ -77,59 +85,63 @@ export const SecurityConfigPage: React.FC = () => {
 
       if (editingConfig) {
         await configService.security.update(editingConfig.id, data);
-        message.success('Security configuration updated');
+        message.success('安全配置更新成功');
       } else {
         await configService.security.create(data);
-        message.success('Security configuration created');
+        message.success('安全配置创建成功');
       }
       setModalVisible(false);
       loadConfigs();
     } catch (error: any) {
-      message.error(error.response?.data?.error || 'Failed to save configuration');
+      message.error(error.response?.data?.error || '保存配置失败');
     }
   };
 
   const columns = [
     {
-      title: 'Category',
+      title: '分类',
       dataIndex: 'category',
       key: 'category',
+      width: 100,
+      render: (category: string) => categoryLabels[category] || category,
     },
     {
-      title: 'Key',
+      title: '键名',
       dataIndex: 'key',
       key: 'key',
+      width: 150,
     },
     {
-      title: 'Value',
+      title: '值',
       dataIndex: 'value',
       key: 'value',
       ellipsis: true,
       render: (value: any) => JSON.stringify(value),
     },
     {
-      title: 'Description',
+      title: '描述',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
     },
     {
-      title: 'Enabled',
+      title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
-      render: (enabled: boolean) => enabled ? 'Yes' : 'No',
+      width: 60,
+      render: (enabled: boolean) => enabled ? '启用' : '禁用',
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 140,
       render: (_: any, record: any) => (
-        <Space>
+        <Space size="small">
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
+            编辑
           </Button>
           <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record)}>
-            Delete
+            删除
           </Button>
         </Space>
       ),
@@ -137,66 +149,70 @@ export const SecurityConfigPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 12 }}>
       <Card
         title={
           <Space>
             <SafetyOutlined />
-            Security Configuration
+            安全配置
           </Space>
         }
+        size="small"
         extra={
           <Space>
             <Select
-              placeholder="Filter by category"
-              style={{ width: 200 }}
+              placeholder="按分类筛选"
+              style={{ width: 120 }}
               onChange={setFilterCategory}
               allowClear
+              size="small"
             >
-              <Select.Option value="authentication">Authentication</Select.Option>
-              <Select.Option value="encryption">Encryption</Select.Option>
-              <Select.Option value="access_control">Access Control</Select.Option>
-              <Select.Option value="password_policy">Password Policy</Select.Option>
+              <Select.Option value="authentication">身份认证</Select.Option>
+              <Select.Option value="encryption">加密</Select.Option>
+              <Select.Option value="access_control">访问控制</Select.Option>
+              <Select.Option value="password_policy">密码策略</Select.Option>
             </Select>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-              Add Configuration
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
+              添加配置
             </Button>
           </Space>
         }
       >
-        <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} />
+        <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} size="small" />
       </Card>
 
       <Modal
-        title={editingConfig ? 'Edit Security Configuration' : 'Create Security Configuration'}
+        title={editingConfig ? '编辑安全配置' : '创建安全配置'}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => form.submit()}
+        okText="保存"
+        cancelText="取消"
         width={600}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-            <Select placeholder="Select category">
-              <Select.Option value="authentication">Authentication</Select.Option>
-              <Select.Option value="encryption">Encryption</Select.Option>
-              <Select.Option value="access_control">Access Control</Select.Option>
-              <Select.Option value="password_policy">Password Policy</Select.Option>
+          <Form.Item name="category" label="分类" rules={[{ required: true, message: '请选择分类' }]}>
+            <Select placeholder="选择分类">
+              <Select.Option value="authentication">身份认证</Select.Option>
+              <Select.Option value="encryption">加密</Select.Option>
+              <Select.Option value="access_control">访问控制</Select.Option>
+              <Select.Option value="password_policy">密码策略</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="key" label="Key" rules={[{ required: true }]}>
-            <Input placeholder="Configuration key" />
+          <Form.Item name="key" label="键名" rules={[{ required: true, message: '请输入键名' }]}>
+            <Input placeholder="配置键名" />
           </Form.Item>
-          <Form.Item name="value" label="Value (JSON)" rules={[{ required: true }]}>
+          <Form.Item name="value" label="值（JSON格式）" rules={[{ required: true, message: '请输入值' }]}>
             <Input.TextArea
               placeholder='{"minLength": 8, "requireSpecialChar": true}'
               rows={4}
             />
           </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea placeholder="Description" rows={2} />
+          <Form.Item name="description" label="描述">
+            <Input.TextArea placeholder="描述" rows={2} />
           </Form.Item>
-          <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-            <Switch />
+          <Form.Item name="enabled" label="启用" valuePropName="checked">
+            <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>
         </Form>
       </Modal>

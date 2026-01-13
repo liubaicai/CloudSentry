@@ -6,13 +6,13 @@ export const SettingsPage: React.FC = () => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values: any) => {
-    message.success('Settings saved successfully');
+    message.success('设置保存成功');
     console.log('Settings:', values);
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card title="System Settings" extra={<SettingOutlined />}>
+    <div style={{ padding: 12 }}>
+      <Card title="系统设置" extra={<SettingOutlined />} size="small">
         <Form
           form={form}
           layout="vertical"
@@ -22,41 +22,41 @@ export const SettingsPage: React.FC = () => {
             alertsEnabled: true,
             autoArchive: true,
           }}
-          style={{ maxWidth: 600 }}
+          style={{ maxWidth: 500 }}
         >
           <Form.Item
-            label="Data Retention Period (days)"
+            label="数据保留期限（天）"
             name="retentionDays"
-            rules={[{ required: true, message: 'Please enter retention period' }]}
+            rules={[{ required: true, message: '请输入保留期限' }]}
           >
             <Input type="number" />
           </Form.Item>
 
           <Form.Item
-            label="Enable Alerts"
+            label="启用告警"
             name="alertsEnabled"
             valuePropName="checked"
           >
-            <Switch />
+            <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>
 
           <Form.Item
-            label="Auto Archive Old Events"
+            label="自动归档旧事件"
             name="autoArchive"
             valuePropName="checked"
           >
-            <Switch />
+            <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>
 
           <Form.Item
-            label="Syslog Server Port"
+            label="Syslog服务端口"
             name="syslogPort"
           >
             <Input type="number" placeholder="514" />
           </Form.Item>
 
           <Form.Item
-            label="Email Notifications"
+            label="邮件通知"
             name="emailNotifications"
           >
             <Input placeholder="admin@example.com" />
@@ -64,7 +64,7 @@ export const SettingsPage: React.FC = () => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Save Settings
+              保存设置
             </Button>
           </Form.Item>
         </Form>

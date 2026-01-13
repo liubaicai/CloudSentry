@@ -16,6 +16,21 @@ const severityColors: Record<string, string> = {
   info: 'green',
 };
 
+const severityLabels: Record<string, string> = {
+  critical: '严重',
+  high: '高危',
+  medium: '中危',
+  low: '低危',
+  info: '信息',
+};
+
+const statusLabels: Record<string, string> = {
+  new: '新建',
+  investigating: '调查中',
+  resolved: '已解决',
+  false_positive: '误报',
+};
+
 const statusColors: Record<string, string> = {
   new: 'blue',
   investigating: 'orange',
@@ -46,7 +61,7 @@ export const ThreatDetailPage: React.FC = () => {
       setStatus(data.status);
       setAssignedTo(data.assignedTo || '');
     } catch (error) {
-      message.error('Failed to load event details');
+      message.error('加载事件详情失败');
     } finally {
       setLoading(false);
     }
@@ -59,28 +74,29 @@ export const ThreatDetailPage: React.FC = () => {
         status,
         assignedTo: assignedTo || undefined,
       });
-      message.success('Event updated successfully');
+      message.success('事件更新成功');
       setEditMode(false);
       loadEvent(event.id);
     } catch (error) {
-      message.error('Failed to update event');
+      message.error('事件更新失败');
     }
   };
 
   const handleDelete = () => {
     if (!event) return;
     Modal.confirm({
-      title: 'Delete Event',
-      content: 'Are you sure you want to delete this event?',
-      okText: 'Delete',
+      title: '删除事件',
+      content: '确定要删除此事件吗？',
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: async () => {
         try {
           await eventsService.deleteEvent(event.id);
-          message.success('Event deleted successfully');
+          message.success('事件删除成功');
           navigate('/threats');
         } catch (error) {
-          message.error('Failed to delete event');
+          message.error('事件删除失败');
         }
       },
     });
@@ -88,7 +104,7 @@ export const ThreatDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div style={{ padding: 12, textAlign: 'center' }}>
         <Spin size="large" />
       </div>
     );
@@ -96,115 +112,118 @@ export const ThreatDetailPage: React.FC = () => {
 
   if (!event) {
     return (
-      <div style={{ padding: 24 }}>
-        <Card>
-          <p>Event not found</p>
-          <Button onClick={() => navigate('/threats')}>Back to Threat List</Button>
+      <div style={{ padding: 12 }}>
+        <Card size="small">
+          <p>未找到事件</p>
+          <Button onClick={() => navigate('/threats')}>返回威胁列表</Button>
         </Card>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Card>
+    <div style={{ padding: 12 }}>
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        <Card size="small">
           <Space>
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/threats')}>
-              Back
+              返回
             </Button>
             {!editMode && (
               <>
                 <Button icon={<EditOutlined />} onClick={() => setEditMode(true)}>
-                  Edit
+                  编辑
                 </Button>
                 <Button icon={<DeleteOutlined />} danger onClick={handleDelete}>
-                  Delete
+                  删除
                 </Button>
               </>
             )}
             {editMode && (
               <>
                 <Button type="primary" onClick={handleUpdate}>
-                  Save
+                  保存
                 </Button>
-                <Button onClick={() => setEditMode(false)}>Cancel</Button>
+                <Button onClick={() => setEditMode(false)}>取消</Button>
               </>
             )}
           </Space>
         </Card>
 
-        <Card title="Event Details">
-          <Descriptions bordered column={2}>
-            <Descriptions.Item label="Event ID" span={2}>
+        <Card title="事件详情" size="small">
+          <Descriptions bordered column={2} size="small">
+            <Descriptions.Item label="事件ID" span={2}>
               {event.id}
             </Descriptions.Item>
-            <Descriptions.Item label="Timestamp">
+            <Descriptions.Item label="发生时间">
               {dayjs(event.timestamp).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
-            <Descriptions.Item label="Created At">
+            <Descriptions.Item label="创建时间">
               {dayjs(event.createdAt).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
-            <Descriptions.Item label="Severity">
+            <Descriptions.Item label="威胁级别">
               <Tag color={severityColors[event.severity]}>
-                {event.severity.toUpperCase()}
+                {severityLabels[event.severity] || event.severity.toUpperCase()}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Category">{event.category}</Descriptions.Item>
-            <Descriptions.Item label="Status">
+            <Descriptions.Item label="类别">{event.category}</Descriptions.Item>
+            <Descriptions.Item label="状态">
               {editMode ? (
                 <Select
                   value={status}
-                  style={{ width: 150 }}
+                  style={{ width: 120 }}
+                  size="small"
                   onChange={(value) => setStatus(value)}
                 >
-                  <Select.Option value="new">New</Select.Option>
-                  <Select.Option value="investigating">Investigating</Select.Option>
-                  <Select.Option value="resolved">Resolved</Select.Option>
-                  <Select.Option value="false_positive">False Positive</Select.Option>
+                  <Select.Option value="new">新建</Select.Option>
+                  <Select.Option value="investigating">调查中</Select.Option>
+                  <Select.Option value="resolved">已解决</Select.Option>
+                  <Select.Option value="false_positive">误报</Select.Option>
                 </Select>
               ) : (
-                <Tag color={statusColors[event.status]}>{event.status}</Tag>
+                <Tag color={statusColors[event.status]}>{statusLabels[event.status] || event.status}</Tag>
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Assigned To">
+            <Descriptions.Item label="负责人">
               {editMode ? (
                 <Input
                   value={assignedTo}
                   onChange={(e) => setAssignedTo(e.target.value)}
-                  placeholder="Assign to user"
+                  placeholder="分配给用户"
+                  size="small"
                 />
               ) : (
-                event.assignedTo || 'Unassigned'
+                event.assignedTo || '未分配'
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Source">{event.source}</Descriptions.Item>
-            <Descriptions.Item label="Destination">
-              {event.destination || 'N/A'}
+            <Descriptions.Item label="来源">{event.source}</Descriptions.Item>
+            <Descriptions.Item label="目标">
+              {event.destination || '无'}
             </Descriptions.Item>
-            <Descriptions.Item label="Protocol">{event.protocol || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Port">{event.port || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Tags" span={2}>
+            <Descriptions.Item label="协议">{event.protocol || '无'}</Descriptions.Item>
+            <Descriptions.Item label="端口">{event.port || '无'}</Descriptions.Item>
+            <Descriptions.Item label="标签" span={2}>
               {event.tags.length > 0 ? (
                 event.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
               ) : (
-                'No tags'
+                '无标签'
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Message" span={2}>
+            <Descriptions.Item label="消息" span={2}>
               {event.message}
             </Descriptions.Item>
           </Descriptions>
         </Card>
 
         {event.metadata && (
-          <Card title="Metadata">
+          <Card title="元数据" size="small">
             <pre
               style={{
                 background: '#f5f5f5',
                 padding: 12,
                 borderRadius: 4,
                 overflow: 'auto',
+                margin: 0,
               }}
             >
               {JSON.stringify(event.metadata, null, 2)}
@@ -212,11 +231,11 @@ export const ThreatDetailPage: React.FC = () => {
           </Card>
         )}
 
-        <Card title="Raw Log">
+        <Card title="原始日志" size="small">
           <TextArea
             value={event.rawLog}
             readOnly
-            autoSize={{ minRows: 5, maxRows: 15 }}
+            autoSize={{ minRows: 4, maxRows: 12 }}
             style={{ fontFamily: 'monospace', background: '#f5f5f5' }}
           />
         </Card>
