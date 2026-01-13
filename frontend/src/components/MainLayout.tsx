@@ -10,6 +10,11 @@ import {
   UserOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  TeamOutlined,
+  GlobalOutlined,
+  SafetyOutlined,
+  ToolOutlined,
+  DatabaseOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -45,9 +50,41 @@ export const MainLayout: React.FC = () => {
       label: 'Alert Forwarding',
     },
     {
-      key: '/settings',
+      key: '/users',
+      icon: <TeamOutlined />,
+      label: 'User Management',
+    },
+    {
+      key: 'system',
       icon: <SettingOutlined />,
-      label: 'Settings',
+      label: 'System Management',
+      children: [
+        {
+          key: '/settings',
+          icon: <SettingOutlined />,
+          label: 'System Settings',
+        },
+        {
+          key: '/network',
+          icon: <GlobalOutlined />,
+          label: 'Network Config',
+        },
+        {
+          key: '/operations',
+          icon: <ToolOutlined />,
+          label: 'Operations Config',
+        },
+        {
+          key: '/security',
+          icon: <SafetyOutlined />,
+          label: 'Security Config',
+        },
+      ],
+    },
+    {
+      key: '/data-management',
+      icon: <DatabaseOutlined />,
+      label: 'Data Management',
     },
   ];
 

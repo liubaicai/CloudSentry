@@ -47,3 +47,9 @@ export const authorize = (...roles: string[]) => {
     next();
   };
 };
+
+// Alias for authenticate
+export const authenticateToken = authenticate;
+
+// Admin authorization middleware
+export const requireAdmin = authorize('admin');

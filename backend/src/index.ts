@@ -9,6 +9,11 @@ import syslogRoutes from './routes/syslog';
 import dashboardRoutes from './routes/dashboard';
 import alertForwardingRoutes from './routes/alertForwarding';
 import settingsRoutes from './routes/settings';
+import usersRoutes from './routes/users';
+import networkRoutes from './routes/network';
+import operationsRoutes from './routes/operations';
+import securityConfigRoutes from './routes/securityConfig';
+import dataManagementRoutes from './routes/dataManagement';
 
 dotenv.config();
 
@@ -41,6 +46,11 @@ app.use('/api/syslog', syslogRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/alert-forwarding', alertForwardingRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/network', networkRoutes);
+app.use('/api/operations', operationsRoutes);
+app.use('/api/security-config', securityConfigRoutes);
+app.use('/api/data-management', dataManagementRoutes);
 
 // Error handling
 app.use(errorHandler);
