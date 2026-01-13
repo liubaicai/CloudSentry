@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth';
+import { apiLimiter } from '../middleware/rateLimiter';
 import {
   getAllChannels,
   getChannel,
@@ -11,8 +12,8 @@ import {
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
+// All routes require authentication and rate limiting
+router.use(authenticate, apiLimiter);
 
 router.get('/', getAllChannels);
 router.get('/stats', getChannelStats);
