@@ -267,19 +267,6 @@ const FieldMappingPage: React.FC = () => {
     }
   };
 
-  // Helper function to flatten nested object keys for display
-  const flattenObjectKeys = (obj: any, prefix = ''): string[] => {
-    const keys: string[] = [];
-    for (const key in obj) {
-      const fullKey = prefix ? `${prefix}.${key}` : key;
-      keys.push(fullKey);
-      if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-        keys.push(...flattenObjectKeys(obj[key], fullKey));
-      }
-    }
-    return keys;
-  };
-
   const columns: ColumnsType<FieldMapping> = [
     {
       title: '优先级',

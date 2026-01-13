@@ -148,11 +148,13 @@ export const DashboardPage: React.FC = () => {
     },
   ];
 
-  // Calculate security score
-  const totalEvents = stats.overview.total || 1;
-  const criticalCount = stats.severityDistribution.find(s => s.severity === 'critical')?.count || 0;
-  const highCount = stats.severityDistribution.find(s => s.severity === 'high')?.count || 0;
-  const securityScore = Math.max(0, 100 - ((criticalCount * 10 + highCount * 5) / totalEvents * 100));
+  // Calculate security score - handles zero events case
+  const totalEvents = stats.overview.total;
+  const criticalCount = stats.severityDistribution.find((s: { severity: string }) => s.severity === 'critical')?.count || 0;
+  const highCount = stats.severityDistribution.find((s: { severity: string }) => s.severity === 'high')?.count || 0;
+  const securityScore = totalEvents === 0 
+    ? 100 // Perfect score when no events
+    : Math.max(0, Math.min(100, 100 - ((criticalCount * 10 + highCount * 5) / totalEvents * 100)));
 
   return (
     <div style={{ padding: 12 }}>
