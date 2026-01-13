@@ -2,17 +2,6 @@
 	# Set the document root
 	root * /usr/share/caddy
 
-	# Enable file server for static files
-	file_server
-
-	# Handle SPA routing - try files, then fallback to index.html
-	try_files {path} /index.html
-
-	# Proxy API requests to backend
-	handle /api/* {
-		reverse_proxy backend:3000
-	}
-
 	# Enable gzip compression
 	encode gzip
 
@@ -26,6 +15,17 @@
 		X-XSS-Protection "1; mode=block"
 		# Referrer policy
 		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	# Proxy API requests to backend (must be before file_server)
+	handle /api/* {
+		reverse_proxy backend:3000
+	}
+
+	# Handle static files and SPA routing
+	handle {
+		try_files {path} /index.html
+		file_server
 	}
 
 	# Logging

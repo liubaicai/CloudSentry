@@ -37,7 +37,7 @@ export const getAllOpenAIConfigs = async (req: Request, res: Response): Promise<
     });
 
     // Don't expose the full API keys
-    const safeConfigs = configs.map(config => ({
+    const safeConfigs = configs.map((config: { apiKey: string | null; [key: string]: unknown }) => ({
       ...config,
       apiKey: config.apiKey ? `${config.apiKey.substring(0, 8)}...` : '',
     }));
