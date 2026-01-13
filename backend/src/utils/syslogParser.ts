@@ -193,16 +193,20 @@ function parseBasicSyslog(
   
   if (rfc3164Match) {
     // Parse timestamp (add current year since RFC3164 doesn't include it)
+    // Note: This parsing is best-effort for fallback only. The glossy library
+    // handles proper timestamp parsing for standard RFC messages.
     const timestampStr = rfc3164Match[1];
     const year = new Date().getFullYear();
     try {
+      // Using simple Date constructor for fallback parsing
+      // This works in most environments for the limited RFC3164 format
       timestamp = new Date(`${timestampStr} ${year}`);
       // If parsed date is in the future, it's likely from last year
       if (timestamp > new Date()) {
         timestamp = new Date(`${timestampStr} ${year - 1}`);
       }
     } catch (e) {
-      // Keep default timestamp
+      // Keep default timestamp if parsing fails
     }
     
     hostname = rfc3164Match[2];
