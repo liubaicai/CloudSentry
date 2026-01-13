@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Modal, Form, Input, Switch, message } from 'antd';
+import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
 import { configService } from '../services/configService';
-import dayjs from 'dayjs';
 
 export const NetworkConfigPage: React.FC = () => {
   const [configs, setConfigs] = useState<any[]>([]);

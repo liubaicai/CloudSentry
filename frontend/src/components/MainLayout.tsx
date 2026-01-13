@@ -35,19 +35,43 @@ export const MainLayout: React.FC = () => {
       label: 'Dashboard',
     },
     {
-      key: '/threats',
+      key: 'threat-management',
       icon: <WarningOutlined />,
-      label: 'Threat List',
+      label: 'Threat Management',
+      children: [
+        {
+          key: '/threats',
+          icon: <WarningOutlined />,
+          label: 'Threat List',
+        },
+        {
+          key: '/analysis',
+          icon: <BarChartOutlined />,
+          label: 'Threat Analysis',
+        },
+      ],
     },
     {
-      key: '/analysis',
-      icon: <BarChartOutlined />,
-      label: 'Analysis',
-    },
-    {
-      key: '/alert-forwarding',
+      key: 'integration',
       icon: <SendOutlined />,
-      label: 'Alert Forwarding',
+      label: 'Integration',
+      children: [
+        {
+          key: '/channels',
+          icon: <GlobalOutlined />,
+          label: 'Channel Management',
+        },
+        {
+          key: '/field-mappings',
+          icon: <SettingOutlined />,
+          label: 'Field Mapping',
+        },
+        {
+          key: '/alert-forwarding',
+          icon: <SendOutlined />,
+          label: 'Alert Forwarding',
+        },
+      ],
     },
     {
       key: '/users',
@@ -79,12 +103,12 @@ export const MainLayout: React.FC = () => {
           icon: <SafetyOutlined />,
           label: 'Security Config',
         },
+        {
+          key: '/data-management',
+          icon: <DatabaseOutlined />,
+          label: 'Data Management',
+        },
       ],
-    },
-    {
-      key: '/data-management',
-      icon: <DatabaseOutlined />,
-      label: 'Data Management',
     },
   ];
 

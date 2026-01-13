@@ -14,6 +14,8 @@ import networkRoutes from './routes/network';
 import operationsRoutes from './routes/operations';
 import securityConfigRoutes from './routes/securityConfig';
 import dataManagementRoutes from './routes/dataManagement';
+import channelsRoutes from './routes/channels';
+import fieldMappingsRoutes from './routes/fieldMappings';
 
 dotenv.config();
 
@@ -51,6 +53,8 @@ app.use('/api/network', networkRoutes);
 app.use('/api/operations', operationsRoutes);
 app.use('/api/security-config', securityConfigRoutes);
 app.use('/api/data-management', dataManagementRoutes);
+app.use('/api/channels', channelsRoutes);
+app.use('/api/field-mappings', fieldMappingsRoutes);
 
 // Error handling
 app.use(errorHandler);
