@@ -1,8 +1,34 @@
+/**
+ * Enhanced Syslog Parser Module
+ * 
+ * This module provides comprehensive syslog message parsing with support for:
+ * - RFC 3164 (BSD Syslog Protocol) - Traditional syslog format
+ * - RFC 5424 (The Syslog Protocol) - Modern syslog with structured data
+ * - Fallback parsing for malformed or non-standard messages
+ * 
+ * The parser uses the glossy library for professional-grade parsing and includes
+ * an intelligent fallback mechanism to ensure all messages are processed, even
+ * if they don't conform to RFC standards.
+ * 
+ * Key features:
+ * - Extracts all standard syslog fields (priority, facility, severity, timestamp, etc.)
+ * - Parses structured data from RFC 5424 messages
+ * - Handles hostname, application name, process ID, and message ID
+ * - Automatic format detection
+ * - Graceful degradation for malformed messages
+ * 
+ * @module syslogParser
+ */
+
 import * as glossy from 'glossy';
 import { logger } from './logger';
 
 /**
- * Glossy parse result interface (glossy doesn't have TS types)
+ * Extended Glossy parse result interface
+ * 
+ * The @types/glossy package exists but is incomplete - it's missing several
+ * fields that the actual glossy library returns (prival, facilityID, severityID, etc.).
+ * This interface extends the basic types with the actual fields we receive.
  */
 interface GlossyParseResult {
   originalMessage?: string;
@@ -193,8 +219,11 @@ function parseBasicSyslog(
   
   if (rfc3164Match) {
     // Parse timestamp (add current year since RFC3164 doesn't include it)
-    // Note: This parsing is best-effort for fallback only. The glossy library
-    // handles proper timestamp parsing for standard RFC messages.
+    // NOTE: This is fallback parsing only for malformed messages. Standard RFC
+    // messages are parsed by the glossy library which handles timestamps correctly.
+    // For malformed messages, we do best-effort parsing. The Date constructor
+    // works reliably for the RFC3164 format in most environments, but if timestamp
+    // parsing becomes an issue, consider adding a dedicated date parsing library.
     const timestampStr = rfc3164Match[1];
     const year = new Date().getFullYear();
     try {
@@ -207,6 +236,7 @@ function parseBasicSyslog(
       }
     } catch (e) {
       // Keep default timestamp if parsing fails
+      // Since this is fallback code, using current time is acceptable
     }
     
     hostname = rfc3164Match[2];
