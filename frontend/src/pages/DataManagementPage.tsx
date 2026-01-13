@@ -4,7 +4,7 @@ import {
   DatabaseOutlined,
   DeleteOutlined,
   ExportOutlined,
-  BackupOutlined,
+  SaveOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
 import { configService } from '../services/configService';
@@ -161,7 +161,7 @@ export const DataManagementPage: React.FC = () => {
             </Button>
             <Button
               type="default"
-              icon={<BackupOutlined />}
+              icon={<SaveOutlined />}
               onClick={handleBackup}
             >
               Create Backup

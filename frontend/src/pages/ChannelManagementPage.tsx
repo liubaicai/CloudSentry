@@ -20,7 +20,6 @@ import {
   EditOutlined,
   DeleteOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import channelService, { SyslogChannel, CreateChannelData } from '../services/channelService';
