@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
@@ -63,7 +64,7 @@ export const getEvents = async (req: AuthRequest, res: Response): Promise<void> 
 
 export const getEventById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const event = await prisma.securityEvent.findUnique({
       where: { id },
@@ -82,7 +83,7 @@ export const getEventById = async (req: AuthRequest, res: Response): Promise<voi
 
 export const updateEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { status, assignedTo, tags } = req.body;
 
     const event = await prisma.securityEvent.update({
@@ -102,7 +103,7 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
 
 export const deleteEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     await prisma.securityEvent.delete({
       where: { id },

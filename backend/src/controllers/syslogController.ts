@@ -73,19 +73,25 @@ async function applyFieldMappings(
             transformedValue = sourceValue;
             break;
           case 'regex':
-            if (mapping.transformConfig && mapping.transformConfig.pattern) {
-              const regex = new RegExp(mapping.transformConfig.pattern, mapping.transformConfig.flags || '');
-              const match = String(sourceValue).match(regex);
-              if (match) {
-                transformedValue = mapping.transformConfig.replacement
-                  ? String(sourceValue).replace(regex, mapping.transformConfig.replacement)
-                  : match[0];
+            if (mapping.transformConfig && typeof mapping.transformConfig === 'object' && !Array.isArray(mapping.transformConfig)) {
+              const config = mapping.transformConfig as any;
+              if (config.pattern) {
+                const regex = new RegExp(config.pattern, config.flags || '');
+                const match = String(sourceValue).match(regex);
+                if (match) {
+                  transformedValue = config.replacement
+                    ? String(sourceValue).replace(regex, config.replacement)
+                    : match[0];
+                }
               }
             }
             break;
           case 'lookup':
-            if (mapping.transformConfig && mapping.transformConfig.mappings) {
-              transformedValue = mapping.transformConfig.mappings[sourceValue] || sourceValue;
+            if (mapping.transformConfig && typeof mapping.transformConfig === 'object' && !Array.isArray(mapping.transformConfig)) {
+              const config = mapping.transformConfig as any;
+              if (config.mappings) {
+                transformedValue = config.mappings[sourceValue] || sourceValue;
+              }
             }
             break;
           case 'script':
@@ -121,14 +127,14 @@ async function processSyslogMessage(
   const mappedData = await applyFieldMappings(rawData, channelId);
 
   // Merge with original data, giving preference to mapped data
-  const finalData: SyslogMessage = {
+  const finalData = {
     severity: mappedData.severity || rawData.severity || 'info',
     category: mappedData.category || rawData.category || 'unknown',
     source: mappedData.source || rawData.source || sourceIdentifier,
-    destination: mappedData.destination || rawData.destination,
+    destination: mappedData.destination || rawData.destination || undefined,
     message: mappedData.message || rawData.message || JSON.stringify(rawData),
-    protocol: mappedData.protocol || rawData.protocol,
-    port: mappedData.port || rawData.port,
+    protocol: mappedData.protocol || rawData.protocol || undefined,
+    port: mappedData.port || rawData.port || undefined,
     tags: mappedData.tags || rawData.tags || [],
     metadata: mappedData.metadata || rawData.metadata || rawData,
   };

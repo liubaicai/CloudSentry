@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
@@ -37,7 +38,7 @@ export const createRule = async (req: AuthRequest, res: Response): Promise<void>
 
 export const updateRule = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { name, description, enabled, conditions, destination, type } = req.body;
 
     const rule = await prisma.alertForwardingRule.update({
@@ -60,7 +61,7 @@ export const updateRule = async (req: AuthRequest, res: Response): Promise<void>
 
 export const deleteRule = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     await prisma.alertForwardingRule.delete({
       where: { id },

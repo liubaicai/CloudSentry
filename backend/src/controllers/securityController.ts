@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
@@ -30,7 +31,7 @@ export const securityController = {
   // Get security configuration by ID
   async getSecurityConfigById(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const config = await prisma.securityConfig.findUnique({
         where: { id },
       });
@@ -76,7 +77,7 @@ export const securityController = {
   // Update security configuration
   async updateSecurityConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const { category, key, value, description, enabled } = req.body;
 
       const updateData: any = {};
@@ -102,7 +103,7 @@ export const securityController = {
   // Delete security configuration
   async deleteSecurityConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
 
       await prisma.securityConfig.delete({
         where: { id },

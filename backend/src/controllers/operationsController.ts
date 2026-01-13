@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
@@ -30,7 +31,7 @@ export const operationsController = {
   // Get operations configuration by ID
   async getOperationsConfigById(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const config = await prisma.operationsConfig.findUnique({
         where: { id },
       });
@@ -76,7 +77,7 @@ export const operationsController = {
   // Update operations configuration
   async updateOperationsConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const { category, key, value, description, enabled } = req.body;
 
       const updateData: any = {};
@@ -102,7 +103,7 @@ export const operationsController = {
   // Delete operations configuration
   async deleteOperationsConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
 
       await prisma.operationsConfig.delete({
         where: { id },

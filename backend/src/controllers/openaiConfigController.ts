@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
 import { openaiService } from '../services/openaiService';
+import { getParamAsString } from '../utils/controllerHelpers';
 
 // Get OpenAI configuration
 export const getOpenAIConfig = async (req: Request, res: Response): Promise<void> => {
@@ -91,7 +92,7 @@ export const createOpenAIConfig = async (req: Request, res: Response): Promise<v
 // Update OpenAI configuration
 export const updateOpenAIConfig = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { baseUrl, apiKey, model, enabled, description } = req.body;
 
     const existing = await prisma.openAIConfig.findUnique({
@@ -137,7 +138,7 @@ export const updateOpenAIConfig = async (req: Request, res: Response): Promise<v
 // Delete OpenAI configuration
 export const deleteOpenAIConfig = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const config = await prisma.openAIConfig.findUnique({
       where: { id },

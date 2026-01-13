@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
 import { openaiService } from '../services/openaiService';
+import { getParamAsString } from '../utils/controllerHelpers';
 
 // Get all channels
 export const getAllChannels = async (req: Request, res: Response): Promise<void> => {
@@ -51,7 +52,7 @@ export const getAllChannels = async (req: Request, res: Response): Promise<void>
 // Get single channel
 export const getChannel = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const channel = await prisma.syslogChannel.findUnique({
       where: { id },
@@ -118,7 +119,7 @@ export const createChannel = async (req: Request, res: Response): Promise<void> 
 // Update channel
 export const updateChannel = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { name, sourceIdentifier, description, enabled, metadata } = req.body;
 
     // Check if channel exists
@@ -165,7 +166,7 @@ export const updateChannel = async (req: Request, res: Response): Promise<void> 
 // Delete channel
 export const deleteChannel = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const channel = await prisma.syslogChannel.findUnique({
       where: { id },
@@ -216,7 +217,7 @@ export const getChannelStats = async (req: Request, res: Response): Promise<void
 // Generate AI field mappings for a channel
 export const generateAIMappings = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { sampleData } = req.body;
 
     if (!sampleData) {
@@ -284,7 +285,7 @@ export const generateAIMappings = async (req: Request, res: Response): Promise<v
 // Apply AI-generated mappings to a channel
 export const applyAIMappings = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const { mappings } = req.body;
 
     if (!mappings || !Array.isArray(mappings)) {

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
@@ -22,7 +23,7 @@ export const networkController = {
   // Get network configuration by ID
   async getNetworkConfigById(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const config = await prisma.networkConfig.findUnique({
         where: { id },
       });
@@ -71,7 +72,7 @@ export const networkController = {
   // Update network configuration
   async updateNetworkConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const { name, description, interface: iface, ipAddress, netmask, gateway, dnsServers, enabled } = req.body;
 
       const updateData: any = {};
@@ -100,7 +101,7 @@ export const networkController = {
   // Delete network configuration
   async deleteNetworkConfig(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
 
       await prisma.networkConfig.delete({
         where: { id },

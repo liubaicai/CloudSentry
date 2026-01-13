@@ -214,8 +214,8 @@ Example output format:
       await prisma.aIGeneratedMapping.create({
         data: {
           channelPattern: sourceIdentifier,
-          sampleData: sampleData,
-          generatedMappings: mappings,
+          sampleData: sampleData as any,
+          generatedMappings: mappings as any,
           tested: false,
         },
       });
