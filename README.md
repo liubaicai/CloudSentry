@@ -6,12 +6,14 @@ CloudSentry is a modern Security Event Management Platform built with TypeScript
 
 - 🔐 **User Authentication**: JWT-based authentication system with role-based access control
 - 📊 **Dashboard**: Real-time statistics and visualizations of security events
-- 🚨 **Threat Management**: Advanced filtering and analysis of security events
+- 🚨 **Threat Management**: Advanced filtering and analysis of security events with enhanced threat fields
 - 🔍 **Threat Details**: Detailed view and management of individual security events
 - 👥 **User Management**: Complete user account management with role-based access
 - 📈 **Aggregated Analysis**: Pattern detection and trend analysis (extensible)
-- 🌐 **Channel Management**: Track and manage syslog sources with auto-discovery ✨ NEW
-- 🔄 **Field Mapping**: Intelligent mapping of syslog fields to database schema with transformations ✨ NEW
+- 🌐 **Channel Management**: Track and manage syslog sources with auto-discovery
+- 🔄 **Field Mapping**: Intelligent mapping of syslog fields to database schema with transformations
+- 🤖 **AI-Powered Mapping**: Automatic field mapping generation using OpenAI-compatible APIs ✨ NEW
+- ⏰ **Data Retention**: Automatic cleanup of old data with configurable retention policy (7 days default) ✨ NEW
 - 📤 **Alert Forwarding**: Configure rules to forward alerts to external systems (webhook, email, syslog)
 - ⚙️ **System Settings**: Configurable system parameters
 - 🌐 **Network Configuration**: Network interface and connectivity settings management
@@ -29,6 +31,7 @@ CloudSentry is a modern Security Event Management Platform built with TypeScript
 - **Prisma** - Modern ORM
 - **JWT** - Authentication
 - **Winston** - Logging
+- **OpenAI SDK** - AI-powered field mapping ✨ NEW
 
 ### Frontend
 - **React 18** with **TypeScript**
@@ -37,6 +40,7 @@ CloudSentry is a modern Security Event Management Platform built with TypeScript
 - **React Router** - Routing
 - **Recharts** - Data visualization
 - **Axios** - HTTP client
+- **Caddy** - Reverse proxy and web server ✨ NEW (replaces nginx)
 
 ## Project Structure
 
@@ -303,6 +307,80 @@ CloudSentry includes advanced syslog channel management and intelligent field ma
 - **Channel-Specific**: Apply different mappings per channel or globally
 
 For detailed documentation, see [CHANNEL_MANAGEMENT.md](./CHANNEL_MANAGEMENT.md)
+
+## 🤖 AI-Powered Field Mapping (NEW)
+
+CloudSentry now includes intelligent field mapping generation using OpenAI-compatible APIs:
+
+### Key Features
+- **Automatic Mapping Generation**: AI analyzes sample data and generates appropriate field mappings
+- **Smart Reuse**: System checks for compatible existing mappings before generating new ones
+- **Learning System**: Mappings are stored and reused for similar data structures
+- **OpenAI Compatible**: Works with OpenAI API or compatible services (Azure OpenAI, local models, etc.)
+
+### Enhanced Threat Data Model
+Security events now include comprehensive threat tracking fields:
+- `threatName` - Name/identifier of the threat
+- `threatLevel` - Threat severity level
+- `sourceIp`, `destinationIp` - Enhanced network information
+- `sourcePort`, `destinationPort` - Port information
+- `sourceChannel` - Channel identifier
+- `rawData` - Complete original data
+
+### Quick Start with AI Mapping
+
+1. Configure OpenAI API:
+```bash
+POST /api/openai-config
+{
+  "baseUrl": "https://api.openai.com/v1",
+  "apiKey": "sk-...",
+  "model": "gpt-3.5-turbo"
+}
+```
+
+2. Generate mappings for a channel:
+```bash
+POST /api/channels/:id/ai-mappings/generate
+{
+  "sampleData": {
+    "src_ip": "192.168.1.100",
+    "alert_level": "3",
+    "message": "Threat detected"
+  }
+}
+```
+
+3. Apply the generated mappings:
+```bash
+POST /api/channels/:id/ai-mappings/apply
+{
+  "mappings": [...generated mappings...]
+}
+```
+
+For complete documentation, see [AI_MAPPING_GUIDE.md](./AI_MAPPING_GUIDE.md)
+
+## ⏰ Data Retention Policy (NEW)
+
+CloudSentry implements a lightweight data retention strategy for optimal performance:
+
+### Features
+- **7-Day Default Retention**: Keeps platform lightweight and performant
+- **Automatic Cleanup**: Runs daily to remove old data
+- **Configurable**: Retention period can be adjusted via the service
+- **PostgreSQL Optimized**: Efficient deletion and space reclamation
+
+### Why 7 Days?
+- **Performance**: Smaller dataset = faster queries
+- **Lightweight**: Suitable for edge deployments
+- **Adequate**: Sufficient for real-time threat monitoring
+- **Archivable**: Export older data if long-term storage is needed
+
+The combination of PostgreSQL with a 7-day retention window can handle:
+- Up to 10,000 events/minute on modest hardware
+- ~6 million events total
+- Sub-second query responses
 
 ## Contributing
 

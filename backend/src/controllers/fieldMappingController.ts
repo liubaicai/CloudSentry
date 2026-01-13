@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
 
@@ -36,7 +37,7 @@ export const getAllFieldMappings = async (req: Request, res: Response): Promise<
 // Get single field mapping
 export const getFieldMapping = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const mapping = await prisma.fieldMapping.findUnique({
       where: { id },
@@ -84,8 +85,14 @@ export const createFieldMapping = async (req: Request, res: Response): Promise<v
 
     // Validate targetField is a valid SecurityEvent field
     const validTargetFields = [
+      'threatName',
+      'threatLevel',
       'severity',
       'category',
+      'sourceIp',
+      'destinationIp',
+      'sourcePort',
+      'destinationPort',
       'source',
       'destination',
       'message',
@@ -138,7 +145,7 @@ export const createFieldMapping = async (req: Request, res: Response): Promise<v
 // Update field mapping
 export const updateFieldMapping = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
     const {
       channelId,
       sourceField,
@@ -162,8 +169,14 @@ export const updateFieldMapping = async (req: Request, res: Response): Promise<v
     // If targetField is being updated, validate it
     if (targetField) {
       const validTargetFields = [
+        'threatName',
+        'threatLevel',
         'severity',
         'category',
+        'sourceIp',
+        'destinationIp',
+        'sourcePort',
+        'destinationPort',
         'source',
         'destination',
         'message',
@@ -206,7 +219,7 @@ export const updateFieldMapping = async (req: Request, res: Response): Promise<v
 // Delete field mapping
 export const deleteFieldMapping = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = getParamAsString(req.params.id);
 
     const mapping = await prisma.fieldMapping.findUnique({
       where: { id },

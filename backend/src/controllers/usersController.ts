@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { logger } from '../utils/logger';
@@ -64,7 +65,7 @@ export const usersController = {
   // Get user by ID
   async getUserById(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       
       const user = await prisma.user.findUnique({
         where: { id },
@@ -140,7 +141,7 @@ export const usersController = {
   // Update user
   async updateUser(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
       const { username, email, password, role } = req.body;
 
       const updateData: any = {};
@@ -176,7 +177,7 @@ export const usersController = {
   // Delete user
   async deleteUser(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = getParamAsString(req.params.id);
 
       // Prevent deleting yourself
       if (req.user?.userId === id) {

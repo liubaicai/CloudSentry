@@ -36,7 +36,7 @@ export const getDashboardStats = async (req: AuthRequest, res: Response): Promis
       prisma.securityEvent.groupBy({
         by: ['category'],
         _count: true,
-        orderBy: { _count: { _all: 'desc' } },
+        orderBy: { _count: { category: 'desc' } },
         take: 10,
       }),
       prisma.securityEvent.groupBy({

@@ -8,6 +8,8 @@ import {
   updateChannel,
   deleteChannel,
   getChannelStats,
+  generateAIMappings,
+  applyAIMappings,
 } from '../controllers/channelController';
 
 const router = Router();
@@ -21,5 +23,9 @@ router.get('/:id', getChannel);
 router.post('/', createChannel);
 router.patch('/:id', updateChannel);
 router.delete('/:id', deleteChannel);
+
+// AI mapping routes
+router.post('/:id/ai-mappings/generate', generateAIMappings);
+router.post('/:id/ai-mappings/apply', applyAIMappings);
 
 export default router;

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { getParamAsString } from '../utils/controllerHelpers';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
@@ -35,7 +36,7 @@ export const updateSetting = async (req: AuthRequest, res: Response): Promise<vo
 
 export const deleteSetting = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { key } = req.params;
+    const key = getParamAsString(req.params.key);
 
     await prisma.systemSettings.delete({
       where: { key },

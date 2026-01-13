@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
+import { dataRetentionService } from './services/dataRetentionService';
 import authRoutes from './routes/auth';
 import eventsRoutes from './routes/events';
 import syslogRoutes from './routes/syslog';
@@ -16,6 +17,7 @@ import securityConfigRoutes from './routes/securityConfig';
 import dataManagementRoutes from './routes/dataManagement';
 import channelsRoutes from './routes/channels';
 import fieldMappingsRoutes from './routes/fieldMappings';
+import openaiConfigRoutes from './routes/openaiConfig';
 
 dotenv.config();
 
@@ -55,6 +57,7 @@ app.use('/api/security-config', securityConfigRoutes);
 app.use('/api/data-management', dataManagementRoutes);
 app.use('/api/channels', channelsRoutes);
 app.use('/api/field-mappings', fieldMappingsRoutes);
+app.use('/api/openai-config', openaiConfigRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -62,6 +65,9 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   logger.info(`Server is running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Start automatic data retention cleanup
+  dataRetentionService.startAutomaticCleanup();
 });
 
 export default app;
