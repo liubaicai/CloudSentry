@@ -8,13 +8,13 @@ import dayjs from 'dayjs';
 
 const { Option } = Select;
 
-const severityColors: Record<string, string> = {
-  critical: 'red',
-  high: 'orange',
-  medium: 'gold',
-  low: 'blue',
-  info: 'green',
-};
+  const severityColors: Record<string, string> = {
+    critical: 'error',
+    high: 'warning',
+    medium: 'gold',
+    low: 'success',
+    info: 'default',
+  };
 
 const severityLabels: Record<string, string> = {
   critical: '严重',
@@ -31,12 +31,12 @@ const statusLabels: Record<string, string> = {
   false_positive: '误报',
 };
 
-const statusColors: Record<string, string> = {
-  new: 'blue',
-  investigating: 'orange',
-  resolved: 'green',
-  false_positive: 'gray',
-};
+  const statusColors: Record<string, string> = {
+    new: 'default',
+    investigating: 'warning',
+    resolved: 'success',
+    false_positive: 'default',
+  };
 
 export const ThreatListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ export const ThreatListPage: React.FC = () => {
         ...pagination,
         total: response.pagination.total,
       });
-    } catch (error) {
+    } catch {
       message.error('加载事件失败');
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export const ThreatListPage: React.FC = () => {
       await eventsService.updateEvent(id, { status });
       message.success('状态更新成功');
       loadEvents();
-    } catch (error) {
+    } catch {
       message.error('状态更新失败');
     }
   };
@@ -192,7 +192,7 @@ export const ThreatListPage: React.FC = () => {
           <Space wrap>
             <Input
               placeholder="搜索事件..."
-              prefix={<SearchOutlined />}
+              prefix={<SearchOutlined style={{ color: '#64748B' }} />}
               style={{ width: 250 }}
               onChange={(e) => handleSearch(e.target.value)}
               allowClear
@@ -220,7 +220,7 @@ export const ThreatListPage: React.FC = () => {
               <Option value="resolved">已解决</Option>
               <Option value="false_positive">误报</Option>
             </Select>
-            <Button icon={<ReloadOutlined />} onClick={loadEvents}>
+            <Button icon={<ReloadOutlined style={{ color: '#64748B' }} />} onClick={loadEvents}>
               刷新
             </Button>
           </Space>
@@ -272,7 +272,7 @@ export const ThreatListPage: React.FC = () => {
             <p><strong>消息:</strong> {selectedEvent.message}</p>
             <p><strong>标签:</strong> {selectedEvent.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}</p>
             <p><strong>原始日志:</strong></p>
-            <pre style={{ background: '#f5f5f5', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300 }}>
+            <pre style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300 }}>
               {selectedEvent.rawLog}
             </pre>
           </div>

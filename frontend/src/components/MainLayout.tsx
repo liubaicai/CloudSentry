@@ -134,9 +134,10 @@ export const MainLayout: React.FC = () => {
         collapsible 
         collapsed={collapsed} 
         width={200}
+        theme="light"
         style={{
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.05)',
+          background: '#ffffff',
+          borderRight: '1px solid #E2E8F0',
         }}
       >
         <div style={{ 
@@ -145,8 +146,7 @@ export const MainLayout: React.FC = () => {
           alignItems: 'center', 
           justifyContent: 'center',
           padding: '0 12px',
-          background: 'rgba(255,255,255,0.03)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          borderBottom: '1px solid #E2E8F0',
         }}>
           <div style={{
             display: 'flex',
@@ -157,29 +157,25 @@ export const MainLayout: React.FC = () => {
               width: 32,
               height: 32,
               borderRadius: 6,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: '#0F172A',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(102, 126, 234, 0.4)',
             }}>
               <SafetyCertificateOutlined style={{ fontSize: 18, color: 'white' }} />
             </div>
             {!collapsed && (
               <div>
                 <div style={{ 
-                  color: 'white', 
+                  color: '#0F172A', 
                   fontSize: 16, 
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
                 }}>
-                  云哨安全
+                  云卫安全
                 </div>
                 <div style={{ 
-                  color: 'rgba(255,255,255,0.5)', 
+                  color: '#64748B', 
                   fontSize: 10,
                   letterSpacing: 1,
                 }}>
@@ -190,14 +186,13 @@ export const MainLayout: React.FC = () => {
           </div>
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
           style={{ 
             fontSize: 13,
-            background: 'transparent',
             borderRight: 'none',
           }}
         />
@@ -205,14 +200,13 @@ export const MainLayout: React.FC = () => {
       <Layout>
         <Header style={{ 
           padding: '0 20px', 
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          background: '#ffffff',
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center',
           height: 56,
           lineHeight: '56px',
-          borderBottom: '1px solid #e8e8e8',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+          borderBottom: '1px solid #E2E8F0',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div 
@@ -224,31 +218,31 @@ export const MainLayout: React.FC = () => {
                 alignItems: 'center', 
                 justifyContent: 'center',
                 borderRadius: 8,
-                background: collapsed ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f5f5f5',
+                background: collapsed ? '#0F172A' : '#F1F5F9',
                 cursor: 'pointer',
-                transition: 'all 0.3s',
+                transition: 'all 0.2s',
               }}
             >
               {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                style: { fontSize: 16, color: collapsed ? 'white' : '#666' }
+                style: { fontSize: 16, color: collapsed ? 'white' : '#64748B' }
               })}
             </div>
             <div style={{
               padding: '4px 12px',
-              background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
+              background: '#F0FDF4',
+              border: '1px solid #DCFCE7',
               borderRadius: 16,
               display: 'flex',
               alignItems: 'center',
               gap: 6,
             }}>
               <div style={{
-                width: 8,
-                height: 8,
+                width: 6,
+                height: 6,
                 borderRadius: '50%',
-                background: '#4caf50',
-                animation: 'pulse 2s infinite',
+                background: '#16A34A',
               }} />
-              <Text style={{ fontSize: 12, color: '#2e7d32' }}>系统运行正常</Text>
+              <Text style={{ fontSize: 12, color: '#15803D' }}>系统运行正常</Text>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -257,13 +251,13 @@ export const MainLayout: React.FC = () => {
                 width: 36,
                 height: 36,
                 borderRadius: 8,
-                background: '#f5f5f5',
+                background: '#F1F5F9',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
               }}>
-                <BellOutlined style={{ fontSize: 16, color: '#666' }} />
+                <BellOutlined style={{ fontSize: 16, color: '#64748B' }} />
               </div>
             </Badge>
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -274,16 +268,17 @@ export const MainLayout: React.FC = () => {
                 gap: 8,
                 padding: '4px 12px',
                 borderRadius: 8,
-                background: '#f5f5f5',
+                background: '#F1F5F9',
               }}>
                 <Avatar 
                   size={28} 
                   icon={<UserOutlined />}
                   style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: '#CBD5E1',
+                    color: '#475569',
                   }}
                 />
-                <Text style={{ fontSize: 13 }}>{user?.username}</Text>
+                <Text style={{ fontSize: 13, color: '#334155' }}>{user?.username}</Text>
               </div>
             </Dropdown>
           </div>
@@ -291,7 +286,7 @@ export const MainLayout: React.FC = () => {
         <Content style={{ 
           margin: '12px', 
           overflow: 'initial',
-          background: 'linear-gradient(180deg, #f5f7fa 0%, #e8ebed 100%)',
+          background: '#F8FAFC',
           borderRadius: 8,
         }}>
           <div style={{ padding: 0, minHeight: 360 }}>
@@ -300,23 +295,34 @@ export const MainLayout: React.FC = () => {
         </Content>
       </Layout>
       <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+        .ant-menu-light .ant-menu-item-selected {
+          background-color: #F1F5F9 !important;
+          color: #0F172A !important;
+          font-weight: 600;
+          border-radius: 6px;
+          margin: 4px 8px;
+          width: calc(100% - 16px);
         }
-        .ant-menu-dark .ant-menu-item-selected {
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%) !important;
-          border-radius: 8px;
-          margin: 2px 8px;
+        .ant-menu-light .ant-menu-item {
+          margin: 4px 8px;
+          width: calc(100% - 16px);
+          border-radius: 6px;
+          color: #64748B;
         }
-        .ant-menu-dark .ant-menu-item:hover {
-          background: rgba(255, 255, 255, 0.08) !important;
-          border-radius: 8px;
-          margin: 2px 8px;
+        .ant-menu-light .ant-menu-item:hover {
+          color: #0F172A !important;
+          background-color: #F8FAFC !important;
         }
-        .ant-menu-dark .ant-menu-submenu-title:hover {
-          background: rgba(255, 255, 255, 0.08) !important;
-          border-radius: 8px;
+        .ant-menu-submenu-title {
+          color: #64748B !important;
+        }
+        .ant-menu-submenu-title:hover {
+          color: #0F172A !important;
+        }
+        .ant-layout-sider-trigger {
+          background: #ffffff !important;
+          color: #0F172A !important;
+          border-top: 1px solid #E2E8F0;
         }
       `}</style>
     </Layout>

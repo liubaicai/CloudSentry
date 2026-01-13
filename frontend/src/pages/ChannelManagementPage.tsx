@@ -60,7 +60,7 @@ const ChannelManagementPage: React.FC = () => {
         ...pagination,
         total: response.pagination.total,
       });
-    } catch (error) {
+    } catch {
       message.error('加载通道失败');
     } finally {
       setLoading(false);
@@ -71,8 +71,8 @@ const ChannelManagementPage: React.FC = () => {
     try {
       const stats = await channelService.getChannelStats();
       setStats(stats);
-    } catch (error) {
-      console.error('Failed to fetch stats:', error);
+    } catch {
+      // ignore
     }
   };
 
@@ -94,7 +94,7 @@ const ChannelManagementPage: React.FC = () => {
       message.success('通道删除成功');
       fetchChannels();
       fetchStats();
-    } catch (error) {
+    } catch {
       message.error('通道删除失败');
     }
   };
@@ -112,7 +112,7 @@ const ChannelManagementPage: React.FC = () => {
       setModalVisible(false);
       fetchChannels();
       fetchStats();
-    } catch (error) {
+    } catch {
       message.error('保存通道失败');
     }
   };

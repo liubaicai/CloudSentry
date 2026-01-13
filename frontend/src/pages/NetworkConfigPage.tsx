@@ -19,7 +19,7 @@ export const NetworkConfigPage: React.FC = () => {
     try {
       const data = await configService.network.getAll();
       setConfigs(data);
-    } catch (error) {
+    } catch {
       message.error('加载网络配置失败');
     } finally {
       setLoading(false);
@@ -51,7 +51,7 @@ export const NetworkConfigPage: React.FC = () => {
           await configService.network.delete(config.id);
           message.success('网络配置删除成功');
           loadConfigs();
-        } catch (error) {
+        } catch {
           message.error('网络配置删除失败');
         }
       },

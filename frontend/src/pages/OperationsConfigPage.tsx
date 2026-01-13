@@ -27,7 +27,7 @@ export const OperationsConfigPage: React.FC = () => {
     try {
       const data = await configService.operations.getAll(filterCategory || undefined);
       setConfigs(data);
-    } catch (error) {
+    } catch {
       message.error('加载运维配置失败');
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export const OperationsConfigPage: React.FC = () => {
           await configService.operations.delete(config.id);
           message.success('运维配置删除成功');
           loadConfigs();
-        } catch (error) {
+        } catch {
           message.error('配置删除失败');
         }
       },
@@ -76,7 +76,7 @@ export const OperationsConfigPage: React.FC = () => {
       if (typeof values.value === 'string') {
         try {
           parsedValue = JSON.parse(values.value);
-        } catch (e) {
+        } catch {
           parsedValue = values.value;
         }
       }

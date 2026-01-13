@@ -9,11 +9,11 @@ import dayjs from 'dayjs';
 const { TextArea } = Input;
 
 const severityColors: Record<string, string> = {
-  critical: 'red',
-  high: 'orange',
+  critical: 'error',
+  high: 'warning',
   medium: 'gold',
-  low: 'blue',
-  info: 'green',
+  low: 'success',
+  info: 'default',
 };
 
 const severityLabels: Record<string, string> = {
@@ -32,10 +32,10 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  new: 'blue',
-  investigating: 'orange',
-  resolved: 'green',
-  false_positive: 'gray',
+  new: 'default',
+  investigating: 'warning',
+  resolved: 'success',
+  false_positive: 'default',
 };
 
 export const ThreatDetailPage: React.FC = () => {
@@ -60,7 +60,7 @@ export const ThreatDetailPage: React.FC = () => {
       setEvent(data);
       setStatus(data.status);
       setAssignedTo(data.assignedTo || '');
-    } catch (error) {
+    } catch {
       message.error('加载事件详情失败');
     } finally {
       setLoading(false);
@@ -77,7 +77,7 @@ export const ThreatDetailPage: React.FC = () => {
       message.success('事件更新成功');
       setEditMode(false);
       loadEvent(event.id);
-    } catch (error) {
+    } catch {
       message.error('事件更新失败');
     }
   };
@@ -95,7 +95,7 @@ export const ThreatDetailPage: React.FC = () => {
           await eventsService.deleteEvent(event.id);
           message.success('事件删除成功');
           navigate('/threats');
-        } catch (error) {
+        } catch {
           message.error('事件删除失败');
         }
       },
@@ -217,15 +217,16 @@ export const ThreatDetailPage: React.FC = () => {
 
         {event.metadata && (
           <Card title="元数据" size="small">
-            <pre
-              style={{
-                background: '#f5f5f5',
-                padding: 12,
-                borderRadius: 4,
-                overflow: 'auto',
-                margin: 0,
-              }}
-            >
+                <pre
+                  style={{
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    padding: 12,
+                    borderRadius: 4,
+                    overflow: 'auto',
+                    margin: 0,
+                  }}
+                >
               {JSON.stringify(event.metadata, null, 2)}
             </pre>
           </Card>
@@ -236,7 +237,7 @@ export const ThreatDetailPage: React.FC = () => {
             value={event.rawLog}
             readOnly
             autoSize={{ minRows: 4, maxRows: 12 }}
-            style={{ fontFamily: 'monospace', background: '#f5f5f5' }}
+            style={{ fontFamily: 'monospace', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
           />
         </Card>
       </Space>

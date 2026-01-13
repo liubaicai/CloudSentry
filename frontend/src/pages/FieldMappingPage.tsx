@@ -117,7 +117,7 @@ const FieldMappingPage: React.FC = () => {
       // Sort by priority descending
       const sortedMappings = response.mappings.sort((a: FieldMapping, b: FieldMapping) => b.priority - a.priority);
       setMappings(sortedMappings);
-    } catch (error) {
+    } catch {
       message.error('加载字段映射失败');
     } finally {
       setLoading(false);
@@ -128,8 +128,8 @@ const FieldMappingPage: React.FC = () => {
     try {
       const response = await channelService.getChannels({ limit: 100 });
       setChannels(response.channels);
-    } catch (error) {
-      console.error('Failed to fetch channels:', error);
+    } catch {
+      console.error('Failed to fetch channels');
     }
   };
 
@@ -155,7 +155,7 @@ const FieldMappingPage: React.FC = () => {
       await fieldMappingService.deleteFieldMapping(id);
       message.success('字段映射删除成功');
       fetchMappings();
-    } catch (error) {
+    } catch {
       message.error('字段映射删除失败');
     }
   };
@@ -164,7 +164,7 @@ const FieldMappingPage: React.FC = () => {
     try {
       await fieldMappingService.updateFieldMapping(id, { priority: newPriority });
       fetchMappings();
-    } catch (error) {
+    } catch {
       message.error('优先级更新失败');
     }
   };
@@ -178,7 +178,7 @@ const FieldMappingPage: React.FC = () => {
       if (values.transformConfig) {
         try {
           transformConfig = JSON.parse(values.transformConfig);
-        } catch (e) {
+        } catch {
           message.error('转换配置的JSON格式无效');
           return;
         }
@@ -200,7 +200,7 @@ const FieldMappingPage: React.FC = () => {
       }
       setModalVisible(false);
       fetchMappings();
-    } catch (error) {
+    } catch {
       message.error('保存字段映射失败');
     }
   };
@@ -227,7 +227,7 @@ const FieldMappingPage: React.FC = () => {
     let parsedSampleData;
     try {
       parsedSampleData = JSON.parse(aiSampleData);
-    } catch (e) {
+    } catch {
       message.error('示例数据不是有效的JSON格式');
       return;
     }

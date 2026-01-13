@@ -22,7 +22,7 @@ export const UserManagementPage: React.FC = () => {
     try {
       const response = await usersService.getUsers();
       setUsers(response.users);
-    } catch (error) {
+    } catch {
       message.error('加载用户失败');
     } finally {
       setLoading(false);
@@ -57,7 +57,7 @@ export const UserManagementPage: React.FC = () => {
           await usersService.deleteUser(user.id);
           message.success('用户删除成功');
           loadUsers();
-        } catch (error) {
+        } catch {
           message.error('用户删除失败');
         }
       },

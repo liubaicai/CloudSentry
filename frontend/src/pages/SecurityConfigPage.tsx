@@ -104,7 +104,7 @@ export const SecurityConfigPage: React.FC = () => {
     try {
       const data = await configService.security.getAll(filterCategory || undefined);
       setConfigs(data);
-    } catch (error) {
+    } catch {
       message.error('加载安全配置失败');
     } finally {
       setLoading(false);
@@ -156,7 +156,7 @@ export const SecurityConfigPage: React.FC = () => {
           await configService.security.delete(config.id);
           message.success('安全配置删除成功');
           loadConfigs();
-        } catch (error) {
+        } catch {
           message.error('配置删除失败');
         }
       },
@@ -170,7 +170,7 @@ export const SecurityConfigPage: React.FC = () => {
       if (typeof values.value === 'string') {
         try {
           parsedValue = JSON.parse(values.value);
-        } catch (e) {
+        } catch {
           parsedValue = values.value;
         }
       }

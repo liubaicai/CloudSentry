@@ -23,7 +23,7 @@ export const AlertForwardingPage: React.FC = () => {
     try {
       const response = await api.get('/alert-forwarding');
       setRules(response.data.rules);
-    } catch (error) {
+    } catch {
       message.error('加载规则失败');
     } finally {
       setLoading(false);
@@ -54,7 +54,7 @@ export const AlertForwardingPage: React.FC = () => {
       await api.delete(`/alert-forwarding/${id}`);
       message.success('规则删除成功');
       loadRules();
-    } catch (error) {
+    } catch {
       message.error('规则删除失败');
     }
   };
@@ -76,7 +76,7 @@ export const AlertForwardingPage: React.FC = () => {
 
       setModalVisible(false);
       loadRules();
-    } catch (error) {
+    } catch {
       message.error('保存规则失败');
     }
   };
@@ -227,7 +227,7 @@ export const AlertForwardingPage: React.FC = () => {
                   try {
                     JSON.parse(value);
                     return Promise.resolve();
-                  } catch (e) {
+                  } catch {
                     return Promise.reject('请输入有效的JSON格式，例如：{"severity": ["critical", "high"]}');
                   }
                 },

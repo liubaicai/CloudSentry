@@ -22,7 +22,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
-        } catch (error) {
+        } catch {
           authService.logout();
         }
       }

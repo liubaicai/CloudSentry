@@ -29,7 +29,7 @@ export const DataManagementPage: React.FC = () => {
     try {
       const data = await configService.dataManagement.getStats();
       setStats(data);
-    } catch (error) {
+    } catch {
       message.error('加载统计数据失败');
     } finally {
       setLoading(false);

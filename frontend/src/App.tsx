@@ -25,17 +25,57 @@ function App() {
       locale={zhCN}
       theme={{
         token: {
-          colorPrimary: '#1890ff',
+          // Light geek: cool neutrals, minimal decoration
+          colorPrimary: '#334155',
+          colorInfo: '#0284C7',
+          colorLink: '#0284C7',
+
+          colorBgLayout: '#F8FAFC',
+          colorBgContainer: '#FFFFFF',
+
+          colorText: '#334155',
+          colorTextHeading: '#0F172A',
+          colorTextSecondary: '#64748B',
+
+          colorBorder: '#E2E8F0',
+          colorBorderSecondary: '#F1F5F9',
+
           borderRadius: 4,
+          borderRadiusSM: 2,
+          borderRadiusLG: 6,
+
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+          fontFamilyCode:
+            "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
+
           fontSize: 13,
         },
         components: {
+          Button: {
+            controlHeight: 32,
+            contentFontSize: 13,
+            fontWeight: 500,
+          },
           Card: {
-            paddingLG: 16,
+            paddingLG: 12,
+            headerFontSize: 14,
           },
           Table: {
             cellPaddingBlock: 8,
             cellPaddingInline: 12,
+            headerBg: '#F8FAFC',
+            headerColor: '#64748B',
+            borderColor: '#E2E8F0',
+            fontSize: 13,
+          },
+          Menu: {
+            itemSelectedBg: '#F1F5F9',
+            itemSelectedColor: '#0F172A',
+          },
+          Input: {
+            activeBorderColor: '#0F172A',
+            hoverBorderColor: '#94A3B8',
           },
         },
       }}

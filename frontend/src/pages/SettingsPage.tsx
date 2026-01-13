@@ -80,7 +80,7 @@ export const SettingsPage: React.FC = () => {
         faviconUrl: data.settings?.faviconUrl || '',
         primaryColor: data.settings?.primaryColor || '#1890ff',
       });
-    } catch (error) {
+    } catch {
       message.error('加载设置失败');
     } finally {
       setLoading(false);
@@ -91,8 +91,8 @@ export const SettingsPage: React.FC = () => {
     try {
       const data = await configService.openai.getAll();
       setOpenaiConfigs(data.configs || []);
-    } catch (error) {
-      console.error('Failed to load OpenAI configs:', error);
+    } catch {
+      console.error('Failed to load OpenAI configs');
     }
   };
 
@@ -100,19 +100,19 @@ export const SettingsPage: React.FC = () => {
     try {
       await configService.settings.update(key, value);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };
 
-  const handleBasicSubmit = async (values: any) => {
+   const handleBasicSubmit = async (values: any) => {
     try {
       setLoading(true);
       for (const [key, value] of Object.entries(values)) {
         await saveSettings(key, value);
       }
       message.success('基本设置保存成功');
-    } catch (error) {
+    } catch {
       message.error('保存设置失败');
     } finally {
       setLoading(false);
@@ -126,7 +126,7 @@ export const SettingsPage: React.FC = () => {
         await saveSettings(key, value);
       }
       message.success('Syslog设置保存成功');
-    } catch (error) {
+    } catch {
       message.error('保存设置失败');
     } finally {
       setLoading(false);
@@ -140,7 +140,7 @@ export const SettingsPage: React.FC = () => {
         await saveSettings(key, value);
       }
       message.success('平台设置保存成功');
-    } catch (error) {
+    } catch {
       message.error('保存设置失败');
     } finally {
       setLoading(false);
@@ -154,7 +154,7 @@ export const SettingsPage: React.FC = () => {
         await saveSettings(key, value);
       }
       message.success('品牌设置保存成功');
-    } catch (error) {
+    } catch {
       message.error('保存设置失败');
     } finally {
       setLoading(false);
@@ -189,7 +189,7 @@ export const SettingsPage: React.FC = () => {
       await configService.openai.delete(id);
       message.success('OpenAI配置删除成功');
       loadOpenAIConfigs();
-    } catch (error) {
+    } catch {
       message.error('删除失败');
     }
   };
@@ -226,7 +226,7 @@ export const SettingsPage: React.FC = () => {
       } else {
         message.warning('OpenAI服务不可用');
       }
-    } catch (error) {
+    } catch {
       message.error('OpenAI服务测试失败');
     } finally {
       setTestingOpenai(false);
