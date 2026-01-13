@@ -10,6 +10,21 @@ interface SyslogServerConfig {
   udpEnabled: boolean;
 }
 
+interface ParsedSyslogMessage {
+  timestamp: string;
+  severity: string;
+  category: string;
+  source: string;
+  message: string;
+  rawLog: string;
+  protocol: string;
+  metadata: {
+    priority: number;
+    facility: number;
+    severityLevel: number;
+  };
+}
+
 // Default syslog server configuration
 const defaultConfig: SyslogServerConfig = {
   tcpPort: 514,
@@ -24,7 +39,7 @@ class SyslogServerService {
   private config: SyslogServerConfig = defaultConfig;
 
   // Parse syslog message (RFC 3164 / RFC 5424 format)
-  private parseSyslogMessage(message: string, remoteAddress: string): any {
+  private parseSyslogMessage(message: string, remoteAddress: string): ParsedSyslogMessage {
     const rawMessage = message.trim();
     
     // Try to parse RFC 5424 format: <priority>version timestamp hostname app-name procid msgid structured-data msg
@@ -187,6 +202,7 @@ class SyslogServerService {
   }
 
   // Start TCP server
+  // Start TCP server
   private startTcpServer(): void {
     if (!this.config.tcpEnabled) {
       logger.info('Syslog TCP server is disabled');
@@ -200,14 +216,37 @@ class SyslogServerService {
       socket.on('data', (data) => {
         buffer += data.toString('utf8');
         
-        // Process complete messages (newline-delimited)
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+        // RFC 5425 specifies octet-counting framing, but many implementations use newline or null delimiters
+        // Try to handle both newline-delimited and null-delimited messages
+        // Also handle messages that arrive in a single chunk without delimiter
         
-        for (const line of lines) {
-          if (line.trim()) {
-            this.processMessage(line, remoteAddress);
+        // Check for newline-delimited messages (most common)
+        if (buffer.includes('\n')) {
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.trim()) {
+              this.processMessage(line.replace(/\r$/, ''), remoteAddress);
+            }
           }
+        }
+        // Check for null-delimited messages (RFC 6587 non-transparent framing)
+        else if (buffer.includes('\0')) {
+          const messages = buffer.split('\0');
+          buffer = messages.pop() || '';
+          
+          for (const msg of messages) {
+            if (msg.trim()) {
+              this.processMessage(msg, remoteAddress);
+            }
+          }
+        }
+        // If buffer gets too large without a delimiter, process it as a single message
+        // This handles cases where syslog messages don't include delimiters
+        else if (buffer.length > 8192) {
+          this.processMessage(buffer, remoteAddress);
+          buffer = '';
         }
       });
 
@@ -248,13 +287,22 @@ class SyslogServerService {
       });
 
       for (const setting of settings) {
-        const value = setting.value as any;
+        // Prisma Json type can be various types, handle accordingly
+        const value = setting.value;
         switch (setting.key) {
           case 'syslogTcpPort':
-            this.config.tcpPort = typeof value === 'number' ? value : parseInt(value, 10) || 514;
+            if (typeof value === 'number') {
+              this.config.tcpPort = value;
+            } else if (typeof value === 'string') {
+              this.config.tcpPort = parseInt(value, 10) || 514;
+            }
             break;
           case 'syslogUdpPort':
-            this.config.udpPort = typeof value === 'number' ? value : parseInt(value, 10) || 514;
+            if (typeof value === 'number') {
+              this.config.udpPort = value;
+            } else if (typeof value === 'string') {
+              this.config.udpPort = parseInt(value, 10) || 514;
+            }
             break;
           case 'syslogTcpEnabled':
             this.config.tcpEnabled = value === true || value === 'true';
