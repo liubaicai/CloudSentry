@@ -39,6 +39,14 @@ export interface UpdateChannelData {
   metadata?: any;
 }
 
+export interface AIMappingSuggestion {
+  sourceField: string;
+  targetField: string;
+  transformType: string;
+  transformConfig?: any;
+  description: string;
+}
+
 const channelService = {
   async getChannels(params?: {
     page?: number;
@@ -71,6 +79,25 @@ const channelService = {
 
   async getChannelStats() {
     const response = await api.get('/channels/stats');
+    return response.data;
+  },
+
+  // AI Mapping Methods
+  async generateAIMappings(channelId: string, sampleData: any): Promise<{
+    message: string;
+    mappings: AIMappingSuggestion[];
+    isNew: boolean;
+  }> {
+    const response = await api.post(`/channels/${channelId}/ai-mappings/generate`, { sampleData });
+    return response.data;
+  },
+
+  async applyAIMappings(channelId: string, mappings: AIMappingSuggestion[]): Promise<{
+    message: string;
+    count: number;
+    mappings: any[];
+  }> {
+    const response = await api.post(`/channels/${channelId}/ai-mappings/apply`, { mappings });
     return response.data;
   },
 };
