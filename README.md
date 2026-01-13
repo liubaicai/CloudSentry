@@ -6,10 +6,12 @@ CloudSentry is a modern Security Event Management Platform built with TypeScript
 
 - 🔐 **User Authentication**: JWT-based authentication system with role-based access control
 - 📊 **Dashboard**: Real-time statistics and visualizations of security events
-- 🚨 **Threat List**: Advanced filtering and management of security events
+- 🚨 **Threat Management**: Advanced filtering and analysis of security events
 - 🔍 **Threat Details**: Detailed view and management of individual security events
 - 👥 **User Management**: Complete user account management with role-based access
 - 📈 **Aggregated Analysis**: Pattern detection and trend analysis (extensible)
+- 🌐 **Channel Management**: Track and manage syslog sources with auto-discovery ✨ NEW
+- 🔄 **Field Mapping**: Intelligent mapping of syslog fields to database schema with transformations ✨ NEW
 - 📤 **Alert Forwarding**: Configure rules to forward alerts to external systems (webhook, email, syslog)
 - ⚙️ **System Settings**: Configurable system parameters
 - 🌐 **Network Configuration**: Network interface and connectivity settings management
@@ -283,6 +285,24 @@ npm run build:frontend      # Build frontend only
 - Implement rate limiting for API endpoints
 - Regular security audits and updates
 - Use environment variables for sensitive data
+
+## Channel Management & Field Mapping
+
+CloudSentry includes advanced syslog channel management and intelligent field mapping capabilities:
+
+### Channel Management
+- **Auto-discovery**: Automatically create channels when receiving syslog from new sources
+- **Event Tracking**: Monitor event counts and last event time per channel
+- **Custom Naming**: Assign meaningful names to discovered channels
+- **Channel Control**: Enable/disable specific channels
+
+### Field Mapping
+- **Smart Mapping**: Map incoming syslog fields to database schema
+- **Transformation Types**: Direct copy, regex extraction, lookup tables
+- **Priority-based**: Control mapping order with priorities
+- **Channel-Specific**: Apply different mappings per channel or globally
+
+For detailed documentation, see [CHANNEL_MANAGEMENT.md](./CHANNEL_MANAGEMENT.md)
 
 ## Contributing
 
