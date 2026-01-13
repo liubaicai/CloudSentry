@@ -28,5 +28,7 @@ COPY --from=builder /app/prisma ./prisma
 RUN npx prisma generate
 
 EXPOSE 3000
+EXPOSE 514/tcp
+EXPOSE 514/udp
 
 CMD ["sh", "-c", "npx prisma db push && npm start"]

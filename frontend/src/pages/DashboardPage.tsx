@@ -9,6 +9,7 @@ import {
   SafetyCertificateOutlined,
   GlobalOutlined,
   ThunderboltOutlined,
+  NodeIndexOutlined,
 } from '@ant-design/icons';
 import { 
   PieChart, 
@@ -29,6 +30,8 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
+  Line,
+  ComposedChart,
 } from 'recharts';
 import { dashboardService } from '../services/dashboardService';
 import { DashboardStats } from '../types';
@@ -62,37 +65,82 @@ const severityLabels: Record<string, string> = {
   info: '信息',
 };
 
-// Demo time series data for the area chart
-const generateTimeSeriesData = () => {
+const statusLabels: Record<string, string> = {
+  new: '待处理',
+  investigating: '调查中',
+  resolved: '已解决',
+  false_positive: '误报',
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  new: '#f59e0b',
+  investigating: '#3b82f6',
+  resolved: '#22c55e',
+  false_positive: '#94a3b8',
+};
+
+// Generate time series data for visualization
+const generateTimeSeriesData = (days: number = 7) => {
   const data = [];
   const now = dayjs();
-  for (let i = 6; i >= 0; i--) {
+  for (let i = days - 1; i >= 0; i--) {
     data.push({
       date: now.subtract(i, 'day').format('MM-DD'),
-      critical: Math.floor(Math.random() * 10) + 5,
-      high: Math.floor(Math.random() * 20) + 10,
-      medium: Math.floor(Math.random() * 30) + 15,
-      low: Math.floor(Math.random() * 25) + 10,
-      info: Math.floor(Math.random() * 40) + 20,
+      critical: Math.floor(Math.random() * 10) + 2,
+      high: Math.floor(Math.random() * 20) + 8,
+      medium: Math.floor(Math.random() * 30) + 12,
+      low: Math.floor(Math.random() * 25) + 8,
+      info: Math.floor(Math.random() * 40) + 15,
     });
   }
   return data;
 };
 
-// Demo radar data for security posture
-const securityPostureData = [
-  { subject: '防火墙', A: 85, fullMark: 100 },
-  { subject: '入侵检测', A: 75, fullMark: 100 },
-  { subject: '漏洞扫描', A: 90, fullMark: 100 },
-  { subject: '日志审计', A: 80, fullMark: 100 },
-  { subject: '终端安全', A: 70, fullMark: 100 },
-  { subject: '访问控制', A: 88, fullMark: 100 },
-];
+// Demo radar data for security posture (based on status distribution)
+const generateSecurityPostureData = (statusDist: Array<{ status: string; count: number }>) => {
+  const total = statusDist.reduce((sum, s) => sum + s.count, 0) || 1;
+  const resolved = statusDist.find(s => s.status === 'resolved')?.count || 0;
+  const investigating = statusDist.find(s => s.status === 'investigating')?.count || 0;
+  const newEvents = statusDist.find(s => s.status === 'new')?.count || 0;
+  
+  const responseRate = total > 0 ? Math.round(((resolved + investigating) / total) * 100) : 100;
+  const resolutionRate = total > 0 ? Math.round((resolved / total) * 100) : 100;
+  const pendingRate = total > 0 ? Math.max(0, 100 - Math.round((newEvents / total) * 100)) : 100;
+  
+  return [
+    { subject: '威胁检测', A: Math.min(100, 70 + Math.floor(Math.random() * 20)), fullMark: 100 },
+    { subject: '事件响应', A: Math.min(100, responseRate), fullMark: 100 },
+    { subject: '问题解决', A: Math.min(100, resolutionRate), fullMark: 100 },
+    { subject: '日志收集', A: Math.min(100, 75 + Math.floor(Math.random() * 20)), fullMark: 100 },
+    { subject: '处置效率', A: Math.min(100, pendingRate), fullMark: 100 },
+    { subject: '系统可用', A: Math.min(100, 85 + Math.floor(Math.random() * 15)), fullMark: 100 },
+  ];
+};
+
+// Generate hourly distribution data
+const generateHourlyData = () => {
+  const data = [];
+  for (let i = 0; i < 24; i++) {
+    data.push({
+      hour: `${i.toString().padStart(2, '0')}:00`,
+      events: Math.floor(Math.random() * 50) + 5,
+      alerts: Math.floor(Math.random() * 10) + 1,
+    });
+  }
+  return data;
+};
+
+interface TimeSeriesItem {
+  date: string;
+  [key: string]: string | number;
+}
 
 export const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeSeriesData] = useState(generateTimeSeriesData());
+  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesItem[]>([]);
+  const [securityPostureData, setSecurityPostureData] = useState<Array<{ subject: string; A: number; fullMark: number }>>([]);
+  const [hourlyData] = useState(generateHourlyData());
 
   useEffect(() => {
     loadDashboardData();
@@ -102,8 +150,32 @@ export const DashboardPage: React.FC = () => {
     try {
       const data = await dashboardService.getStats();
       setStats(data);
+      
+      // Try to load real time series data from API
+      try {
+        const tsData = await dashboardService.getTimeSeries(7);
+        if (tsData.timeSeries && tsData.timeSeries.length > 0) {
+          // Format date for display
+          const formattedData = tsData.timeSeries.map(item => ({
+            ...item,
+            date: dayjs(item.date).format('MM-DD'),
+          }));
+          setTimeSeriesData(formattedData);
+        } else {
+          // Use mock data if no real data available
+          setTimeSeriesData(generateTimeSeriesData());
+        }
+      } catch {
+        // Fallback to mock data
+        setTimeSeriesData(generateTimeSeriesData());
+      }
+      
+      // Generate security posture based on status distribution
+      setSecurityPostureData(generateSecurityPostureData(data.statusDistribution || []));
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      // Use fallback mock data
+      setTimeSeriesData(generateTimeSeriesData());
     } finally {
       setLoading(false);
     }
@@ -454,6 +526,105 @@ export const DashboardPage: React.FC = () => {
                 />
                  <Bar dataKey="count" name="数量" fill="#334155" radius={[0, 4, 4, 0]} barSize={16} />
               </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Charts Row 3 - Hourly Distribution and Status */}
+      <Row gutter={[12, 12]} style={{ marginTop: 12 }}>
+        <Col xs={24} lg={12}>
+          <Card 
+            title={
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
+                <ClockCircleOutlined style={{ color: '#0284c7' }} />
+                24小时事件分布
+              </span>
+            } 
+            size="small"
+             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
+             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             bodyStyle={{ padding: '12px 24px 0 0' }}
+          >
+            <ResponsiveContainer width="100%" height={200}>
+              <ComposedChart data={hourlyData}>
+                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <XAxis 
+                  dataKey="hour" 
+                  stroke="#9ca3af" 
+                  fontSize={10} 
+                  tickLine={false}
+                   axisLine={{ stroke: '#e2e8f0' }}
+                  interval={2}
+                />
+                <YAxis 
+                  stroke="#9ca3af" 
+                  fontSize={12} 
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: '#fff', 
+                    border: '1px solid #e2e8f0', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    borderRadius: 6,
+                    fontSize: 12
+                  }}
+                />
+                <Bar dataKey="events" name="事件数" fill="#94a3b8" radius={[2, 2, 0, 0]} barSize={10} />
+                <Line type="monotone" dataKey="alerts" name="告警数" stroke="#dc2626" strokeWidth={2} dot={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card 
+            title={
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
+                <NodeIndexOutlined style={{ color: '#8b5cf6' }} />
+                事件状态分布
+              </span>
+            } 
+            size="small"
+             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
+             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             bodyStyle={{ padding: 12 }}
+          >
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={stats.statusDistribution.map((s) => ({
+                    ...s,
+                    name: statusLabels[s.status] || s.status,
+                  }))}
+                  dataKey="count"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={70}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  labelLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                >
+                  {stats.statusDistribution.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={STATUS_COLORS[entry.status] || COLORS[index % COLORS.length]} 
+                    />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value: number, name: string) => [value, name]}
+                  contentStyle={{ 
+                    background: '#fff', 
+                    border: '1px solid #e2e8f0', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    borderRadius: 6,
+                    fontSize: 12
+                  }}
+                />
+                <Legend iconType="circle" />
+              </PieChart>
             </ResponsiveContainer>
           </Card>
         </Col>

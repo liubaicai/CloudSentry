@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 import { dataRetentionService } from './services/dataRetentionService';
+import { syslogServerService } from './services/syslogServerService';
 import authRoutes from './routes/auth';
 import eventsRoutes from './routes/events';
 import syslogRoutes from './routes/syslog';
@@ -71,6 +72,11 @@ app.listen(PORT, () => {
   
   // Start automatic data retention cleanup
   dataRetentionService.startAutomaticCleanup();
+  
+  // Start syslog server (TCP/UDP on port 514)
+  syslogServerService.start().catch((error) => {
+    logger.error('Failed to start syslog server:', error);
+  });
 });
 
 export default app;

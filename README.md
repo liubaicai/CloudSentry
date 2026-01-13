@@ -1,136 +1,140 @@
-# CloudSentry
+# CloudSentry 云卫安全
 
-CloudSentry is a modern Security Event Management Platform built with TypeScript. It provides a comprehensive solution for receiving, storing, analyzing, and managing security alerts and events from syslog sources.
+CloudSentry（云卫安全）是一个现代化的安全事件管理平台，使用 TypeScript 构建。它提供了一个完整的解决方案，用于接收、存储、分析和管理来自 syslog 源的安全告警和事件。
 
-## Features
+## 功能特性
 
-- 🔐 **User Authentication**: JWT-based authentication system with role-based access control
-- 📊 **Dashboard**: Real-time statistics and visualizations of security events
-- 🚨 **Threat Management**: Advanced filtering and analysis of security events with enhanced threat fields
-- 🔍 **Threat Details**: Detailed view and management of individual security events
-- 👥 **User Management**: Complete user account management with role-based access
-- 📈 **Aggregated Analysis**: Pattern detection and trend analysis (extensible)
-- 🌐 **Channel Management**: Track and manage syslog sources with auto-discovery
-- 🔄 **Field Mapping**: Intelligent mapping of syslog fields to database schema with transformations
-- 🤖 **AI-Powered Mapping**: Automatic field mapping generation using OpenAI-compatible APIs ✨ NEW
-- ⏰ **Data Retention**: Automatic cleanup of old data with configurable retention policy (7 days default) ✨ NEW
-- 📤 **Alert Forwarding**: Configure rules to forward alerts to external systems (webhook, email, syslog)
-- ⚙️ **System Settings**: Configurable system parameters
-- 🌐 **Network Configuration**: Network interface and connectivity settings management
-- 🔧 **Operations Configuration**: Operational policies including retention, backup, and maintenance
-- 🔒 **Security Configuration**: Security policies and authentication settings
-- 💾 **Data Management**: Database statistics, export, backup, and maintenance tools
-- 🔌 **Syslog API**: RESTful API endpoint for receiving security events in bulk or individually
+- 🔐 **用户认证**: 基于 JWT 的认证系统，支持基于角色的访问控制
+- 📊 **安全仪表盘**: 实时统计数据和安全事件可视化展示
+- 🚨 **威胁管理**: 高级安全事件过滤和分析，支持增强的威胁字段
+- 🔍 **威胁详情**: 单个安全事件的详细视图和管理
+- 👥 **用户管理**: 完整的用户账户管理，支持基于角色的访问控制
+- 📈 **聚合分析**: 模式检测和趋势分析（可扩展）
+- 🌐 **通道管理**: 跟踪和管理 syslog 源，支持自动发现
+- 🔄 **字段映射**: 智能 syslog 字段到数据库模式的映射和转换
+- 🤖 **AI 智能映射**: 使用 OpenAI 兼容 API 自动生成字段映射 ✨ 新功能
+- ⏰ **数据保留**: 自动清理旧数据，支持可配置的保留策略（默认 7 天）✨ 新功能
+- 📤 **告警转发**: 配置规则将告警转发到外部系统（webhook、邮件、syslog）
+- ⚙️ **系统设置**: 可配置的系统参数
+- 🌐 **网络配置**: 网络接口和连接设置管理
+- 🔧 **运维配置**: 运维策略包括保留、备份和维护
+- 🔒 **安全配置**: 安全策略和认证设置
+- 💾 **数据管理**: 数据库统计、导出、备份和维护工具
+- 🔌 **Syslog 服务**: TCP/UDP Syslog 服务器（端口 514）和 RESTful API 端点
 
-## Technology Stack
+## 技术栈
 
-### Backend
-- **Node.js** with **TypeScript**
-- **Express.js** - Web framework
-- **PostgreSQL** - Database
-- **Prisma** - Modern ORM
-- **JWT** - Authentication
-- **Winston** - Logging
-- **OpenAI SDK** - AI-powered field mapping ✨ NEW
+### 后端
+- **Node.js** + **TypeScript**
+- **Express.js** - Web 框架
+- **PostgreSQL** - 数据库
+- **Prisma** - 现代 ORM
+- **JWT** - 认证
+- **Winston** - 日志
+- **OpenAI SDK** - AI 驱动的字段映射 ✨ 新功能
+- **原生 Syslog 服务器** - TCP/UDP 端口 514 ✨ 新功能
 
-### Frontend
-- **React 18** with **TypeScript**
-- **Vite** - Build tool
-- **Ant Design** - UI component library
-- **React Router** - Routing
-- **Recharts** - Data visualization
-- **Axios** - HTTP client
-- **Caddy** - Reverse proxy and web server ✨ NEW (replaces nginx)
+### 前端
+- **React 18** + **TypeScript**
+- **Vite** - 构建工具
+- **Ant Design** - UI 组件库
+- **React Router** - 路由
+- **Recharts** - 数据可视化
+- **Axios** - HTTP 客户端
+- **Caddy** - 反向代理和 Web 服务器
 
-## Project Structure
+## 项目结构
 
 ```
 CloudSentry/
-├── backend/                 # Backend API server
+├── backend/                 # 后端 API 服务器
 │   ├── src/
-│   │   ├── controllers/    # Request handlers
-│   │   ├── routes/         # API routes
-│   │   ├── middleware/     # Express middleware
-│   │   ├── config/         # Configuration files
-│   │   └── utils/          # Utility functions
-│   ├── prisma/             # Database schema and migrations
+│   │   ├── controllers/    # 请求处理器
+│   │   ├── routes/         # API 路由
+│   │   ├── middleware/     # Express 中间件
+│   │   ├── services/       # 业务服务
+│   │   ├── config/         # 配置文件
+│   │   └── utils/          # 工具函数
+│   ├── prisma/             # 数据库模式和迁移
 │   └── package.json
-├── frontend/               # React frontend
+├── frontend/               # React 前端
 │   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   ├── contexts/       # React contexts
-│   │   └── types/          # TypeScript types
+│   │   ├── components/     # React 组件
+│   │   ├── pages/          # 页面组件
+│   │   ├── services/       # API 服务
+│   │   ├── contexts/       # React 上下文
+│   │   └── types/          # TypeScript 类型
 │   └── package.json
-└── docker-compose.yml      # Docker setup
+└── docker-compose.yml      # Docker 配置
 ```
 
-## Getting Started
+## 快速开始
 
-### Prerequisites
+### 环境要求
 
 - Node.js 18+ 
 - PostgreSQL 14+
-- npm or yarn
+- npm 或 yarn
 
-### Installation
+### 安装步骤
 
-1. **Clone the repository**
+1. **克隆仓库**
    ```bash
    git clone https://github.com/liubaicai/CloudSentry.git
    cd CloudSentry
    ```
 
-2. **Install dependencies**
+2. **安装依赖**
    ```bash
    npm run install:all
    ```
 
-3. **Setup Backend**
+3. **配置后端**
    ```bash
    cd backend
    cp .env.example .env
-   # Edit .env with your database credentials
+   # 编辑 .env 文件配置数据库凭证
    
-   # Run database migrations
+   # 运行数据库迁移
    npm run prisma:migrate
    npm run prisma:generate
    ```
 
-4. **Start Development Servers**
+4. **启动开发服务器**
    
-   Terminal 1 - Backend:
+   终端 1 - 后端：
    ```bash
    npm run dev:backend
    ```
    
-   Terminal 2 - Frontend:
+   终端 2 - 前端：
    ```bash
    npm run dev:frontend
    ```
 
-5. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3000
-   - API Health Check: http://localhost:3000/health
+5. **访问应用**
+   - 前端界面: http://localhost:5173
+   - 后端 API: http://localhost:3000
+   - API 健康检查: http://localhost:3000/health
+   - Syslog 服务: TCP/UDP 端口 514
 
-### Using Docker
+### 使用 Docker
 
 ```bash
 docker-compose up -d
 ```
 
-This will start:
-- PostgreSQL database on port 5432
-- Backend API on port 3000
-- Frontend on port 5173
+这将启动：
+- PostgreSQL 数据库（端口 5432）
+- 后端 API（端口 3000）
+- 前端界面（端口 5173）
+- Syslog 服务（TCP/UDP 端口 514）
 
-## API Documentation
+## API 文档
 
-### Authentication
+### 认证
 
-**Register**
+**注册**
 ```bash
 POST /api/auth/register
 Content-Type: application/json
@@ -143,7 +147,7 @@ Content-Type: application/json
 }
 ```
 
-**Login**
+**登录**
 ```bash
 POST /api/auth/login
 Content-Type: application/json
@@ -154,9 +158,20 @@ Content-Type: application/json
 }
 ```
 
-### Syslog Ingestion
+### Syslog 数据接入
 
-**Single Event**
+**原生 Syslog 协议（推荐）**
+
+支持标准 RFC 3164 和 RFC 5424 格式的 syslog 消息：
+```bash
+# 发送 syslog 消息到 UDP 端口
+echo "<14>Jan 13 10:00:00 myhost myapp[1234]: Test security event" | nc -u localhost 514
+
+# 发送 syslog 消息到 TCP 端口
+echo "<14>Jan 13 10:00:00 myhost myapp[1234]: Test security event" | nc localhost 514
+```
+
+**HTTP API - 单条事件**
 ```bash
 POST /api/syslog
 Content-Type: application/json
@@ -167,14 +182,14 @@ Content-Type: application/json
   "category": "intrusion",
   "source": "192.168.1.100",
   "destination": "192.168.1.200",
-  "message": "Suspicious activity detected",
+  "message": "检测到可疑活动",
   "protocol": "TCP",
   "port": 22,
-  "tags": ["ssh", "brute-force"]
+  "tags": ["ssh", "暴力破解"]
 }
 ```
 
-**Bulk Events**
+**HTTP API - 批量事件**
 ```bash
 POST /api/syslog/bulk
 Content-Type: application/json
@@ -184,26 +199,26 @@ Content-Type: application/json
     "severity": "high",
     "category": "malware",
     "source": "192.168.1.105",
-    "message": "Malware detected"
+    "message": "检测到恶意软件"
   },
   {
     "severity": "medium",
     "category": "policy_violation",
     "source": "192.168.1.110",
-    "message": "Policy violation detected"
+    "message": "检测到策略违规"
   }
 ]
 ```
 
-### Events Management
+### 事件管理
 
-**List Events**
+**获取事件列表**
 ```bash
 GET /api/events?page=1&limit=20&severity=critical&status=new
 Authorization: Bearer <token>
 ```
 
-**Update Event Status**
+**更新事件状态**
 ```bash
 PATCH /api/events/:id
 Authorization: Bearer <token>
@@ -215,34 +230,34 @@ Content-Type: application/json
 }
 ```
 
-### Dashboard
+### 仪表盘
 
-**Get Statistics**
+**获取统计数据**
 ```bash
 GET /api/dashboard/stats
 Authorization: Bearer <token>
 ```
 
-**Get Time Series Data**
+**获取时间序列数据**
 ```bash
 GET /api/dashboard/timeseries?days=7
 Authorization: Bearer <token>
 ```
 
-## Default Credentials
+## 默认凭证
 
-After first setup, you'll need to register an admin user via the API or registration page.
+首次安装后，您需要通过 API 或注册页面创建管理员用户。
 
-For testing, you can use:
-- Username: `admin`
-- Password: `admin123`
-- Email: `admin@cloudsentry.local`
+测试用户：
+- 用户名: `admin`
+- 密码: `admin123`
+- 邮箱: `admin@cloudsentry.local`
 
-## Configuration
+## 配置说明
 
-### Backend Environment Variables
+### 后端环境变量
 
-Create a `.env` file in the `backend` directory:
+在 `backend` 目录创建 `.env` 文件：
 
 ```env
 DATABASE_URL="postgresql://postgres:password@localhost:5432/cloudsentry?schema=public"
@@ -253,83 +268,82 @@ NODE_ENV="development"
 CORS_ORIGIN="http://localhost:5173"
 ```
 
-### Frontend Environment Variables
+### 前端环境变量
 
-Create a `.env` file in the `frontend` directory (optional):
+在 `frontend` 目录创建 `.env` 文件（可选）：
 
 ```env
 VITE_API_URL=/api
 ```
 
-## Development
+## 开发指南
 
-### Database Migrations
+### 数据库迁移
 
 ```bash
 cd backend
-npm run prisma:migrate      # Create and apply migrations
-npm run prisma:generate     # Generate Prisma Client
-npm run prisma:studio       # Open Prisma Studio
+npm run prisma:migrate      # 创建并应用迁移
+npm run prisma:generate     # 生成 Prisma 客户端
+npm run prisma:studio       # 打开 Prisma Studio
+npm run prisma:seed         # 填充示例数据
 ```
 
-### Build for Production
+### 生产构建
 
 ```bash
-npm run build               # Build both frontend and backend
-npm run build:backend       # Build backend only
-npm run build:frontend      # Build frontend only
+npm run build               # 构建前端和后端
+npm run build:backend       # 仅构建后端
+npm run build:frontend      # 仅构建前端
 ```
 
-## Security Considerations
+## 安全注意事项
 
-- Change default JWT secret in production
-- Use strong passwords
-- Enable HTTPS in production
-- Configure proper CORS origins
-- Implement rate limiting for API endpoints
-- Regular security audits and updates
-- Use environment variables for sensitive data
+- 生产环境中更改默认 JWT 密钥
+- 使用强密码
+- 生产环境启用 HTTPS
+- 配置正确的 CORS 来源
+- 为 API 端点实现速率限制
+- 定期进行安全审计和更新
+- 使用环境变量存储敏感数据
 
-## Channel Management & Field Mapping
+## 通道管理和字段映射
 
-CloudSentry includes advanced syslog channel management and intelligent field mapping capabilities:
+CloudSentry 包含高级 syslog 通道管理和智能字段映射功能：
 
-### Channel Management
-- **Auto-discovery**: Automatically create channels when receiving syslog from new sources
-- **Event Tracking**: Monitor event counts and last event time per channel
-- **Custom Naming**: Assign meaningful names to discovered channels
-- **Channel Control**: Enable/disable specific channels
+### 通道管理
+- **自动发现**: 从新源接收 syslog 时自动创建通道
+- **事件跟踪**: 监控每个通道的事件数和最后事件时间
+- **自定义命名**: 为发现的通道分配有意义的名称
+- **通道控制**: 启用/禁用特定通道
 
-### Field Mapping
-- **Smart Mapping**: Map incoming syslog fields to database schema
-- **Transformation Types**: Direct copy, regex extraction, lookup tables
-- **Priority-based**: Control mapping order with priorities
-- **Channel-Specific**: Apply different mappings per channel or globally
+### 字段映射
+- **智能映射**: 将传入的 syslog 字段映射到数据库模式
+- **转换类型**: 直接复制、正则提取、查找表
+- **优先级控制**: 使用优先级控制映射顺序
+- **通道特定**: 按通道或全局应用不同映射
 
-For detailed documentation, see [CHANNEL_MANAGEMENT.md](./CHANNEL_MANAGEMENT.md)
+## 🤖 AI 智能字段映射（新功能）
 
-## 🤖 AI-Powered Field Mapping (NEW)
+CloudSentry 现在支持使用 OpenAI 兼容 API 自动生成字段映射：
 
-CloudSentry now includes intelligent field mapping generation using OpenAI-compatible APIs:
+### 核心功能
+- **自动生成映射**: AI 分析样本数据并生成适当的字段映射
+- **智能复用**: 系统在生成新映射前检查兼容的现有映射
+- **学习系统**: 映射被存储并用于类似的数据结构
+- **OpenAI 兼容**: 支持 OpenAI API 或兼容服务（Azure OpenAI、本地模型等）
 
-### Key Features
-- **Automatic Mapping Generation**: AI analyzes sample data and generates appropriate field mappings
-- **Smart Reuse**: System checks for compatible existing mappings before generating new ones
-- **Learning System**: Mappings are stored and reused for similar data structures
-- **OpenAI Compatible**: Works with OpenAI API or compatible services (Azure OpenAI, local models, etc.)
+### 增强的威胁数据模型
+安全事件现在包含全面的威胁跟踪字段：
+- `threatName` - 威胁名称/标识符
+- `threatLevel` - 威胁严重级别
+- `sourceIp`, `destinationIp` - 增强的网络信息
+- `sourcePort`, `destinationPort` - 端口信息
+- `sourceChannel` - 通道标识符
+- `rawData` - 完整原始数据
 
-### Enhanced Threat Data Model
-Security events now include comprehensive threat tracking fields:
-- `threatName` - Name/identifier of the threat
-- `threatLevel` - Threat severity level
-- `sourceIp`, `destinationIp` - Enhanced network information
-- `sourcePort`, `destinationPort` - Port information
-- `sourceChannel` - Channel identifier
-- `rawData` - Complete original data
+### AI 映射快速入门
 
-### Quick Start with AI Mapping
-
-1. Configure OpenAI API:
+1. 配置 OpenAI API：
 ```bash
 POST /api/openai-config
 {
@@ -339,57 +353,65 @@ POST /api/openai-config
 }
 ```
 
-2. Generate mappings for a channel:
+2. 为通道生成映射：
 ```bash
 POST /api/channels/:id/ai-mappings/generate
 {
   "sampleData": {
     "src_ip": "192.168.1.100",
     "alert_level": "3",
-    "message": "Threat detected"
+    "message": "检测到威胁"
   }
 }
 ```
 
-3. Apply the generated mappings:
+3. 应用生成的映射：
 ```bash
 POST /api/channels/:id/ai-mappings/apply
 {
-  "mappings": [...generated mappings...]
+  "mappings": [...生成的映射...]
 }
 ```
 
-For complete documentation, see [AI_MAPPING_GUIDE.md](./AI_MAPPING_GUIDE.md)
+## ⏰ 数据保留策略（新功能）
 
-## ⏰ Data Retention Policy (NEW)
+CloudSentry 实现了轻量级数据保留策略以获得最佳性能：
 
-CloudSentry implements a lightweight data retention strategy for optimal performance:
+### 功能特点
+- **7 天默认保留**: 保持平台轻量和高性能
+- **自动清理**: 每天运行以删除旧数据
+- **可配置**: 保留期可通过服务调整
+- **PostgreSQL 优化**: 高效删除和空间回收
 
-### Features
-- **7-Day Default Retention**: Keeps platform lightweight and performant
-- **Automatic Cleanup**: Runs daily to remove old data
-- **Configurable**: Retention period can be adjusted via the service
-- **PostgreSQL Optimized**: Efficient deletion and space reclamation
+### 为什么选择 7 天？
+- **性能**: 较小的数据集 = 更快的查询
+- **轻量级**: 适合边缘部署
+- **足够**: 对于实时威胁监控已足够
+- **可归档**: 如需长期存储可导出旧数据
 
-### Why 7 Days?
-- **Performance**: Smaller dataset = faster queries
-- **Lightweight**: Suitable for edge deployments
-- **Adequate**: Sufficient for real-time threat monitoring
-- **Archivable**: Export older data if long-term storage is needed
+PostgreSQL 结合 7 天保留窗口可以处理：
+- 在中等硬件上每分钟最多 10,000 个事件
+- 总计约 600 万个事件
+- 亚秒级查询响应
 
-The combination of PostgreSQL with a 7-day retention window can handle:
-- Up to 10,000 events/minute on modest hardware
-- ~6 million events total
-- Sub-second query responses
+## Syslog 服务配置
 
-## Contributing
+### 端口说明
+- **TCP 514**: 标准 Syslog TCP 端口（可靠传输）
+- **UDP 514**: 标准 Syslog UDP 端口（高性能）
+- **HTTP 3000**: RESTful API 端点
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### 在系统设置中配置
+可以在系统设置页面配置 Syslog 服务器的端口和启用状态。
 
-## License
+## 贡献指南
+
+欢迎贡献！请随时提交 Pull Request。
+
+## 许可证
 
 MIT
 
-## Support
+## 支持
 
-For issues and questions, please open an issue on GitHub.
+如有问题和疑问，请在 GitHub 上提交 Issue。
