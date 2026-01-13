@@ -51,11 +51,23 @@ const FieldMappingPage: React.FC = () => {
     'metadata',
   ];
 
+  const targetFieldLabels: Record<string, string> = {
+    severity: '级别',
+    category: '类别',
+    source: '来源',
+    destination: '目标',
+    message: '消息',
+    protocol: '协议',
+    port: '端口',
+    tags: '标签',
+    metadata: '元数据',
+  };
+
   const transformTypes = [
-    { value: 'direct', label: 'Direct Mapping', description: 'Copy value directly' },
-    { value: 'regex', label: 'Regex Transform', description: 'Extract using regex pattern' },
-    { value: 'lookup', label: 'Lookup Table', description: 'Map values using lookup table' },
-    { value: 'script', label: 'Script', description: 'Custom transformation script (future)' },
+    { value: 'direct', label: '直接映射', description: '直接复制值' },
+    { value: 'regex', label: '正则转换', description: '使用正则表达式提取' },
+    { value: 'lookup', label: '查找表', description: '使用查找表映射值' },
+    { value: 'script', label: '脚本', description: '自定义转换脚本（即将推出）' },
   ];
 
   useEffect(() => {
@@ -71,7 +83,7 @@ const FieldMappingPage: React.FC = () => {
       });
       setMappings(response.mappings);
     } catch (error) {
-      message.error('Failed to fetch field mappings');
+      message.error('加载字段映射失败');
     } finally {
       setLoading(false);
     }
@@ -106,10 +118,10 @@ const FieldMappingPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await fieldMappingService.deleteFieldMapping(id);
-      message.success('Field mapping deleted successfully');
+      message.success('字段映射删除成功');
       fetchMappings();
     } catch (error) {
-      message.error('Failed to delete field mapping');
+      message.error('字段映射删除失败');
     }
   };
 
@@ -123,7 +135,7 @@ const FieldMappingPage: React.FC = () => {
         try {
           transformConfig = JSON.parse(values.transformConfig);
         } catch (e) {
-          message.error('Invalid JSON in Transform Config');
+          message.error('转换配置的JSON格式无效');
           return;
         }
       }
@@ -135,97 +147,99 @@ const FieldMappingPage: React.FC = () => {
 
       if (editingMapping) {
         await fieldMappingService.updateFieldMapping(editingMapping.id, data);
-        message.success('Field mapping updated successfully');
+        message.success('字段映射更新成功');
       } else {
         await fieldMappingService.createFieldMapping(
           data as CreateFieldMappingData
         );
-        message.success('Field mapping created successfully');
+        message.success('字段映射创建成功');
       }
       setModalVisible(false);
       fetchMappings();
     } catch (error) {
-      message.error('Failed to save field mapping');
+      message.error('保存字段映射失败');
     }
   };
 
   const columns: ColumnsType<FieldMapping> = [
     {
-      title: 'Priority',
+      title: '优先级',
       dataIndex: 'priority',
       key: 'priority',
-      width: 80,
+      width: 70,
       sorter: (a, b) => a.priority - b.priority,
     },
     {
-      title: 'Channel',
+      title: '通道',
       key: 'channel',
-      width: 150,
+      width: 120,
       render: (_, record) =>
         record.channel ? (
           <Tag color="blue">{record.channel.name}</Tag>
         ) : (
-          <Tag color="default">Global</Tag>
+          <Tag color="default">全局</Tag>
         ),
     },
     {
-      title: 'Source Field',
+      title: '源字段',
       dataIndex: 'sourceField',
       key: 'sourceField',
-      width: 150,
+      width: 120,
     },
     {
-      title: 'Target Field',
+      title: '目标字段',
       dataIndex: 'targetField',
       key: 'targetField',
-      width: 150,
+      width: 100,
+      render: (field: string) => targetFieldLabels[field] || field,
     },
     {
-      title: 'Transform Type',
+      title: '转换类型',
       dataIndex: 'transformType',
       key: 'transformType',
-      width: 130,
+      width: 100,
       render: (type: string) => {
         const config = transformTypes.find((t) => t.value === type);
         return <Tag color="purple">{config?.label || type}</Tag>;
       },
     },
     {
-      title: 'Description',
+      title: '描述',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
-      width: 100,
+      width: 70,
       render: (enabled: boolean) => (
         <Tag color={enabled ? 'green' : 'red'}>
-          {enabled ? 'Enabled' : 'Disabled'}
+          {enabled ? '启用' : '禁用'}
         </Tag>
       ),
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 100,
       fixed: 'right',
       render: (_, record) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
+            size="small"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           />
           <Popconfirm
-            title="Are you sure you want to delete this mapping?"
+            title="确定要删除此映射吗？"
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText="确定"
+            cancelText="取消"
           >
-            <Button type="link" danger icon={<DeleteOutlined />} />
+            <Button type="link" size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -233,33 +247,36 @@ const FieldMappingPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: 12 }}>
       <Card
-        title="Field Mapping Configuration"
+        title="字段映射配置"
+        size="small"
         extra={
           <Space>
             <Select
-              placeholder="Filter by channel"
+              placeholder="按通道筛选"
               allowClear
-              style={{ width: 200 }}
+              style={{ width: 150 }}
               onChange={setSelectedChannel}
+              size="small"
             >
-              <Option value="">All Channels</Option>
+              <Option value="">所有通道</Option>
               {channels.map((channel) => (
                 <Option key={channel.id} value={channel.id}>
                   {channel.name}
                 </Option>
               ))}
             </Select>
-            <Button icon={<ReloadOutlined />} onClick={fetchMappings}>
-              Refresh
+            <Button icon={<ReloadOutlined />} onClick={fetchMappings} size="small">
+              刷新
             </Button>
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={handleCreate}
+              size="small"
             >
-              Add Mapping
+              添加映射
             </Button>
           </Space>
         }
@@ -270,24 +287,27 @@ const FieldMappingPage: React.FC = () => {
           rowKey="id"
           loading={loading}
           pagination={{ pageSize: 20 }}
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1000 }}
+          size="small"
         />
       </Card>
 
       <Modal
-        title={editingMapping ? 'Edit Field Mapping' : 'Create Field Mapping'}
+        title={editingMapping ? '编辑字段映射' : '创建字段映射'}
         open={modalVisible}
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
+        okText="保存"
+        cancelText="取消"
         width={700}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="channelId"
-            label="Channel"
-            help="Leave empty for global mapping that applies to all channels"
+            label="通道"
+            help="留空表示全局映射，适用于所有通道"
           >
-            <Select placeholder="Select channel or leave empty for global" allowClear>
+            <Select placeholder="选择通道或留空表示全局" allowClear>
               {channels.map((channel) => (
                 <Option key={channel.id} value={channel.id}>
                   {channel.name} ({channel.sourceIdentifier})
@@ -297,29 +317,29 @@ const FieldMappingPage: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="sourceField"
-            label="Source Field"
-            rules={[{ required: true, message: 'Please enter source field name' }]}
-            help="Field name in the incoming syslog data"
+            label="源字段"
+            rules={[{ required: true, message: '请输入源字段名称' }]}
+            help="传入syslog数据中的字段名称"
           >
-            <Input placeholder="e.g., log_level, src_ip, event_type" />
+            <Input placeholder="例如：log_level, src_ip, event_type" />
           </Form.Item>
           <Form.Item
             name="targetField"
-            label="Target Field"
-            rules={[{ required: true, message: 'Please select target field' }]}
-            help="Field in SecurityEvent table where data will be stored"
+            label="目标字段"
+            rules={[{ required: true, message: '请选择目标字段' }]}
+            help="数据将存储到SecurityEvent表中的字段"
           >
-            <Select placeholder="Select target field">
+            <Select placeholder="选择目标字段">
               {targetFields.map((field) => (
                 <Option key={field} value={field}>
-                  {field}
+                  {targetFieldLabels[field] || field}
                 </Option>
               ))}
             </Select>
           </Form.Item>
           <Form.Item
             name="transformType"
-            label="Transform Type"
+            label="转换类型"
             initialValue="direct"
           >
             <Select>
@@ -332,35 +352,35 @@ const FieldMappingPage: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="transformConfig"
-            label="Transform Config (JSON)"
-            help="Configuration for transformation. For regex: {pattern, flags, replacement}. For lookup: {mappings: {key: value}}"
+            label="转换配置（JSON格式）"
+            help="正则转换: {pattern, flags, replacement}。查找表: {mappings: {key: value}}"
           >
             <TextArea
               rows={4}
-              placeholder='e.g., {"pattern": "^ERROR", "flags": "i"} or {"mappings": {"1": "critical", "2": "high"}}'
+              placeholder='例如：{"pattern": "^ERROR", "flags": "i"} 或 {"mappings": {"1": "critical", "2": "high"}}'
             />
           </Form.Item>
           <Form.Item
             name="priority"
-            label="Priority"
+            label="优先级"
             initialValue={0}
-            help="Higher priority mappings are applied first"
+            help="优先级高的映射先执行"
           >
             <InputNumber min={0} max={100} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="描述">
             <TextArea
               rows={2}
-              placeholder="Optional description of this mapping"
+              placeholder="此映射的可选描述"
             />
           </Form.Item>
           <Form.Item
             name="enabled"
-            label="Status"
+            label="状态"
             valuePropName="checked"
             initialValue={true}
           >
-            <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
+            <Switch checkedChildren="启用" unCheckedChildren="禁用" />
           </Form.Item>
         </Form>
       </Modal>

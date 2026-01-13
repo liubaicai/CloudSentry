@@ -20,7 +20,7 @@ export const NetworkConfigPage: React.FC = () => {
       const data = await configService.network.getAll();
       setConfigs(data);
     } catch (error) {
-      message.error('Failed to load network configurations');
+      message.error('加载网络配置失败');
     } finally {
       setLoading(false);
     }
@@ -41,17 +41,18 @@ export const NetworkConfigPage: React.FC = () => {
 
   const handleDelete = (config: any) => {
     Modal.confirm({
-      title: 'Delete Network Configuration',
-      content: `Are you sure you want to delete "${config.name}"?`,
-      okText: 'Delete',
+      title: '删除网络配置',
+      content: `确定要删除 "${config.name}" 吗？`,
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: async () => {
         try {
           await configService.network.delete(config.id);
-          message.success('Network configuration deleted');
+          message.success('网络配置删除成功');
           loadConfigs();
         } catch (error) {
-          message.error('Failed to delete network configuration');
+          message.error('网络配置删除失败');
         }
       },
     });
@@ -61,21 +62,21 @@ export const NetworkConfigPage: React.FC = () => {
     try {
       if (editingConfig) {
         await configService.network.update(editingConfig.id, values);
-        message.success('Network configuration updated');
+        message.success('网络配置更新成功');
       } else {
         await configService.network.create(values);
-        message.success('Network configuration created');
+        message.success('网络配置创建成功');
       }
       setModalVisible(false);
       loadConfigs();
     } catch (error: any) {
-      message.error(error.response?.data?.error || 'Failed to save configuration');
+      message.error(error.response?.data?.error || '保存配置失败');
     }
   };
 
   const columns = [
     {
-      title: 'Name',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
       render: (text: string) => (
@@ -86,37 +87,38 @@ export const NetworkConfigPage: React.FC = () => {
       ),
     },
     {
-      title: 'Interface',
+      title: '网络接口',
       dataIndex: 'interface',
       key: 'interface',
     },
     {
-      title: 'IP Address',
+      title: 'IP地址',
       dataIndex: 'ipAddress',
       key: 'ipAddress',
     },
     {
-      title: 'Gateway',
+      title: '网关',
       dataIndex: 'gateway',
       key: 'gateway',
     },
     {
-      title: 'Enabled',
+      title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
-      render: (enabled: boolean) => enabled ? 'Yes' : 'No',
+      width: 80,
+      render: (enabled: boolean) => enabled ? '启用' : '禁用',
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 140,
       render: (_: any, record: any) => (
-        <Space>
+        <Space size="small">
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
+            编辑
           </Button>
           <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record)}>
-            Delete
+            删除
           </Button>
         </Space>
       ),
@@ -124,49 +126,52 @@ export const NetworkConfigPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 12 }}>
       <Card
-        title="Network Configuration"
+        title="网络配置"
+        size="small"
         extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Configuration
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
+            添加配置
           </Button>
         }
       >
-        <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} />
+        <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} size="small" />
       </Card>
 
       <Modal
-        title={editingConfig ? 'Edit Network Configuration' : 'Create Network Configuration'}
+        title={editingConfig ? '编辑网络配置' : '创建网络配置'}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => form.submit()}
+        okText="保存"
+        cancelText="取消"
         width={600}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="Configuration name" />
+          <Form.Item name="name" label="名称" rules={[{ required: true, message: '请输入名称' }]}>
+            <Input placeholder="配置名称" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea placeholder="Description" rows={2} />
+          <Form.Item name="description" label="描述">
+            <Input.TextArea placeholder="描述" rows={2} />
           </Form.Item>
-          <Form.Item name="interface" label="Network Interface">
-            <Input placeholder="e.g., eth0, ens33" />
+          <Form.Item name="interface" label="网络接口">
+            <Input placeholder="例如：eth0, ens33" />
           </Form.Item>
-          <Form.Item name="ipAddress" label="IP Address">
+          <Form.Item name="ipAddress" label="IP地址">
             <Input placeholder="192.168.1.100" />
           </Form.Item>
-          <Form.Item name="netmask" label="Netmask">
+          <Form.Item name="netmask" label="子网掩码">
             <Input placeholder="255.255.255.0" />
           </Form.Item>
-          <Form.Item name="gateway" label="Gateway">
+          <Form.Item name="gateway" label="网关">
             <Input placeholder="192.168.1.1" />
           </Form.Item>
-          <Form.Item name="dnsServers" label="DNS Servers">
-            <Select mode="tags" placeholder="Enter DNS servers" />
+          <Form.Item name="dnsServers" label="DNS服务器">
+            <Select mode="tags" placeholder="输入DNS服务器地址" />
           </Form.Item>
-          <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-            <Switch />
+          <Form.Item name="enabled" label="启用" valuePropName="checked">
+            <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>
         </Form>
       </Modal>

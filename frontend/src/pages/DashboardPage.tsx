@@ -21,6 +21,14 @@ const severityColors: Record<string, string> = {
   info: 'green',
 };
 
+const severityLabels: Record<string, string> = {
+  critical: '严重',
+  high: '高危',
+  medium: '中危',
+  low: '低危',
+  info: '信息',
+};
+
 export const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,31 +60,35 @@ export const DashboardPage: React.FC = () => {
 
   const columns = [
     {
-      title: 'Time',
+      title: '时间',
       dataIndex: 'timestamp',
       key: 'timestamp',
+      width: 160,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Severity',
+      title: '级别',
       dataIndex: 'severity',
       key: 'severity',
+      width: 80,
       render: (severity: string) => (
-        <Tag color={severityColors[severity]}>{severity.toUpperCase()}</Tag>
+        <Tag color={severityColors[severity]}>{severityLabels[severity] || severity.toUpperCase()}</Tag>
       ),
     },
     {
-      title: 'Category',
+      title: '类别',
       dataIndex: 'category',
       key: 'category',
+      width: 100,
     },
     {
-      title: 'Source',
+      title: '来源',
       dataIndex: 'source',
       key: 'source',
+      width: 120,
     },
     {
-      title: 'Message',
+      title: '消息',
       dataIndex: 'message',
       key: 'message',
       ellipsis: true,
@@ -84,21 +96,21 @@ export const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Row gutter={[16, 16]}>
+    <div style={{ padding: 12 }}>
+      <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Total Events"
+              title="事件总数"
               value={stats.overview.total}
               prefix={<WarningOutlined />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Last 24 Hours"
+              title="最近24小时"
               value={stats.overview.last24Hours}
               prefix={<ClockCircleOutlined />}
               valueStyle={{ color: '#1890ff' }}
@@ -106,9 +118,9 @@ export const DashboardPage: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Last 7 Days"
+              title="最近7天"
               value={stats.overview.last7Days}
               prefix={<ArrowUpOutlined />}
               valueStyle={{ color: '#3f8600' }}
@@ -116,9 +128,9 @@ export const DashboardPage: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Last 30 Days"
+              title="最近30天"
               value={stats.overview.last30Days}
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#cf1322' }}
@@ -127,10 +139,10 @@ export const DashboardPage: React.FC = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+      <Row gutter={[12, 12]} style={{ marginTop: 12 }}>
         <Col xs={24} lg={12}>
-          <Card title="Severity Distribution">
-            <ResponsiveContainer width="100%" height={300}>
+          <Card title="威胁级别分布" size="small">
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie
                   data={stats.severityDistribution}
@@ -138,7 +150,7 @@ export const DashboardPage: React.FC = () => {
                   nameKey="severity"
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={90}
                   label
                 >
                   {stats.severityDistribution.map((_entry, index) => (
@@ -152,8 +164,8 @@ export const DashboardPage: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="Top Categories">
-            <ResponsiveContainer width="100%" height={300}>
+          <Card title="威胁类别分布" size="small">
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie
                   data={stats.categoryDistribution}
@@ -161,7 +173,7 @@ export const DashboardPage: React.FC = () => {
                   nameKey="category"
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={90}
                   label
                 >
                   {stats.categoryDistribution.map((_entry, index) => (
@@ -176,14 +188,15 @@ export const DashboardPage: React.FC = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+      <Row gutter={[12, 12]} style={{ marginTop: 12 }}>
         <Col xs={24}>
-          <Card title="Recent Events">
+          <Card title="最近事件" size="small">
             <Table
               columns={columns}
               dataSource={stats.recentEvents}
               rowKey="id"
               pagination={false}
+              size="small"
             />
           </Card>
         </Col>

@@ -61,7 +61,7 @@ const ChannelManagementPage: React.FC = () => {
         total: response.pagination.total,
       });
     } catch (error) {
-      message.error('Failed to fetch channels');
+      message.error('加载通道失败');
     } finally {
       setLoading(false);
     }
@@ -91,11 +91,11 @@ const ChannelManagementPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await channelService.deleteChannel(id);
-      message.success('Channel deleted successfully');
+      message.success('通道删除成功');
       fetchChannels();
       fetchStats();
     } catch (error) {
-      message.error('Failed to delete channel');
+      message.error('通道删除失败');
     }
   };
 
@@ -104,16 +104,16 @@ const ChannelManagementPage: React.FC = () => {
       const values = await form.validateFields();
       if (editingChannel) {
         await channelService.updateChannel(editingChannel.id, values);
-        message.success('Channel updated successfully');
+        message.success('通道更新成功');
       } else {
         await channelService.createChannel(values as CreateChannelData);
-        message.success('Channel created successfully');
+        message.success('通道创建成功');
       }
       setModalVisible(false);
       fetchChannels();
       fetchStats();
     } catch (error) {
-      message.error('Failed to save channel');
+      message.error('保存通道失败');
     }
   };
 
@@ -127,68 +127,69 @@ const ChannelManagementPage: React.FC = () => {
 
   const columns: ColumnsType<SyslogChannel> = [
     {
-      title: 'Channel Name',
+      title: '通道名称',
       dataIndex: 'name',
       key: 'name',
-      width: 200,
+      width: 160,
     },
     {
-      title: 'Source Identifier',
+      title: '来源标识',
       dataIndex: 'sourceIdentifier',
       key: 'sourceIdentifier',
-      width: 180,
+      width: 150,
     },
     {
-      title: 'Description',
+      title: '描述',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
-      width: 100,
+      width: 80,
       render: (enabled: boolean) => (
         <Tag color={enabled ? 'green' : 'red'}>
-          {enabled ? 'Enabled' : 'Disabled'}
+          {enabled ? '启用' : '禁用'}
         </Tag>
       ),
     },
     {
-      title: 'Event Count',
+      title: '事件数',
       dataIndex: 'eventCount',
       key: 'eventCount',
-      width: 120,
+      width: 100,
       render: (count: number) => count.toLocaleString(),
     },
     {
-      title: 'Last Event',
+      title: '最后事件',
       dataIndex: 'lastEventAt',
       key: 'lastEventAt',
-      width: 180,
+      width: 160,
       render: (date: string) =>
-        date ? new Date(date).toLocaleString() : 'Never',
+        date ? new Date(date).toLocaleString() : '从未',
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
-      width: 150,
+      width: 100,
       fixed: 'right',
       render: (_, record) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
+            size="small"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           />
           <Popconfirm
-            title="Are you sure you want to delete this channel?"
+            title="确定要删除此通道吗？"
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText="确定"
+            cancelText="取消"
           >
-            <Button type="link" danger icon={<DeleteOutlined />} />
+            <Button type="link" size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -196,30 +197,30 @@ const ChannelManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Row gutter={16} style={{ marginBottom: 24 }}>
+    <div style={{ padding: 12 }}>
+      <Row gutter={12} style={{ marginBottom: 12 }}>
         <Col span={8}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Total Channels"
+              title="通道总数"
               value={stats.totalChannels}
               valueStyle={{ color: '#1890ff' }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Active Channels"
+              title="活跃通道"
               value={stats.activeChannels}
               valueStyle={{ color: '#52c41a' }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card size="small">
             <Statistic
-              title="Total Events Received"
+              title="接收事件总数"
               value={stats.totalEvents}
               valueStyle={{ color: '#722ed1' }}
             />
@@ -228,30 +229,34 @@ const ChannelManagementPage: React.FC = () => {
       </Row>
 
       <Card
-        title="Channel Management"
+        title="通道管理"
+        size="small"
         extra={
           <Space>
             <Input.Search
-              placeholder="Search channels..."
+              placeholder="搜索通道..."
               allowClear
-              style={{ width: 250 }}
+              style={{ width: 200 }}
               onSearch={setSearchText}
+              size="small"
             />
             <Button
               icon={<ReloadOutlined />}
+              size="small"
               onClick={() => {
                 fetchChannels();
                 fetchStats();
               }}
             >
-              Refresh
+              刷新
             </Button>
             <Button
               type="primary"
               icon={<PlusOutlined />}
+              size="small"
               onClick={handleCreate}
             >
-              Add Channel
+              添加通道
             </Button>
           </Space>
         }
@@ -263,48 +268,51 @@ const ChannelManagementPage: React.FC = () => {
           loading={loading}
           pagination={pagination}
           onChange={handleTableChange}
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1000 }}
+          size="small"
         />
       </Card>
 
       <Modal
-        title={editingChannel ? 'Edit Channel' : 'Create Channel'}
+        title={editingChannel ? '编辑通道' : '创建通道'}
         open={modalVisible}
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
+        okText="保存"
+        cancelText="取消"
         width={600}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="name"
-            label="Channel Name"
-            rules={[{ required: true, message: 'Please enter channel name' }]}
+            label="通道名称"
+            rules={[{ required: true, message: '请输入通道名称' }]}
           >
-            <Input placeholder="e.g., Firewall Server" />
+            <Input placeholder="例如：防火墙服务器" />
           </Form.Item>
           <Form.Item
             name="sourceIdentifier"
-            label="Source Identifier"
+            label="来源标识"
             rules={[
-              { required: true, message: 'Please enter source identifier' },
+              { required: true, message: '请输入来源标识' },
             ]}
-            help="IP address or hostname that uniquely identifies the sender"
+            help="用于唯一标识发送方的IP地址或主机名"
           >
-            <Input placeholder="e.g., 192.168.1.100 or firewall.local" />
+            <Input placeholder="例如：192.168.1.100 或 firewall.local" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="描述">
             <Input.TextArea
               rows={3}
-              placeholder="Optional description of this channel"
+              placeholder="此通道的可选描述"
             />
           </Form.Item>
           <Form.Item
             name="enabled"
-            label="Status"
+            label="状态"
             valuePropName="checked"
             initialValue={true}
           >
-            <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
+            <Switch checkedChildren="启用" unCheckedChildren="禁用" />
           </Form.Item>
         </Form>
       </Modal>

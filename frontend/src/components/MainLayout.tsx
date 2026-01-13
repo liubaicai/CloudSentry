@@ -32,81 +32,81 @@ export const MainLayout: React.FC = () => {
     {
       key: '/',
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: '仪表盘',
     },
     {
       key: 'threat-management',
       icon: <WarningOutlined />,
-      label: 'Threat Management',
+      label: '威胁管理',
       children: [
         {
           key: '/threats',
           icon: <WarningOutlined />,
-          label: 'Threat List',
+          label: '威胁列表',
         },
         {
           key: '/analysis',
           icon: <BarChartOutlined />,
-          label: 'Threat Analysis',
+          label: '威胁分析',
         },
       ],
     },
     {
       key: 'integration',
       icon: <SendOutlined />,
-      label: 'Integration',
+      label: '集成管理',
       children: [
         {
           key: '/channels',
           icon: <GlobalOutlined />,
-          label: 'Channel Management',
+          label: '通道管理',
         },
         {
           key: '/field-mappings',
           icon: <SettingOutlined />,
-          label: 'Field Mapping',
+          label: '字段映射',
         },
         {
           key: '/alert-forwarding',
           icon: <SendOutlined />,
-          label: 'Alert Forwarding',
+          label: '告警转发',
         },
       ],
     },
     {
       key: '/users',
       icon: <TeamOutlined />,
-      label: 'User Management',
+      label: '用户管理',
     },
     {
       key: 'system',
       icon: <SettingOutlined />,
-      label: 'System Management',
+      label: '系统管理',
       children: [
         {
           key: '/settings',
           icon: <SettingOutlined />,
-          label: 'System Settings',
+          label: '系统设置',
         },
         {
           key: '/network',
           icon: <GlobalOutlined />,
-          label: 'Network Config',
+          label: '网络配置',
         },
         {
           key: '/operations',
           icon: <ToolOutlined />,
-          label: 'Operations Config',
+          label: '运维配置',
         },
         {
           key: '/security',
           icon: <SafetyOutlined />,
-          label: 'Security Config',
+          label: '安全配置',
         },
         {
           key: '/data-management',
           icon: <DatabaseOutlined />,
-          label: 'Data Management',
+          label: '数据管理',
         },
       ],
     },
@@ -116,7 +116,7 @@ export const MainLayout: React.FC = () => {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: 'Logout',
+      label: '退出登录',
       onClick: () => {
         logout();
         navigate('/login');
@@ -126,17 +126,20 @@ export const MainLayout: React.FC = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider trigger={null} collapsible collapsed={collapsed} width={200}>
         <div style={{ 
-          height: 64, 
+          height: 48, 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
           color: 'white',
-          fontSize: 20,
-          fontWeight: 'bold'
+          fontSize: 16,
+          fontWeight: 'bold',
+          background: 'rgba(255,255,255,0.1)',
+          margin: 8,
+          borderRadius: 4,
         }}>
-          {collapsed ? 'CS' : 'CloudSentry'}
+          {collapsed ? '云哨' : '云哨安全平台'}
         </div>
         <Menu
           theme="dark"
@@ -144,31 +147,35 @@ export const MainLayout: React.FC = () => {
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
+          style={{ fontSize: 13 }}
         />
       </Sider>
       <Layout>
         <Header style={{ 
-          padding: '0 24px', 
+          padding: '0 16px', 
           background: '#fff', 
           display: 'flex', 
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          height: 48,
+          lineHeight: '48px',
+          borderBottom: '1px solid #f0f0f0',
         }}>
           <div>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: () => setCollapsed(!collapsed),
-              style: { fontSize: 18, cursor: 'pointer' }
+              style: { fontSize: 16, cursor: 'pointer' }
             })}
           </div>
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Avatar icon={<UserOutlined />} />
-              <Text>{user?.username}</Text>
+            <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Avatar size="small" icon={<UserOutlined />} />
+              <Text style={{ fontSize: 13 }}>{user?.username}</Text>
             </div>
           </Dropdown>
         </Header>
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+        <Content style={{ margin: '12px', overflow: 'initial' }}>
           <div style={{ padding: 0, minHeight: 360 }}>
             <Outlet />
           </div>
