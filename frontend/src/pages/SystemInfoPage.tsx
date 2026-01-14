@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Progress, Table, Spin, Typography, Tag, Button, Tooltip } from 'antd';
+import { Card, Row, Col, Statistic, Progress, Table, Spin, Typography, Tag, Button, Tooltip, message } from 'antd';
 import {
   DesktopOutlined,
   ClockCircleOutlined,
@@ -55,6 +55,7 @@ export const SystemInfoPage: React.FC = () => {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadSystemInfo = async (isRefresh = false) => {
     try {
@@ -65,8 +66,14 @@ export const SystemInfoPage: React.FC = () => {
       }
       const data = await systemInfoService.getSystemInfo();
       setSystemInfo(data);
-    } catch (error) {
-      console.error('Failed to load system info:', error);
+      setError(null);
+    } catch (err) {
+      console.error('Failed to load system info:', err);
+      if (!isRefresh) {
+        setError('无法加载系统信息');
+      } else {
+        message.error('刷新系统信息失败');
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -92,7 +99,16 @@ export const SystemInfoPage: React.FC = () => {
     );
   }
 
-  if (!systemInfo) return null;
+  if (error || !systemInfo) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', gap: 16 }}>
+        <Text style={{ color: '#ef4444', fontSize: 16 }}>{error || '无法加载系统信息'}</Text>
+        <Button type="primary" onClick={() => loadSystemInfo()} icon={<ReloadOutlined />}>
+          重新加载
+        </Button>
+      </div>
+    );
+  }
 
   const networkColumns = [
     {

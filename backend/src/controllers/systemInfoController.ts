@@ -38,6 +38,9 @@ interface SystemInfo {
   timestamp: string;
 }
 
+// Precision multiplier for percentage calculation (2 decimal places)
+const PERCENTAGE_PRECISION = 100;
+
 function getCpuUsage(): Promise<number> {
   return new Promise((resolve) => {
     const cpus = os.cpus();
@@ -110,7 +113,7 @@ export const getSystemInfo = async (req: AuthRequest, res: Response): Promise<vo
         total: totalMemory,
         used: usedMemory,
         free: freeMemory,
-        usagePercent: Math.round((usedMemory / totalMemory) * 10000) / 100,
+        usagePercent: Math.round((usedMemory / totalMemory) * PERCENTAGE_PRECISION * 100) / PERCENTAGE_PRECISION,
       },
       network: networkInfo,
       timestamp: new Date().toISOString(),
