@@ -88,7 +88,11 @@ func (f *HTTPForwarder) send(ctx context.Context, data []byte) error {
 	defer resp.Body.Close()
 
 	// Read response body for error messages
-	body, _ := io.ReadAll(resp.Body)
+	body, readErr := io.ReadAll(resp.Body)
+	if readErr != nil {
+		log.Printf("Warning: failed to read response body: %v", readErr)
+		body = []byte("<unreadable>")
+	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("backend returned status %d: %s", resp.StatusCode, string(body))

@@ -83,13 +83,17 @@ func (p *Parser) Parse(raw []byte, remoteAddr string) (*SyslogMessage, error) {
 	// Try RFC 5424 first (more modern format)
 	msg, err := p.rfc5424Parser.Parse(raw)
 	if err == nil && msg != nil {
-		return p.convertRFC5424(msg.(*rfc5424.SyslogMessage), rawStr, remoteAddr), nil
+		if syslogMsg, ok := msg.(*rfc5424.SyslogMessage); ok {
+			return p.convertRFC5424(syslogMsg, rawStr, remoteAddr), nil
+		}
 	}
 
 	// Fall back to RFC 3164
 	msg, err = p.rfc3164Parser.Parse(raw)
 	if err == nil && msg != nil {
-		return p.convertRFC3164(msg.(*rfc3164.SyslogMessage), rawStr, remoteAddr), nil
+		if syslogMsg, ok := msg.(*rfc3164.SyslogMessage); ok {
+			return p.convertRFC3164(syslogMsg, rawStr, remoteAddr), nil
+		}
 	}
 
 	// If both parsers fail, return a basic message

@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"context"
+	"errors"
 	"io"
 	"log"
 	"net"
@@ -115,7 +116,8 @@ func (s *TCPServer) handleConnection(ctx context.Context, conn net.Conn) {
 				if err == io.EOF {
 					return
 				}
-				if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+				var netErr net.Error
+				if errors.As(err, &netErr) && netErr.Timeout() {
 					continue
 				}
 				log.Printf("TCP read error: %v", err)

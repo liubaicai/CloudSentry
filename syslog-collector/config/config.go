@@ -2,6 +2,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -130,9 +131,34 @@ func (c *Config) applyEnvOverrides() {
 		c.Forwarder.BackendURL = url
 	}
 	if port := os.Getenv("UDP_PORT"); port != "" {
-		// Parse and set UDP port
+		if p, err := parsePort(port); err == nil {
+			c.Server.UDP.Port = p
+		}
 	}
 	if port := os.Getenv("TCP_PORT"); port != "" {
-		// Parse and set TCP port
+		if p, err := parsePort(port); err == nil {
+			c.Server.TCP.Port = p
+		}
 	}
+	if enabled := os.Getenv("UDP_ENABLED"); enabled != "" {
+		c.Server.UDP.Enabled = enabled == "true" || enabled == "1"
+	}
+	if enabled := os.Getenv("TCP_ENABLED"); enabled != "" {
+		c.Server.TCP.Enabled = enabled == "true" || enabled == "1"
+	}
+}
+
+// parsePort parses a port string to an integer.
+func parsePort(s string) (int, error) {
+	port := 0
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return 0, fmt.Errorf("invalid port: %s", s)
+		}
+		port = port*10 + int(c-'0')
+	}
+	if port < 1 || port > 65535 {
+		return 0, fmt.Errorf("port out of range: %d", port)
+	}
+	return port, nil
 }

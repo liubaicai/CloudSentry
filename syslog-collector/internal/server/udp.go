@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	"github.com/liubaicai/CloudSentry/syslog-collector/internal/parser"
 )
@@ -54,6 +55,8 @@ func (s *UDPServer) Start(ctx context.Context) error {
 // listen handles incoming UDP messages.
 func (s *UDPServer) listen(ctx context.Context) {
 	buffer := make([]byte, s.bufferSize)
+	errorCount := 0
+	maxBackoff := 5 * time.Second
 
 	for {
 		select {
@@ -63,8 +66,16 @@ func (s *UDPServer) listen(ctx context.Context) {
 			n, remoteAddr, err := s.conn.ReadFromUDP(buffer)
 			if err != nil {
 				log.Printf("UDP read error: %v", err)
+				// Add backoff on persistent errors to prevent CPU spinning
+				errorCount++
+				backoff := time.Duration(errorCount*100) * time.Millisecond
+				if backoff > maxBackoff {
+					backoff = maxBackoff
+				}
+				time.Sleep(backoff)
 				continue
 			}
+			errorCount = 0 // Reset on successful read
 
 			// Parse message in goroutine to avoid blocking
 			data := make([]byte, n)

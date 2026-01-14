@@ -23,6 +23,9 @@ type Queue struct {
 	mu       sync.Mutex
 
 	stopCh chan struct{}
+
+	// Semaphore to limit concurrent flush goroutines
+	flushSem chan struct{}
 }
 
 // NewQueue creates a new buffer queue.
@@ -34,6 +37,7 @@ func NewQueue(maxSize, flushSize int, flushInterval time.Duration, handler Flush
 		handler:       handler,
 		messages:      make([]*parser.SyslogMessage, 0, flushSize),
 		stopCh:        make(chan struct{}),
+		flushSem:      make(chan struct{}, 10), // Limit to 10 concurrent flush operations
 	}
 }
 
@@ -99,8 +103,18 @@ func (q *Queue) flushLocked() {
 	// Clear buffer
 	q.messages = q.messages[:0]
 
-	// Call handler in goroutine to avoid blocking
-	go q.handler(messages)
+	// Use semaphore to limit concurrent flush goroutines
+	select {
+	case q.flushSem <- struct{}{}:
+		go func() {
+			defer func() { <-q.flushSem }()
+			q.handler(messages)
+		}()
+	default:
+		// If all goroutine slots are busy, run synchronously
+		// This provides backpressure when the forwarder can't keep up
+		q.handler(messages)
+	}
 }
 
 // Stop stops the queue.
