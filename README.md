@@ -201,21 +201,25 @@ cd CloudSentry
 # 构建单体镜像
 docker build -f Dockerfile.standalone -t cloudsentry-standalone .
 
-# 运行容器
+# 运行容器（推荐：设置自定义密钥）
 docker run -d \
   -p 80:80 \
   -p 514:514/tcp \
   -p 514:514/udp \
   -v cloudsentry-data:/var/lib/postgresql/14/main \
-  -e JWT_SECRET="your-production-secret-key" \
+  -e JWT_SECRET="$(openssl rand -base64 48)" \
+  -e POSTGRES_PASSWORD="$(openssl rand -base64 24)" \
   --name cloudsentry \
   cloudsentry-standalone
 ```
+
+> ⚠️ **安全提示**: 如果不设置 `JWT_SECRET` 和 `POSTGRES_PASSWORD`，系统将自动生成随机密钥。对于生产环境，建议手动设置并妥善保管。
 
 单镜像部署的优点：
 - 📦 单一镜像，简化部署和管理
 - 💾 数据持久化通过 Docker volume 实现
 - 🔧 无需额外配置数据库连接
+- 🔐 自动生成安全密钥（如未手动设置）
 - 🚀 适合快速部署和测试环境
 
 ### Linux 一键安装
@@ -238,6 +242,7 @@ sudo bash install-linux.sh
 - 安装并配置 Caddy Web 服务器
 - 安装 CloudSentry 应用
 - 创建系统服务
+- 🔐 自动生成安全的随机密码和 JWT 密钥
 
 ### Windows 一键安装
 
@@ -260,6 +265,7 @@ powershell -ExecutionPolicy Bypass -File install-windows.ps1
 - 安装 CloudSentry 应用
 - 创建 Windows 服务
 - 配置防火墙规则
+- 🔐 自动生成安全的随机密码和 JWT 密钥
 
 ### 手动安装
 

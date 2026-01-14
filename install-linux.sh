@@ -24,13 +24,19 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Generate random secrets for security
+generate_random_string() {
+    local length=${1:-32}
+    tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$length"
+}
+
 # Configuration
 CLOUDSENTRY_USER="cloudsentry"
 CLOUDSENTRY_DIR="/opt/cloudsentry"
 POSTGRES_USER="cloudsentry"
-POSTGRES_PASSWORD="cloudsentry"
+POSTGRES_PASSWORD="$(generate_random_string 24)"
 POSTGRES_DB="cloudsentry"
-JWT_SECRET="your-super-secret-jwt-key-change-in-production"
+JWT_SECRET="$(generate_random_string 64)"
 BACKEND_PORT=3000
 
 # Function to print colored output

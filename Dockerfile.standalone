@@ -6,11 +6,20 @@
 #
 # Usage:
 #   docker build -f Dockerfile.standalone -t cloudsentry-standalone .
-#   docker run -d -p 80:80 -p 514:514/tcp -p 514:514/udp --name cloudsentry cloudsentry-standalone
+#   docker run -d -p 80:80 -p 514:514/tcp -p 514:514/udp \
+#     -e POSTGRES_PASSWORD="your-secure-password" \
+#     -e JWT_SECRET="your-secure-jwt-secret-at-least-32-chars" \
+#     -v cloudsentry-data:/var/lib/postgresql/14/main \
+#     --name cloudsentry cloudsentry-standalone
+#
+# IMPORTANT SECURITY NOTES:
+#   - Always set JWT_SECRET to a secure random string (at least 32 characters)
+#   - Always set POSTGRES_PASSWORD to a secure password in production
+#   - Use volumes for data persistence
 #
 # Environment variables:
-#   JWT_SECRET - JWT secret key (required in production)
-#   POSTGRES_PASSWORD - PostgreSQL password (default: cloudsentry)
+#   JWT_SECRET - JWT secret key (REQUIRED - change from default!)
+#   POSTGRES_PASSWORD - PostgreSQL password (REQUIRED - change from default!)
 #   PORT - Backend port (default: 3000)
 
 # =============================================================================
@@ -175,6 +184,33 @@ EOF
 COPY <<'EOF' /app/init.sh
 #!/bin/bash
 set -e
+
+# Function to generate random string
+generate_random() {
+    tr -dc 'A-Za-z0-9' < /dev/urandom | head -c ${1:-32}
+}
+
+# Security warning and auto-generation for default secrets
+if [ "$JWT_SECRET" = "your-super-secret-jwt-key-change-in-production" ] || [ -z "$JWT_SECRET" ]; then
+    echo "================================================"
+    echo "WARNING: JWT_SECRET is not set or using default!"
+    echo "Generating a random JWT_SECRET for this session."
+    echo "For production, set JWT_SECRET environment variable."
+    echo "================================================"
+    export JWT_SECRET=$(generate_random 64)
+fi
+
+if [ "$POSTGRES_PASSWORD" = "cloudsentry" ] || [ -z "$POSTGRES_PASSWORD" ]; then
+    echo "================================================"
+    echo "WARNING: POSTGRES_PASSWORD is using default value!"
+    echo "Generating a random password for this session."
+    echo "For production, set POSTGRES_PASSWORD environment variable."
+    echo "================================================"
+    export POSTGRES_PASSWORD=$(generate_random 24)
+fi
+
+# Update DATABASE_URL with the actual password
+export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"
 
 # Initialize PostgreSQL if not already done
 if [ ! -f /var/lib/postgresql/14/main/PG_VERSION ]; then

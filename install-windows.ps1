@@ -21,12 +21,28 @@
 param(
     [string]$InstallDir = "C:\CloudSentry",
     [string]$PostgresUser = "cloudsentry",
-    [string]$PostgresPassword = "cloudsentry",
+    [string]$PostgresPassword = "",
     [string]$PostgresDb = "cloudsentry",
-    [string]$JwtSecret = "your-super-secret-jwt-key-change-in-production",
+    [string]$JwtSecret = "",
     [int]$BackendPort = 3000,
     [int]$FrontendPort = 80
 )
+
+# Generate random secrets if not provided
+function New-RandomString {
+    param([int]$Length = 32)
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    $result = -join ((1..$Length) | ForEach-Object { $chars[(Get-Random -Maximum $chars.Length)] })
+    return $result
+}
+
+# Generate random secrets if not provided
+if ([string]::IsNullOrEmpty($PostgresPassword)) {
+    $PostgresPassword = New-RandomString -Length 24
+}
+if ([string]::IsNullOrEmpty($JwtSecret)) {
+    $JwtSecret = New-RandomString -Length 64
+}
 
 # Set strict mode
 Set-StrictMode -Version Latest
