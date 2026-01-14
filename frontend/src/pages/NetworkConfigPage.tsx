@@ -249,7 +249,7 @@ export const NetworkConfigPage: React.FC = () => {
             <Table 
               columns={systemInterfaceColumns} 
               dataSource={systemInterfaces} 
-              rowKey={(record) => `${record.name}-${record.ipAddress}`} 
+              rowKey={(record) => `${record.name}-${record.ipAddress}-${record.mac}`} 
               loading={systemInterfacesLoading} 
               size="small" 
               pagination={false}
