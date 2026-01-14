@@ -3,8 +3,10 @@ import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { AuthProvider } from './contexts/AuthContext';
 import { PrivateRoute } from './components/PrivateRoute';
+import { SetupRoute } from './components/SetupRoute';
 import { MainLayout } from './components/MainLayout';
 import { LoginPage } from './pages/LoginPage';
+import { SetupPage } from './pages/SetupPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ThreatListPage } from './pages/ThreatListPage';
 import { ThreatDetailPage } from './pages/ThreatDetailPage';
@@ -98,6 +100,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/setup" element={<SetupRoute><SetupPage /></SetupRoute>} />
             <Route path="/login" element={<LoginPage />} />
             <Route
               path="/"

@@ -8,7 +8,7 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, initialized } = useAuth();
 
   if (loading) {
     return (
@@ -16,6 +16,11 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
         <Spin size="large" />
       </div>
     );
+  }
+
+  // If system is not initialized, redirect to setup
+  if (!initialized) {
+    return <Navigate to="/setup" />;
   }
 
   return user ? <>{children}</> : <Navigate to="/login" />;

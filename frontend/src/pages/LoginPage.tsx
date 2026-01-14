@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Card, message, Typography } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Card, message, Typography, Spin } from 'antd';
 import { UserOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,7 +9,18 @@ const { Title, Text } = Typography;
 export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loading: authLoading, initialized, user } = useAuth();
+
+  // Redirect to setup if not initialized, or to home if already logged in
+  useEffect(() => {
+    if (!authLoading) {
+      if (!initialized) {
+        navigate('/setup');
+      } else if (user) {
+        navigate('/');
+      }
+    }
+  }, [authLoading, initialized, user, navigate]);
 
   const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
@@ -17,12 +28,23 @@ export const LoginPage: React.FC = () => {
       await login(values.username, values.password);
       message.success('登录成功');
       navigate('/');
-    } catch (error: any) {
-      message.error(error.response?.data?.error || '登录失败');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as { response?: { data?: { error?: string } } }).response?.data?.error 
+        : '登录失败';
+      message.error(errorMessage || '登录失败');
     } finally {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div style={{ 

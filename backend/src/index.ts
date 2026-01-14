@@ -20,6 +20,7 @@ import channelsRoutes from './routes/channels';
 import fieldMappingsRoutes from './routes/fieldMappings';
 import openaiConfigRoutes from './routes/openaiConfig';
 import systemInfoRoutes from './routes/systemInfo';
+import setupRoutes from './routes/setup';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
+app.use('/api/setup', setupRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/syslog', syslogRoutes);
