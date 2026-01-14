@@ -82,3 +82,34 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+export interface SystemInfo {
+  os: {
+    platform: string;
+    type: string;
+    release: string;
+    arch: string;
+    hostname: string;
+  };
+  uptime: number;
+  loadAverage: number[];
+  cpu: {
+    model: string;
+    speed: number;
+    cores: number;
+    usage: number;
+  };
+  memory: {
+    total: number;
+    used: number;
+    free: number;
+    usagePercent: number;
+  };
+  network: Array<{
+    name: string;
+    address: string;
+    mac: string;
+    family: string;
+  }>;
+  timestamp: string;
+}

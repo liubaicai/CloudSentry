@@ -19,6 +19,7 @@ import dataManagementRoutes from './routes/dataManagement';
 import channelsRoutes from './routes/channels';
 import fieldMappingsRoutes from './routes/fieldMappings';
 import openaiConfigRoutes from './routes/openaiConfig';
+import systemInfoRoutes from './routes/systemInfo';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use('/api/data-management', dataManagementRoutes);
 app.use('/api/channels', channelsRoutes);
 app.use('/api/field-mappings', fieldMappingsRoutes);
 app.use('/api/openai-config', openaiConfigRoutes);
+app.use('/api/system-info', systemInfoRoutes);
 
 // Error handling
 app.use(errorHandler);
