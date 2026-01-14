@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
       <Card style={{ width: 380, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} bordered={false}>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <SafetyOutlined style={{ fontSize: 40, color: '#1890ff', marginBottom: 8 }} />
-          <Title level={3} style={{ marginBottom: 4 }}>云哨安全平台</Title>
+          <Title level={3} style={{ marginBottom: 4 }}>云卫安全平台</Title>
           <Text type="secondary">安全事件管理系统</Text>
         </div>
         <Form

@@ -73,8 +73,8 @@ export const SettingsPage: React.FC = () => {
       });
       
       brandingForm.setFieldsValue({
-        siteName: data.settings?.siteName || '云哨安全平台',
-        siteShortName: data.settings?.siteShortName || '云哨',
+        siteName: data.settings?.siteName || '云卫安全平台',
+        siteShortName: data.settings?.siteShortName || '云卫',
         siteDescription: data.settings?.siteDescription || '企业级安全威胁监控与分析平台',
         logoUrl: data.settings?.logoUrl || '',
         faviconUrl: data.settings?.faviconUrl || '',
@@ -457,12 +457,12 @@ export const SettingsPage: React.FC = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="平台名称" name="siteName">
-                    <Input placeholder="云哨安全平台" />
+                    <Input placeholder="云卫安全平台" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="平台简称" name="siteShortName">
-                    <Input placeholder="云哨" />
+                    <Input placeholder="云卫" />
                   </Form.Item>
                 </Col>
               </Row>
