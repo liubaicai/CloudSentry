@@ -2,6 +2,19 @@ import { Response } from 'express';
 import { getParamAsString } from '../utils/controllerHelpers';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
+import { logger } from '../utils/logger';
+
+interface EventWhereInput {
+  severity?: string;
+  category?: string;
+  status?: string;
+  OR?: Array<{
+    message?: { contains: string; mode: string };
+    source?: { contains: string; mode: string };
+    destination?: { contains: string; mode: string };
+  }>;
+  timestamp?: { gte?: Date; lte?: Date };
+}
 
 export const getEvents = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -18,24 +31,24 @@ export const getEvents = async (req: AuthRequest, res: Response): Promise<void> 
 
     const skip = (Number(page) - 1) * Number(limit);
 
-    const where: any = {};
+    const where: EventWhereInput = {};
 
-    if (severity) where.severity = severity;
-    if (category) where.category = category;
-    if (status) where.status = status;
+    if (severity) where.severity = String(severity);
+    if (category) where.category = String(category);
+    if (status) where.status = String(status);
 
     if (search) {
       where.OR = [
-        { message: { contains: search as string, mode: 'insensitive' } },
-        { source: { contains: search as string, mode: 'insensitive' } },
-        { destination: { contains: search as string, mode: 'insensitive' } },
+        { message: { contains: String(search), mode: 'insensitive' } },
+        { source: { contains: String(search), mode: 'insensitive' } },
+        { destination: { contains: String(search), mode: 'insensitive' } },
       ];
     }
 
     if (startDate || endDate) {
       where.timestamp = {};
-      if (startDate) where.timestamp.gte = new Date(startDate as string);
-      if (endDate) where.timestamp.lte = new Date(endDate as string);
+      if (startDate) where.timestamp.gte = new Date(String(startDate));
+      if (endDate) where.timestamp.lte = new Date(String(endDate));
     }
 
     const [events, total] = await Promise.all([
@@ -58,6 +71,7 @@ export const getEvents = async (req: AuthRequest, res: Response): Promise<void> 
       },
     });
   } catch (error) {
+    logger.error('Failed to fetch events:', error);
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 };
@@ -77,6 +91,7 @@ export const getEventById = async (req: AuthRequest, res: Response): Promise<voi
 
     res.json({ event });
   } catch (error) {
+    logger.error('Failed to fetch event:', error);
     res.status(500).json({ error: 'Failed to fetch event' });
   }
 };
@@ -95,8 +110,10 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
       },
     });
 
+    logger.info(`Event updated: ${id}`);
     res.json({ message: 'Event updated', event });
   } catch (error) {
+    logger.error('Failed to update event:', error);
     res.status(500).json({ error: 'Failed to update event' });
   }
 };
@@ -109,8 +126,10 @@ export const deleteEvent = async (req: AuthRequest, res: Response): Promise<void
       where: { id },
     });
 
+    logger.info(`Event deleted: ${id}`);
     res.json({ message: 'Event deleted' });
   } catch (error) {
+    logger.error('Failed to delete event:', error);
     res.status(500).json({ error: 'Failed to delete event' });
   }
 };

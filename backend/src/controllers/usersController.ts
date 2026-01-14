@@ -1,11 +1,9 @@
 import { Response } from 'express';
 import { getParamAsString } from '../utils/controllerHelpers';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/database';
 import bcrypt from 'bcrypt';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
-
-const prisma = new PrismaClient();
 
 export const usersController = {
   // Get all users
