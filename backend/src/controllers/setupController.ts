@@ -101,13 +101,16 @@ export const completeSetup = async (req: Request, res: Response): Promise<void> 
         });
       }
 
-      for (const setting of settingsToCreate) {
-        await prisma.systemSettings.upsert({
-          where: { key: setting.key },
-          update: { value: setting.value },
-          create: setting,
-        });
-      }
+      // Use Promise.all for concurrent database operations
+      await Promise.all(
+        settingsToCreate.map((setting) =>
+          prisma.systemSettings.upsert({
+            where: { key: setting.key },
+            update: { value: setting.value },
+            create: setting,
+          })
+        )
+      );
     }
 
     // Generate token for auto-login after setup
