@@ -1,11 +1,11 @@
 import * as jwt from 'jsonwebtoken';
-import { logger } from './logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-if (!JWT_SECRET) {
-  logger.error('JWT_SECRET environment variable is not set. Authentication will fail.');
+// Validate JWT_SECRET at module load time
+if (!JWT_SECRET && process.env.NODE_ENV !== 'test') {
+  throw new Error('JWT_SECRET environment variable is required for authentication');
 }
 
 export interface TokenPayload {

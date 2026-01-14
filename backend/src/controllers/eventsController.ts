@@ -4,14 +4,21 @@ import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 import { logger } from '../utils/logger';
 
+type QueryMode = 'insensitive' | 'default';
+
+interface StringFilter {
+  contains: string;
+  mode: QueryMode;
+}
+
 interface EventWhereInput {
   severity?: string;
   category?: string;
   status?: string;
   OR?: Array<{
-    message?: { contains: string; mode: string };
-    source?: { contains: string; mode: string };
-    destination?: { contains: string; mode: string };
+    message?: StringFilter;
+    source?: StringFilter;
+    destination?: StringFilter;
   }>;
   timestamp?: { gte?: Date; lte?: Date };
 }
