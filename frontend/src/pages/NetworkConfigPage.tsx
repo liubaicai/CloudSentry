@@ -1,18 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
+import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select, Tag, Tooltip, Row, Col } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, GlobalOutlined, ReloadOutlined, CloudServerOutlined, ImportOutlined } from '@ant-design/icons';
 import { configService } from '../services/configService';
+
+interface SystemNetworkInterface {
+  name: string;
+  ipAddress: string;
+  netmask: string;
+  mac: string;
+  family: string;
+  internal: boolean;
+  gateway: string | null;
+  dnsServers: string[];
+}
 
 export const NetworkConfigPage: React.FC = () => {
   const [configs, setConfigs] = useState<any[]>([]);
+  const [systemInterfaces, setSystemInterfaces] = useState<SystemNetworkInterface[]>([]);
   const [loading, setLoading] = useState(false);
+  const [systemInterfacesLoading, setSystemInterfacesLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingConfig, setEditingConfig] = useState<any>(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
     loadConfigs();
+    loadSystemInterfaces();
   }, []);
+
+  const loadSystemInterfaces = async () => {
+    setSystemInterfacesLoading(true);
+    try {
+      const data = await configService.network.getSystemInterfaces();
+      setSystemInterfaces(data);
+    } catch {
+      message.error('加载系统网卡信息失败');
+    } finally {
+      setSystemInterfacesLoading(false);
+    }
+  };
 
   const loadConfigs = async () => {
     setLoading(true);
@@ -30,6 +56,22 @@ export const NetworkConfigPage: React.FC = () => {
     setEditingConfig(null);
     form.resetFields();
     form.setFieldsValue({ enabled: true });
+    setModalVisible(true);
+  };
+
+  const handleImportSystemInterface = (iface: SystemNetworkInterface) => {
+    setEditingConfig(null);
+    form.resetFields();
+    form.setFieldsValue({
+      name: `${iface.name}-config`,
+      interface: iface.name,
+      ipAddress: iface.ipAddress,
+      netmask: iface.netmask,
+      gateway: iface.gateway || '',
+      dnsServers: iface.dnsServers,
+      enabled: true,
+      description: `导入自系统网卡 ${iface.name} (MAC: ${iface.mac})`,
+    });
     setModalVisible(true);
   };
 
@@ -125,19 +167,109 @@ export const NetworkConfigPage: React.FC = () => {
     },
   ];
 
+  const systemInterfaceColumns = [
+    {
+      title: '网卡名称',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text: string, record: SystemNetworkInterface) => (
+        <Space>
+          <CloudServerOutlined />
+          {text}
+          {record.internal && <Tag color="default">内部</Tag>}
+        </Space>
+      ),
+    },
+    {
+      title: 'IP地址',
+      dataIndex: 'ipAddress',
+      key: 'ipAddress',
+    },
+    {
+      title: '子网掩码',
+      dataIndex: 'netmask',
+      key: 'netmask',
+    },
+    {
+      title: 'MAC地址',
+      dataIndex: 'mac',
+      key: 'mac',
+      render: (text: string) => <span style={{ fontFamily: 'monospace', fontSize: 12 }}>{text}</span>,
+    },
+    {
+      title: '网关',
+      dataIndex: 'gateway',
+      key: 'gateway',
+      render: (text: string | null) => text || '-',
+    },
+    {
+      title: 'DNS服务器',
+      dataIndex: 'dnsServers',
+      key: 'dnsServers',
+      render: (servers: string[]) => servers.length > 0 ? servers.join(', ') : '-',
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 100,
+      render: (_: any, record: SystemNetworkInterface) => (
+        <Tooltip title="导入为配置">
+          <Button 
+            type="link" 
+            size="small" 
+            icon={<ImportOutlined />} 
+            onClick={() => handleImportSystemInterface(record)}
+            disabled={record.internal}
+          >
+            导入
+          </Button>
+        </Tooltip>
+      ),
+    },
+  ];
+
   return (
     <div style={{ padding: 12 }}>
-      <Card
-        title="网络配置"
-        size="small"
-        extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
-            添加配置
-          </Button>
-        }
-      >
-        <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} size="small" />
-      </Card>
+      <Row gutter={[12, 12]}>
+        <Col span={24}>
+          <Card
+            title={
+              <Space>
+                <CloudServerOutlined />
+                系统网卡信息
+              </Space>
+            }
+            size="small"
+            extra={
+              <Button icon={<ReloadOutlined />} onClick={loadSystemInterfaces} loading={systemInterfacesLoading} size="small">
+                刷新
+              </Button>
+            }
+          >
+            <Table 
+              columns={systemInterfaceColumns} 
+              dataSource={systemInterfaces} 
+              rowKey={(record) => `${record.name}-${record.ipAddress}`} 
+              loading={systemInterfacesLoading} 
+              size="small" 
+              pagination={false}
+            />
+          </Card>
+        </Col>
+        <Col span={24}>
+          <Card
+            title="网络配置"
+            size="small"
+            extra={
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
+                添加配置
+              </Button>
+            }
+          >
+            <Table columns={columns} dataSource={configs} rowKey="id" loading={loading} size="small" />
+          </Card>
+        </Col>
+      </Row>
 
       <Modal
         title={editingConfig ? '编辑网络配置' : '创建网络配置'}

@@ -219,12 +219,13 @@ export const ThreatDetailPage: React.FC = () => {
           <Card title="元数据" size="small">
                 <pre
                   style={{
-                    background: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
+                    background: '#0F172A',
+                    border: '1px solid #334155',
                     padding: 12,
                     borderRadius: 4,
                     overflow: 'auto',
                     margin: 0,
+                    color: '#E2E8F0',
                   }}
                 >
               {JSON.stringify(event.metadata, null, 2)}
@@ -237,7 +238,7 @@ export const ThreatDetailPage: React.FC = () => {
             value={event.rawLog}
             readOnly
             autoSize={{ minRows: 4, maxRows: 12 }}
-            style={{ fontFamily: 'monospace', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
+            style={{ fontFamily: 'monospace', background: '#0F172A', border: '1px solid #334155', color: '#E2E8F0' }}
           />
         </Card>
       </Space>

@@ -30,13 +30,13 @@ export const LoginPage: React.FC = () => {
       justifyContent: 'center', 
       alignItems: 'center', 
       height: '100vh', 
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)'
     }}>
-      <Card style={{ width: 380, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} bordered={false}>
+      <Card style={{ width: 380, boxShadow: '0 4px 12px rgba(0,0,0,0.3)', background: '#1E293B', border: '1px solid #334155' }} bordered={false}>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
-          <SafetyOutlined style={{ fontSize: 40, color: '#1890ff', marginBottom: 8 }} />
-          <Title level={3} style={{ marginBottom: 4 }}>云卫安全平台</Title>
-          <Text type="secondary">安全事件管理系统</Text>
+          <SafetyOutlined style={{ fontSize: 40, color: '#60A5FA', marginBottom: 8 }} />
+          <Title level={3} style={{ marginBottom: 4, color: '#F8FAFC' }}>云卫安全平台</Title>
+          <Text style={{ color: '#94A3B8' }}>安全事件管理系统</Text>
         </div>
         <Form
           name="login"

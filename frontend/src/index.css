@@ -1,18 +1,19 @@
 /*
-  Global styling: Light geek (cool neutrals, flat surfaces).
+  Global styling: Dark theme (dark neutrals, flat surfaces).
   Constraints: no large colorful backgrounds/gradients, no glow, minimal motion.
 */
 
 :root {
-  --cs-bg-layout: #f8fafc;
-  --cs-bg-container: #ffffff;
-  --cs-text: #334155;
-  --cs-text-heading: #0f172a;
-  --cs-text-secondary: #64748b;
-  --cs-border: #e2e8f0;
-  --cs-border-subtle: #f1f5f9;
-  --cs-primary: #334155;
-  --cs-info: #0284c7;
+  --cs-bg-layout: #0f172a;
+  --cs-bg-container: #1e293b;
+  --cs-bg-elevated: #334155;
+  --cs-text: #e2e8f0;
+  --cs-text-heading: #f8fafc;
+  --cs-text-secondary: #94a3b8;
+  --cs-border: #334155;
+  --cs-border-subtle: #1e293b;
+  --cs-primary: #60a5fa;
+  --cs-info: #38bdf8;
 }
 
 body {
@@ -35,7 +36,7 @@ code {
   min-height: 100vh;
 }
 
-/* Subtle, non-gradient scrollbar */
+/* Subtle, dark scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -46,12 +47,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.18);
+  background: rgba(148, 163, 184, 0.25);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.28);
+  background: rgba(148, 163, 184, 0.4);
 }
 
 /* Flat cards: border defines structure, avoid hover “lift” */
@@ -65,13 +66,13 @@ code {
   box-shadow: none;
 }
 
-/* Table head: flat, no gradient */
+/* Table head: flat, dark background */
 .ant-table-thead > tr > th {
   background: var(--cs-bg-layout) !important;
   font-weight: 600;
 }
 
-/* Primary button: remove gradients/glow; keep crisp solid */
+/* Primary button: solid dark style */
 .ant-btn-primary {
   background: var(--cs-primary);
   border-color: var(--cs-primary);
@@ -79,8 +80,8 @@ code {
 }
 
 .ant-btn-primary:hover {
-  background: #1f2937;
-  border-color: #1f2937;
+  background: #3b82f6;
+  border-color: #3b82f6;
   box-shadow: none;
 }
 
@@ -89,9 +90,10 @@ code {
   transition: none !important;
 }
 
-/* Modal: keep simple */
+/* Modal: dark theme */
 .ant-modal-content {
   border-radius: 8px;
+  background: var(--cs-bg-container);
 }
 
 .ant-modal-header {
@@ -102,7 +104,7 @@ code {
 .ant-input:focus,
 .ant-input-affix-wrapper:focus,
 .ant-select-focused .ant-select-selector {
-  border-color: #0f172a !important;
+  border-color: var(--cs-primary) !important;
   box-shadow: none !important;
 }
 

@@ -51,6 +51,10 @@ export const configService = {
       const response = await api.get('/network');
       return response.data;
     },
+    async getSystemInterfaces() {
+      const response = await api.get('/network/system-interfaces');
+      return response.data;
+    },
     async getById(id: string) {
       const response = await api.get(`/network/${id}`);
       return response.data;

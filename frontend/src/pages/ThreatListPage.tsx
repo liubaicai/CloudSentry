@@ -272,7 +272,7 @@ export const ThreatListPage: React.FC = () => {
             <p><strong>消息:</strong> {selectedEvent.message}</p>
             <p><strong>标签:</strong> {selectedEvent.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}</p>
             <p><strong>原始日志:</strong></p>
-            <pre style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300 }}>
+            <pre style={{ background: '#0F172A', border: '1px solid #334155', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300, color: '#E2E8F0' }}>
               {selectedEvent.rawLog}
             </pre>
           </div>
