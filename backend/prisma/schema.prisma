@@ -31,6 +31,7 @@ model SecurityEvent {
   threatLevel    String?  // Threat level (critical, high, medium, low, info) - alias for severity
   severity       String   // critical, high, medium, low, info
   category       String   // malware, intrusion, policy_violation, etc.
+  attackType     String?  // Type of attack (sql_injection, xss, brute_force, ddos, etc.)
   
   // Network information
   sourceIp       String   // Source IP address
@@ -38,6 +39,19 @@ model SecurityEvent {
   sourcePort     Int?     // Source port
   destinationPort Int?    // Destination port (alias for port)
   protocol       String?  // Network protocol
+  
+  // Geographic information
+  country        String?  // Source country
+  city           String?  // Source city
+  region         String?  // Geographic region/province
+  isp            String?  // Internet Service Provider
+  
+  // User and device information
+  userName       String?  // Username associated with the event
+  deviceType     String?  // Device type (firewall, ids, server, endpoint, etc.)
+  
+  // Action information
+  action         String?  // Action taken (block, allow, alert, drop, etc.)
   
   // Legacy fields (kept for backward compatibility)
   source         String   // source IP or hostname (alias for sourceIp)
@@ -68,10 +82,12 @@ model SecurityEvent {
   @@index([severity])
   @@index([threatLevel])
   @@index([category])
+  @@index([attackType])
   @@index([status])
   @@index([channelId])
   @@index([sourceIp])
   @@index([destinationIp])
+  @@index([country])
   @@map("security_events")
 }
 
