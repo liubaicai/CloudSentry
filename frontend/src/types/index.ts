@@ -11,12 +11,29 @@ export interface SecurityEvent {
   timestamp: string;
   severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
   category: string;
+  attackType?: string;
   source: string;
+  sourceIp?: string;
   destination?: string;
+  destinationIp?: string;
+  sourcePort?: number;
+  destinationPort?: number;
   message: string;
   rawLog: string;
   protocol?: string;
   port?: number;
+  threatName?: string;
+  threatLevel?: string;
+  // Geographic information
+  country?: string;
+  city?: string;
+  region?: string;
+  isp?: string;
+  // User and device information
+  userName?: string;
+  deviceType?: string;
+  // Action information
+  action?: string;
   status: 'new' | 'investigating' | 'resolved' | 'false_positive';
   assignedTo?: string;
   tags: string[];

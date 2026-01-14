@@ -149,6 +149,7 @@ async function processSyslogMessage(
       threatLevel: mappedData.threatLevel || rawData.threatLevel || rawData.threat_level || finalData.severity,
       severity: finalData.severity,
       category: finalData.category,
+      attackType: mappedData.attackType || rawData.attackType || rawData.attack_type,
       
       // Network information - enhanced fields
       sourceIp: mappedData.sourceIp || rawData.sourceIp || rawData.src_ip || rawData.source_ip || finalData.source,
@@ -156,6 +157,19 @@ async function processSyslogMessage(
       sourcePort: mappedData.sourcePort || rawData.sourcePort || rawData.src_port || rawData.source_port,
       destinationPort: mappedData.destinationPort || rawData.destinationPort || rawData.dst_port || rawData.destination_port || finalData.port,
       protocol: finalData.protocol,
+      
+      // Geographic information
+      country: mappedData.country || rawData.country,
+      city: mappedData.city || rawData.city,
+      region: mappedData.region || rawData.region,
+      isp: mappedData.isp || rawData.isp,
+      
+      // User and device information
+      userName: mappedData.userName || rawData.userName || rawData.user_name || rawData.username,
+      deviceType: mappedData.deviceType || rawData.deviceType || rawData.device_type,
+      
+      // Action information
+      action: mappedData.action || rawData.action,
       
       // Legacy fields for backward compatibility
       source: finalData.source,
