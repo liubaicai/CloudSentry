@@ -17,6 +17,7 @@ import { SecurityConfigPage } from './pages/SecurityConfigPage';
 import { DataManagementPage } from './pages/DataManagementPage';
 import ChannelManagementPage from './pages/ChannelManagementPage';
 import FieldMappingPage from './pages/FieldMappingPage';
+import { SystemInfoPage } from './pages/SystemInfoPage';
 
 function App() {
   return (
@@ -118,6 +119,7 @@ function App() {
               <Route path="operations" element={<OperationsConfigPage />} />
               <Route path="security" element={<SecurityConfigPage />} />
               <Route path="data-management" element={<DataManagementPage />} />
+              <Route path="system-info" element={<SystemInfoPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

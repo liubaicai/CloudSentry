@@ -17,6 +17,7 @@ import {
   BranchesOutlined,
   BellOutlined,
   SafetyCertificateOutlined,
+  CloudServerOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -77,6 +78,11 @@ export const MainLayout: React.FC = () => {
           key: '/settings',
           icon: <SettingOutlined />,
           label: '系统设置',
+        },
+        {
+          key: '/system-info',
+          icon: <CloudServerOutlined />,
+          label: '系统信息',
         },
         {
           key: '/network',
