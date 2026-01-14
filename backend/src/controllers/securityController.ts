@@ -1,10 +1,8 @@
 import { Response } from 'express';
 import { getParamAsString } from '../utils/controllerHelpers';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/database';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
-
-const prisma = new PrismaClient();
 
 export const securityController = {
   // Get all security configurations

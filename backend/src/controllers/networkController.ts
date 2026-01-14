@@ -1,12 +1,10 @@
 import { Response } from 'express';
 import { getParamAsString } from '../utils/controllerHelpers';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/database';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
 import * as os from 'os';
 import { execSync } from 'child_process';
-
-const prisma = new PrismaClient();
 
 // Helper function to get default gateway
 function getDefaultGateway(): string | null {

@@ -1,6 +1,27 @@
 import { Response } from 'express';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
+import { logger } from '../utils/logger';
+
+interface SeverityStat {
+  severity: string;
+  _count: number;
+}
+
+interface CategoryStat {
+  category: string;
+  _count: number;
+}
+
+interface StatusStat {
+  status: string;
+  _count: number;
+}
+
+interface EventTimestamp {
+  timestamp: Date;
+  severity: string;
+}
 
 export const getDashboardStats = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -65,21 +86,22 @@ export const getDashboardStats = async (req: AuthRequest, res: Response): Promis
         last7Days: events7d,
         last30Days: events30d,
       },
-      severityDistribution: severityStats.map((s: any) => ({
+      severityDistribution: severityStats.map((s: SeverityStat) => ({
         severity: s.severity,
         count: s._count,
       })),
-      categoryDistribution: categoryStats.map((c: any) => ({
+      categoryDistribution: categoryStats.map((c: CategoryStat) => ({
         category: c.category,
         count: c._count,
       })),
-      statusDistribution: statusStats.map((s: any) => ({
+      statusDistribution: statusStats.map((s: StatusStat) => ({
         status: s.status,
         count: s._count,
       })),
       recentEvents,
     });
   } catch (error) {
+    logger.error('Failed to fetch dashboard stats:', error);
     res.status(500).json({ error: 'Failed to fetch dashboard stats' });
   }
 };
@@ -104,7 +126,7 @@ export const getTimeSeriesData = async (req: AuthRequest, res: Response): Promis
     // Group by date and severity
     const timeSeriesMap = new Map<string, Record<string, number>>();
 
-    events.forEach((event: any) => {
+    events.forEach((event: EventTimestamp) => {
       const dateKey = event.timestamp.toISOString().split('T')[0];
       if (!timeSeriesMap.has(dateKey)) {
         timeSeriesMap.set(dateKey, {});
@@ -120,6 +142,7 @@ export const getTimeSeriesData = async (req: AuthRequest, res: Response): Promis
 
     res.json({ timeSeries });
   } catch (error) {
+    logger.error('Failed to fetch time series data:', error);
     res.status(500).json({ error: 'Failed to fetch time series data' });
   }
 };
