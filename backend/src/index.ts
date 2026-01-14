@@ -73,10 +73,17 @@ app.listen(PORT, () => {
   // Start automatic data retention cleanup
   dataRetentionService.startAutomaticCleanup();
   
-  // Start syslog server (TCP/UDP on port 514)
-  syslogServerService.start().catch((error) => {
-    logger.error('Failed to start syslog server:', error);
-  });
+  // Start syslog server (TCP/UDP on port 514) unless disabled
+  // Set SYSLOG_SERVER_ENABLED=false when using an external syslog collector
+  const syslogServerEnabled = process.env.SYSLOG_SERVER_ENABLED !== 'false';
+  
+  if (syslogServerEnabled) {
+    syslogServerService.start().catch((error) => {
+      logger.error('Failed to start syslog server:', error);
+    });
+  } else {
+    logger.info('Built-in syslog server is disabled (external collector mode)');
+  }
 });
 
 export default app;

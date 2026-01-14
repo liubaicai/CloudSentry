@@ -1,0 +1,38 @@
+# CloudSentry Syslog Collector Configuration
+# Copy this file to config.yaml and adjust as needed.
+
+# Syslog server settings
+server:
+  udp:
+    enabled: true
+    port: 514
+    buffer_size: 65535
+  tcp:
+    enabled: true
+    port: 514
+    max_connections: 1000
+
+# Buffer queue settings
+buffer:
+  type: "memory"           # memory | disk (disk not yet implemented)
+  max_size: 10000          # Maximum events in buffer
+  flush_interval: "1s"     # How often to flush buffer
+  flush_size: 100          # Batch size per flush
+
+# Backend forwarder settings
+forwarder:
+  backend_url: "http://localhost:3000/api/syslog/bulk"
+  timeout: "10s"
+  retry_count: 3
+  retry_delay: "1s"
+
+# Prometheus metrics endpoint
+metrics:
+  enabled: true
+  port: 9090
+  path: "/metrics"
+
+# Logging settings
+logging:
+  level: "info"            # debug | info | warn | error
+  format: "json"           # json | text
