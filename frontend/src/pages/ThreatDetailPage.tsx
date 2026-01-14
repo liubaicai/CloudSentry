@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Descriptions, Tag, Button, Space, Spin, message, Select, Input, Modal } from 'antd';
-import { ArrowLeftOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Descriptions, Tag, Button, Space, Spin, message, Select, Input, Modal, Typography } from 'antd';
+import { ArrowLeftOutlined, EditOutlined, DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import { eventsService } from '../services/eventsService';
 import { SecurityEvent } from '../types';
 import dayjs from 'dayjs';
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const severityColors: Record<string, string> = {
   critical: 'error',
@@ -123,8 +124,35 @@ export const ThreatDetailPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <Card size="small">
+      {/* Header Banner */}
+      <Card
+        size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              width: 48,
+              height: 48,
+              borderRadius: 8,
+              background: '#334155',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <WarningOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
+            </div>
+            <div>
+              <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>威胁详情</Title>
+              <Text style={{ color: '#94A3B8' }}>查看和管理安全事件详细信息</Text>
+            </div>
+          </div>
           <Space>
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/threats')}>
               返回
@@ -148,9 +176,20 @@ export const ThreatDetailPage: React.FC = () => {
               </>
             )}
           </Space>
-        </Card>
+        </div>
+      </Card>
 
-        <Card title="事件详情" size="small">
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        <Card 
+          title={<span style={{ color: '#F8FAFC' }}>事件详情</span>} 
+          size="small"
+          style={{ 
+            border: '1px solid #334155', 
+            borderRadius: 8, 
+            background: '#1E293B' 
+          }}
+          headStyle={{ borderBottom: '1px solid #334155' }}
+        >
           <Descriptions bordered column={2} size="small">
             <Descriptions.Item label="事件ID" span={2}>
               {event.id}
@@ -216,7 +255,16 @@ export const ThreatDetailPage: React.FC = () => {
         </Card>
 
         {event.metadata && (
-          <Card title="元数据" size="small">
+          <Card 
+            title={<span style={{ color: '#F8FAFC' }}>元数据</span>} 
+            size="small"
+            style={{ 
+              border: '1px solid #334155', 
+              borderRadius: 8, 
+              background: '#1E293B' 
+            }}
+            headStyle={{ borderBottom: '1px solid #334155' }}
+          >
                 <pre
                   style={{
                     background: '#0F172A',
@@ -233,7 +281,16 @@ export const ThreatDetailPage: React.FC = () => {
           </Card>
         )}
 
-        <Card title="原始日志" size="small">
+        <Card 
+          title={<span style={{ color: '#F8FAFC' }}>原始日志</span>} 
+          size="small"
+          style={{ 
+            border: '1px solid #334155', 
+            borderRadius: 8, 
+            background: '#1E293B' 
+          }}
+          headStyle={{ borderBottom: '1px solid #334155' }}
+        >
           <TextArea
             value={event.rawLog}
             readOnly

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select, Tag, Tooltip, Row, Col } from 'antd';
+import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select, Tag, Tooltip, Row, Col, Typography } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, GlobalOutlined, ReloadOutlined, CloudServerOutlined, ImportOutlined } from '@ant-design/icons';
 import { configService } from '../services/configService';
+
+const { Title, Text } = Typography;
 
 interface SystemNetworkInterface {
   name: string;
@@ -230,16 +232,52 @@ export const NetworkConfigPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
+      <Card
+        size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <GlobalOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>网络配置</Title>
+            <Text style={{ color: '#94A3B8' }}>查看系统网卡信息和管理网络配置</Text>
+          </div>
+        </div>
+      </Card>
+
       <Row gutter={[12, 12]}>
         <Col span={24}>
           <Card
             title={
               <Space>
-                <CloudServerOutlined />
-                系统网卡信息
+                <CloudServerOutlined style={{ color: '#8B5CF6' }} />
+                <span>系统网卡信息</span>
               </Space>
             }
             size="small"
+            style={{ 
+              border: '1px solid #334155', 
+              borderRadius: 8, 
+              background: '#1E293B' 
+            }}
+            headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
             extra={
               <Button icon={<ReloadOutlined />} onClick={loadSystemInterfaces} loading={systemInterfacesLoading} size="small">
                 刷新
@@ -258,8 +296,19 @@ export const NetworkConfigPage: React.FC = () => {
         </Col>
         <Col span={24}>
           <Card
-            title="网络配置"
+            title={
+              <Space>
+                <GlobalOutlined style={{ color: '#22C55E' }} />
+                <span>网络配置</span>
+              </Space>
+            }
             size="small"
+            style={{ 
+              border: '1px solid #334155', 
+              borderRadius: 8, 
+              background: '#1E293B' 
+            }}
+            headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
             extra={
               <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
                 添加配置

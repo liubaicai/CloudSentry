@@ -14,15 +14,19 @@ import {
   Statistic,
   Row,
   Col,
+  Typography,
 } from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   ReloadOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import channelService, { SyslogChannel, CreateChannelData } from '../services/channelService';
+
+const { Title, Text } = Typography;
 
 const ChannelManagementPage: React.FC = () => {
   const [channels, setChannels] = useState<SyslogChannel[]>([]);
@@ -198,39 +202,73 @@ const ChannelManagementPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
+      <Card
+        size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <GlobalOutlined style={{ fontSize: 24, color: '#8B5CF6' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>通道管理</Title>
+            <Text style={{ color: '#94A3B8' }}>管理Syslog日志接收通道</Text>
+          </div>
+        </div>
+      </Card>
+
       <Row gutter={12} style={{ marginBottom: 12 }}>
         <Col span={8}>
-          <Card size="small">
+          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
             <Statistic
-              title="通道总数"
+              title={<span style={{ color: '#94A3B8' }}>通道总数</span>}
               value={stats.totalChannels}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#60A5FA', fontWeight: 600 }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small">
+          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
             <Statistic
-              title="活跃通道"
+              title={<span style={{ color: '#94A3B8' }}>活跃通道</span>}
               value={stats.activeChannels}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#22C55E', fontWeight: 600 }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small">
+          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
             <Statistic
-              title="接收事件总数"
+              title={<span style={{ color: '#94A3B8' }}>接收事件总数</span>}
               value={stats.totalEvents}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: '#8B5CF6', fontWeight: 600 }}
             />
           </Card>
         </Col>
       </Row>
 
       <Card
-        title="通道管理"
         size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Space>
             <Input.Search

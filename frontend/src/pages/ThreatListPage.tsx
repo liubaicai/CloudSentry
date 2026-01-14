@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Tag, Input, Select, Button, Space, Modal, message } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Table, Card, Tag, Input, Select, Button, Space, Modal, message, Typography } from 'antd';
+import { SearchOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { eventsService } from '../services/eventsService';
 import { SecurityEvent } from '../types';
@@ -37,6 +37,8 @@ const statusLabels: Record<string, string> = {
     resolved: 'success',
     false_positive: 'default',
   };
+
+const { Title, Text } = Typography;
 
 export const ThreatListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -187,7 +189,44 @@ export const ThreatListPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      <Card size="small">
+      {/* Header Banner */}
+      <Card
+        size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <WarningOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>威胁管理</Title>
+            <Text style={{ color: '#94A3B8' }}>查看、筛选和管理安全事件</Text>
+          </div>
+        </div>
+      </Card>
+
+      <Card 
+        size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
+      >
         <Space style={{ marginBottom: 12, width: '100%' }} direction="vertical">
           <Space wrap>
             <Input

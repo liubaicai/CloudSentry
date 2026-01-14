@@ -377,26 +377,43 @@ const FieldMappingPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      {/* Header Card */}
+      {/* Header Banner */}
       <Card
         size="small"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          border: 'none',
+          background: '#1E293B',
+          border: '1px solid #334155',
           marginBottom: 16,
+          borderRadius: 8,
         }}
+        bodyStyle={{ padding: '16px 24px' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <BranchesOutlined style={{ fontSize: 28, color: 'white' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <BranchesOutlined style={{ fontSize: 24, color: '#8B5CF6' }} />
+          </div>
           <div>
-            <Title level={4} style={{ color: 'white', margin: 0 }}>字段映射配置</Title>
-            <Text style={{ color: 'rgba(255,255,255,0.85)' }}>配置Syslog数据字段到安全事件的映射规则，支持嵌套对象和AI自动生成</Text>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>字段映射配置</Title>
+            <Text style={{ color: '#94A3B8' }}>配置Syslog数据字段到安全事件的映射规则，支持嵌套对象和AI自动生成</Text>
           </div>
         </div>
       </Card>
 
       <Card
         size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Space>
             <Select
@@ -421,7 +438,7 @@ const FieldMappingPage: React.FC = () => {
               icon={<RobotOutlined />}
               onClick={openAiModal}
               size="small"
-              style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none' }}
+              style={{ background: '#8B5CF6', color: 'white', border: 'none' }}
             >
               AI智能生成
             </Button>
@@ -633,7 +650,7 @@ const FieldMappingPage: React.FC = () => {
             icon={<RobotOutlined />}
             onClick={handleAiGenerate}
             loading={aiGenerating}
-            style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none' }}
+            style={{ background: '#8B5CF6', border: 'none' }}
           >
             {aiGenerating ? '生成中...' : 'AI分析并生成映射'}
           </Button>
@@ -641,7 +658,7 @@ const FieldMappingPage: React.FC = () => {
 
         {aiSuggestions.length > 0 && (
           <>
-            <Title level={5}>生成的映射建议</Title>
+            <Title level={5} style={{ color: '#F8FAFC' }}>生成的映射建议</Title>
             <Table
               rowSelection={{
                 selectedRowKeys: selectedAiSuggestions,
