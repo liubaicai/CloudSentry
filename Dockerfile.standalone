@@ -1,0 +1,272 @@
+# CloudSentry Standalone Dockerfile
+# This Dockerfile creates a single image containing:
+# - PostgreSQL database
+# - Node.js backend
+# - Frontend static files served by Caddy
+#
+# Usage:
+#   docker build -f Dockerfile.standalone -t cloudsentry-standalone .
+#   docker run -d -p 80:80 -p 514:514/tcp -p 514:514/udp \
+#     -e POSTGRES_PASSWORD="your-secure-password" \
+#     -e JWT_SECRET="your-secure-jwt-secret-at-least-32-chars" \
+#     -v cloudsentry-data:/var/lib/postgresql/14/main \
+#     --name cloudsentry cloudsentry-standalone
+#
+# IMPORTANT SECURITY NOTES:
+#   - Always set JWT_SECRET to a secure random string (at least 32 characters)
+#   - Always set POSTGRES_PASSWORD to a secure password in production
+#   - Use volumes for data persistence
+#
+# Environment variables:
+#   JWT_SECRET - JWT secret key (REQUIRED - change from default!)
+#   POSTGRES_PASSWORD - PostgreSQL password (REQUIRED - change from default!)
+#   PORT - Backend port (default: 3000)
+
+# =============================================================================
+# Stage 1: Build frontend
+# =============================================================================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+COPY frontend/package*.json ./
+RUN npm install
+
+COPY frontend/ ./
+RUN npm run build
+
+# =============================================================================
+# Stage 2: Build backend
+# =============================================================================
+FROM node:20-alpine AS backend-builder
+
+WORKDIR /app/backend
+
+COPY backend/package*.json ./
+RUN npm install
+
+COPY backend/ ./
+RUN npm run build
+
+# =============================================================================
+# Stage 3: Final image with all services
+# =============================================================================
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    lsb-release \
+    ca-certificates \
+    supervisor \
+    postgresql \
+    postgresql-contrib \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20.x from official binary distribution
+RUN curl -fsSL "https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz" -o /tmp/node.tar.xz \
+    && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
+    && rm -f /tmp/node.tar.xz \
+    && node --version && npm --version
+
+# Install Caddy using official release tarball
+RUN curl -fsSL "https://github.com/caddyserver/caddy/releases/download/v2.8.4/caddy_2.8.4_linux_amd64.tar.gz" -o /tmp/caddy.tar.gz \
+    && tar -xzf /tmp/caddy.tar.gz -C /usr/bin caddy \
+    && chmod +x /usr/bin/caddy \
+    && rm -f /tmp/caddy.tar.gz
+
+# Set environment variables
+ENV POSTGRES_USER=cloudsentry
+ENV POSTGRES_PASSWORD=cloudsentry
+ENV POSTGRES_DB=cloudsentry
+ENV DATABASE_URL="postgresql://cloudsentry:cloudsentry@localhost:5432/cloudsentry?schema=public"
+ENV JWT_SECRET="your-super-secret-jwt-key-change-in-production"
+ENV JWT_EXPIRES_IN="7d"
+ENV PORT=3000
+ENV NODE_ENV=production
+ENV CORS_ORIGIN="http://localhost"
+
+# Create application directories
+WORKDIR /app
+
+# Copy frontend build
+COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
+
+# Copy backend build and dependencies
+COPY --from=backend-builder /app/backend/dist /app/backend/dist
+COPY --from=backend-builder /app/backend/package*.json /app/backend/
+COPY --from=backend-builder /app/backend/prisma /app/backend/prisma
+
+# Install production dependencies and Prisma
+WORKDIR /app/backend
+RUN npm install --production && npm install prisma && npx prisma generate
+
+# Create Caddyfile for serving frontend and proxying API
+RUN mkdir -p /etc/caddy
+COPY <<'EOF' /etc/caddy/Caddyfile
+:80 {
+    # Set the document root
+    root * /app/frontend/dist
+
+    # Enable gzip compression
+    encode gzip
+
+    # Add security headers
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Proxy API requests to backend
+    handle /api/* {
+        reverse_proxy localhost:3000
+    }
+
+    # Handle static files and SPA routing
+    handle {
+        try_files {path} /index.html
+        file_server
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}
+EOF
+
+# Create supervisor configuration
+RUN mkdir -p /var/log/supervisor
+COPY <<'EOF' /etc/supervisor/conf.d/cloudsentry.conf
+[supervisord]
+nodaemon=true
+logfile=/var/log/supervisor/supervisord.log
+pidfile=/var/run/supervisord.pid
+user=root
+
+[program:postgresql]
+command=/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/14/main -c config_file=/etc/postgresql/14/main/postgresql.conf
+user=postgres
+autostart=true
+autorestart=true
+priority=10
+stdout_logfile=/var/log/supervisor/postgresql.log
+stderr_logfile=/var/log/supervisor/postgresql.log
+
+[program:backend]
+command=/bin/bash -c "sleep 5 && cd /app/backend && npx prisma db push --skip-generate && node dist/index.js"
+directory=/app/backend
+user=root
+autostart=true
+autorestart=true
+priority=20
+environment=DATABASE_URL="%(ENV_DATABASE_URL)s",JWT_SECRET="%(ENV_JWT_SECRET)s",JWT_EXPIRES_IN="%(ENV_JWT_EXPIRES_IN)s",PORT="%(ENV_PORT)s",NODE_ENV="%(ENV_NODE_ENV)s",CORS_ORIGIN="%(ENV_CORS_ORIGIN)s"
+stdout_logfile=/var/log/supervisor/backend.log
+stderr_logfile=/var/log/supervisor/backend.log
+
+[program:caddy]
+command=/usr/bin/caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+autostart=true
+autorestart=true
+priority=30
+stdout_logfile=/var/log/supervisor/caddy.log
+stderr_logfile=/var/log/supervisor/caddy.log
+EOF
+
+# Create init script to setup PostgreSQL
+COPY <<'EOF' /app/init.sh
+#!/bin/bash
+set -e
+
+# Function to generate random string
+generate_random() {
+    tr -dc 'A-Za-z0-9' < /dev/urandom | head -c ${1:-32}
+}
+
+# Security warning and auto-generation for default secrets
+if [ "$JWT_SECRET" = "your-super-secret-jwt-key-change-in-production" ] || [ -z "$JWT_SECRET" ]; then
+    echo "================================================"
+    echo "WARNING: JWT_SECRET is not set or using default!"
+    echo "Generating a random JWT_SECRET for this session."
+    echo "For production, set JWT_SECRET environment variable."
+    echo "================================================"
+    export JWT_SECRET=$(generate_random 64)
+fi
+
+if [ "$POSTGRES_PASSWORD" = "cloudsentry" ] || [ -z "$POSTGRES_PASSWORD" ]; then
+    echo "================================================"
+    echo "WARNING: POSTGRES_PASSWORD is using default value!"
+    echo "Generating a random password for this session."
+    echo "For production, set POSTGRES_PASSWORD environment variable."
+    echo "================================================"
+    export POSTGRES_PASSWORD=$(generate_random 24)
+fi
+
+# Update DATABASE_URL with the actual password
+export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"
+
+# Initialize PostgreSQL if not already done
+if [ ! -f /var/lib/postgresql/14/main/PG_VERSION ]; then
+    echo "Initializing PostgreSQL database..."
+    mkdir -p /var/lib/postgresql/14/main
+    chown -R postgres:postgres /var/lib/postgresql/14
+    chmod 700 /var/lib/postgresql/14/main
+    su - postgres -c "/usr/lib/postgresql/14/bin/initdb -D /var/lib/postgresql/14/main"
+    
+    # Configure PostgreSQL to allow local connections
+    echo "host all all 127.0.0.1/32 md5" >> /var/lib/postgresql/14/main/pg_hba.conf
+    echo "host all all ::1/128 md5" >> /var/lib/postgresql/14/main/pg_hba.conf
+    echo "local all all trust" >> /var/lib/postgresql/14/main/pg_hba.conf
+    
+    # Update postgresql.conf
+    echo "listen_addresses = 'localhost'" >> /var/lib/postgresql/14/main/postgresql.conf
+fi
+
+# Start PostgreSQL temporarily to create user and database
+echo "Starting PostgreSQL to create database..."
+su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main -l /var/log/postgresql/postgresql.log start"
+
+# Wait for PostgreSQL to start
+sleep 3
+
+# Create user and database if they don't exist
+su - postgres -c "psql -c \"SELECT 1 FROM pg_roles WHERE rolname='${POSTGRES_USER}'\" | grep -q 1 || psql -c \"CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';\""
+su - postgres -c "psql -c \"SELECT 1 FROM pg_database WHERE datname='${POSTGRES_DB}'\" | grep -q 1 || psql -c \"CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};\""
+su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};\""
+
+# Stop PostgreSQL (supervisor will restart it)
+su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main stop"
+
+echo "Database initialization complete!"
+
+# Create PostgreSQL log directory
+mkdir -p /var/log/postgresql
+chown postgres:postgres /var/log/postgresql
+
+# Start supervisor
+exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+EOF
+
+RUN chmod +x /app/init.sh
+
+# Create volume for PostgreSQL data persistence
+VOLUME ["/var/lib/postgresql/14/main"]
+
+# Expose ports
+EXPOSE 80
+EXPOSE 514/tcp
+EXPOSE 514/udp
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:80/ || exit 1
+
+# Set entrypoint
+ENTRYPOINT ["/app/init.sh"]
