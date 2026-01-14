@@ -43,6 +43,9 @@
 - [快速开始](#快速开始)
     - [环境要求](#环境要求)
     - [使用 Docker（推荐）](#使用-docker推荐)
+    - [单镜像 Docker 部署](#单镜像-docker-部署)
+    - [Linux 一键安装](#linux-一键安装)
+    - [Windows 一键安装](#windows-一键安装)
     - [手动安装](#手动安装)
     - [访问应用](#访问应用)
     - [默认凭证](#默认凭证)
@@ -185,6 +188,78 @@ docker-compose up -d
 - 🚀 后端 API（端口 3000）
 - 🌐 前端界面（端口 5173）
 - 📡 Syslog 服务（TCP/UDP 端口 514）
+
+### 单镜像 Docker 部署
+
+如果您希望使用单个 Docker 镜像来部署完整的 CloudSentry（包含数据库、后端和前端），可以使用 `Dockerfile.standalone`：
+
+```bash
+# 克隆仓库
+git clone https://github.com/liubaicai/CloudSentry.git
+cd CloudSentry
+
+# 构建单体镜像
+docker build -f Dockerfile.standalone -t cloudsentry-standalone .
+
+# 运行容器
+docker run -d \
+  -p 80:80 \
+  -p 514:514/tcp \
+  -p 514:514/udp \
+  -v cloudsentry-data:/var/lib/postgresql/14/main \
+  -e JWT_SECRET="your-production-secret-key" \
+  --name cloudsentry \
+  cloudsentry-standalone
+```
+
+单镜像部署的优点：
+- 📦 单一镜像，简化部署和管理
+- 💾 数据持久化通过 Docker volume 实现
+- 🔧 无需额外配置数据库连接
+- 🚀 适合快速部署和测试环境
+
+### Linux 一键安装
+
+使用安装脚本在 Linux 服务器上一键部署（支持 Ubuntu/Debian, CentOS/RHEL/Fedora, Arch Linux）：
+
+```bash
+# 克隆仓库
+git clone https://github.com/liubaicai/CloudSentry.git
+cd CloudSentry
+
+# 运行安装脚本（需要 root 权限）
+sudo bash install-linux.sh
+```
+
+安装脚本将自动：
+- 检测您的 Linux 发行版
+- 安装 Node.js 20.x
+- 安装并配置 PostgreSQL
+- 安装并配置 Caddy Web 服务器
+- 安装 CloudSentry 应用
+- 创建系统服务
+
+### Windows 一键安装
+
+使用 PowerShell 脚本在 Windows 上一键部署：
+
+```powershell
+# 克隆仓库
+git clone https://github.com/liubaicai/CloudSentry.git
+cd CloudSentry
+
+# 以管理员身份运行 PowerShell，然后执行：
+powershell -ExecutionPolicy Bypass -File install-windows.ps1
+```
+
+安装脚本将自动：
+- 安装 Chocolatey 包管理器
+- 安装 Node.js 20.x
+- 安装并配置 PostgreSQL 16
+- 安装并配置 Caddy Web 服务器
+- 安装 CloudSentry 应用
+- 创建 Windows 服务
+- 配置防火墙规则
 
 ### 手动安装
 
