@@ -2,27 +2,13 @@ import * as dgram from 'dgram';
 import * as net from 'net';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
+import { parseSyslogMessage, ParsedSyslogMessage } from '../utils/syslogParser';
 
 interface SyslogServerConfig {
   tcpPort: number;
   udpPort: number;
   tcpEnabled: boolean;
   udpEnabled: boolean;
-}
-
-interface ParsedSyslogMessage {
-  timestamp: string;
-  severity: string;
-  category: string;
-  source: string;
-  message: string;
-  rawLog: string;
-  protocol: string;
-  metadata: {
-    priority: number;
-    facility: number;
-    severityLevel: number;
-  };
 }
 
 // Default syslog server configuration
@@ -38,86 +24,12 @@ class SyslogServerService {
   private tcpServer: net.Server | null = null;
   private config: SyslogServerConfig = defaultConfig;
 
-  // Parse syslog message (RFC 3164 / RFC 5424 format)
-  private parseSyslogMessage(message: string, remoteAddress: string): ParsedSyslogMessage {
-    const rawMessage = message.trim();
-    
-    // Try to parse RFC 5424 format: <priority>version timestamp hostname app-name procid msgid structured-data msg
-    // Or RFC 3164 format: <priority>timestamp hostname tag: message
-    const priorityMatch = rawMessage.match(/^<(\d+)>(.*)$/);
-    
-    let priority = 13; // Default to user.notice
-    let content = rawMessage;
-    
-    if (priorityMatch) {
-      priority = parseInt(priorityMatch[1], 10);
-      content = priorityMatch[2];
-    }
-    
-    // Calculate facility and severity from priority
-    const facility = Math.floor(priority / 8);
-    const severityLevel = priority % 8;
-    
-    // Map syslog severity to our severity levels
-    const severityMap: Record<number, string> = {
-      0: 'critical', // Emergency
-      1: 'critical', // Alert
-      2: 'critical', // Critical
-      3: 'high',     // Error
-      4: 'medium',   // Warning
-      5: 'low',      // Notice
-      6: 'info',     // Informational
-      7: 'info',     // Debug
-    };
-    
-    // Map facility to category
-    const facilityMap: Record<number, string> = {
-      0: 'kernel',
-      1: 'user',
-      2: 'mail',
-      3: 'daemon',
-      4: 'auth',
-      5: 'syslog',
-      6: 'printer',
-      7: 'news',
-      8: 'uucp',
-      9: 'cron',
-      10: 'authpriv',
-      11: 'ftp',
-      12: 'ntp',
-      13: 'audit',
-      14: 'alert',
-      15: 'clock',
-      16: 'local0',
-      17: 'local1',
-      18: 'local2',
-      19: 'local3',
-      20: 'local4',
-      21: 'local5',
-      22: 'local6',
-      23: 'local7',
-    };
-    
-    return {
-      timestamp: new Date().toISOString(),
-      severity: severityMap[severityLevel] || 'info',
-      category: facilityMap[facility] || 'unknown',
-      source: remoteAddress.replace(/^::ffff:/, ''),
-      message: content,
-      rawLog: rawMessage,
-      protocol: 'syslog',
-      metadata: {
-        priority,
-        facility,
-        severityLevel,
-      },
-    };
-  }
+
 
   // Process and store syslog message
   private async processMessage(message: string, remoteAddress: string): Promise<void> {
     try {
-      const parsed = this.parseSyslogMessage(message, remoteAddress);
+      const parsed = parseSyslogMessage(message, remoteAddress);
       const sourceIdentifier = parsed.source;
 
       // Get or create channel
@@ -137,10 +49,10 @@ class SyslogServerService {
         logger.info(`Auto-created syslog channel for: ${sourceIdentifier}`);
       }
 
-      // Create security event
+      // Create security event with enhanced metadata from parsed message
       await prisma.securityEvent.create({
         data: {
-          timestamp: new Date(parsed.timestamp),
+          timestamp: parsed.timestamp,
           severity: parsed.severity,
           category: parsed.category,
           source: parsed.source,
@@ -164,7 +76,7 @@ class SyslogServerService {
         },
       });
 
-      logger.debug(`Processed syslog message from ${remoteAddress}`);
+      logger.debug(`Processed syslog message from ${remoteAddress} (format: ${parsed.metadata.originalFormat || 'unknown'})`);
     } catch (error) {
       logger.error('Failed to process syslog message:', error);
     }
