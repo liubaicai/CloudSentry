@@ -3,10 +3,87 @@ import { getParamAsString } from '../utils/controllerHelpers';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { AuthRequest } from '../middleware/auth';
+import * as os from 'os';
+import { execSync } from 'child_process';
 
 const prisma = new PrismaClient();
 
+// Helper function to get default gateway
+function getDefaultGateway(): string | null {
+  try {
+    // Try to get the default gateway on Linux
+    const result = execSync('ip route | grep default | awk \'{print $3}\'', { encoding: 'utf-8' });
+    return result.trim() || null;
+  } catch {
+    try {
+      // Fallback for macOS
+      const result = execSync('netstat -nr | grep default | awk \'{print $2}\' | head -1', { encoding: 'utf-8' });
+      return result.trim() || null;
+    } catch {
+      return null;
+    }
+  }
+}
+
+// Helper function to get DNS servers
+function getDnsServers(): string[] {
+  try {
+    // Read resolv.conf on Linux/macOS
+    const result = execSync('cat /etc/resolv.conf | grep nameserver | awk \'{print $2}\'', { encoding: 'utf-8' });
+    return result.trim().split('\n').filter(s => s);
+  } catch {
+    return [];
+  }
+}
+
+export interface SystemNetworkInterface {
+  name: string;
+  ipAddress: string;
+  netmask: string;
+  mac: string;
+  family: string;
+  internal: boolean;
+  gateway: string | null;
+  dnsServers: string[];
+}
+
 export const networkController = {
+  // Get system network interfaces (from the OS)
+  async getSystemInterfaces(req: AuthRequest, res: Response) {
+    try {
+      const networkInterfaces = os.networkInterfaces();
+      const gateway = getDefaultGateway();
+      const dnsServers = getDnsServers();
+      
+      const interfaces: SystemNetworkInterface[] = [];
+      
+      for (const [name, addresses] of Object.entries(networkInterfaces)) {
+        if (addresses) {
+          for (const addr of addresses) {
+            // Only include IPv4 addresses for now
+            if (addr.family === 'IPv4') {
+              interfaces.push({
+                name,
+                ipAddress: addr.address,
+                netmask: addr.netmask,
+                mac: addr.mac,
+                family: addr.family,
+                internal: addr.internal,
+                gateway: addr.internal ? null : gateway,
+                dnsServers: addr.internal ? [] : dnsServers,
+              });
+            }
+          }
+        }
+      }
+      
+      res.json(interfaces);
+    } catch (error) {
+      logger.error('Error fetching system network interfaces:', error);
+      res.status(500).json({ error: 'Failed to fetch system network interfaces' });
+    }
+  },
+
   // Get all network configurations
   async getNetworkConfigs(req: AuthRequest, res: Response) {
     try {

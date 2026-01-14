@@ -7,6 +7,9 @@ const router = express.Router();
 // All routes require authentication and admin role
 router.use(authenticateToken, requireAdmin);
 
+// System network interfaces (read-only from OS)
+router.get('/system-interfaces', networkController.getSystemInterfaces);
+
 router.get('/', networkController.getNetworkConfigs);
 router.get('/:id', networkController.getNetworkConfigById);
 router.post('/', networkController.createNetworkConfig);

@@ -3,7 +3,6 @@ import { Layout, Menu, Avatar, Dropdown, Typography, Badge } from 'antd';
 import {
   DashboardOutlined,
   WarningOutlined,
-  BarChartOutlined,
   SendOutlined,
   SettingOutlined,
   LogoutOutlined,
@@ -38,21 +37,9 @@ export const MainLayout: React.FC = () => {
       label: '仪表盘',
     },
     {
-      key: 'threat-management',
+      key: '/threats',
       icon: <WarningOutlined />,
       label: '威胁管理',
-      children: [
-        {
-          key: '/threats',
-          icon: <WarningOutlined />,
-          label: '威胁列表',
-        },
-        {
-          key: '/analysis',
-          icon: <BarChartOutlined />,
-          label: '威胁分析',
-        },
-      ],
     },
     {
       key: 'integration',
@@ -134,10 +121,10 @@ export const MainLayout: React.FC = () => {
         collapsible 
         collapsed={collapsed} 
         width={200}
-        theme="light"
+        theme="dark"
         style={{
-          background: '#ffffff',
-          borderRight: '1px solid #E2E8F0',
+          background: '#0F172A',
+          borderRight: '1px solid #334155',
         }}
       >
         <div style={{ 
@@ -146,7 +133,7 @@ export const MainLayout: React.FC = () => {
           alignItems: 'center', 
           justifyContent: 'center',
           padding: '0 12px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid #334155',
         }}>
           <div style={{
             display: 'flex',
@@ -157,17 +144,17 @@ export const MainLayout: React.FC = () => {
               width: 32,
               height: 32,
               borderRadius: 6,
-              background: '#0F172A',
+              background: '#60A5FA',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <SafetyCertificateOutlined style={{ fontSize: 18, color: 'white' }} />
+              <SafetyCertificateOutlined style={{ fontSize: 18, color: '#0F172A' }} />
             </div>
             {!collapsed && (
               <div>
                 <div style={{ 
-                  color: '#0F172A', 
+                  color: '#F8FAFC', 
                   fontSize: 16, 
                   fontWeight: 600,
                   lineHeight: 1.2,
@@ -175,7 +162,7 @@ export const MainLayout: React.FC = () => {
                   云卫安全
                 </div>
                 <div style={{ 
-                  color: '#64748B', 
+                  color: '#94A3B8', 
                   fontSize: 10,
                   letterSpacing: 1,
                 }}>
@@ -186,7 +173,7 @@ export const MainLayout: React.FC = () => {
           </div>
         </div>
         <Menu
-          theme="light"
+          theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
@@ -194,19 +181,20 @@ export const MainLayout: React.FC = () => {
           style={{ 
             fontSize: 13,
             borderRight: 'none',
+            background: '#0F172A',
           }}
         />
       </Sider>
       <Layout>
         <Header style={{ 
           padding: '0 20px', 
-          background: '#ffffff',
+          background: '#1E293B',
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center',
           height: 56,
           lineHeight: '56px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid #334155',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div 
@@ -218,19 +206,19 @@ export const MainLayout: React.FC = () => {
                 alignItems: 'center', 
                 justifyContent: 'center',
                 borderRadius: 8,
-                background: collapsed ? '#0F172A' : '#F1F5F9',
+                background: collapsed ? '#60A5FA' : '#334155',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
             >
               {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                style: { fontSize: 16, color: collapsed ? 'white' : '#64748B' }
+                style: { fontSize: 16, color: collapsed ? '#0F172A' : '#94A3B8' }
               })}
             </div>
             <div style={{
               padding: '4px 12px',
-              background: '#F0FDF4',
-              border: '1px solid #DCFCE7',
+              background: 'rgba(34, 197, 94, 0.15)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
               borderRadius: 16,
               display: 'flex',
               alignItems: 'center',
@@ -240,9 +228,9 @@ export const MainLayout: React.FC = () => {
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: '#16A34A',
+                background: '#22C55E',
               }} />
-              <Text style={{ fontSize: 12, color: '#15803D' }}>系统运行正常</Text>
+              <Text style={{ fontSize: 12, color: '#22C55E' }}>系统运行正常</Text>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -251,13 +239,13 @@ export const MainLayout: React.FC = () => {
                 width: 36,
                 height: 36,
                 borderRadius: 8,
-                background: '#F1F5F9',
+                background: '#334155',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
               }}>
-                <BellOutlined style={{ fontSize: 16, color: '#64748B' }} />
+                <BellOutlined style={{ fontSize: 16, color: '#94A3B8' }} />
               </div>
             </Badge>
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -268,17 +256,17 @@ export const MainLayout: React.FC = () => {
                 gap: 8,
                 padding: '4px 12px',
                 borderRadius: 8,
-                background: '#F1F5F9',
+                background: '#334155',
               }}>
                 <Avatar 
                   size={28} 
                   icon={<UserOutlined />}
                   style={{
-                    background: '#CBD5E1',
-                    color: '#475569',
+                    background: '#475569',
+                    color: '#E2E8F0',
                   }}
                 />
-                <Text style={{ fontSize: 13, color: '#334155' }}>{user?.username}</Text>
+                <Text style={{ fontSize: 13, color: '#E2E8F0' }}>{user?.username}</Text>
               </div>
             </Dropdown>
           </div>
@@ -286,7 +274,7 @@ export const MainLayout: React.FC = () => {
         <Content style={{ 
           margin: '12px', 
           overflow: 'initial',
-          background: '#F8FAFC',
+          background: '#0F172A',
           borderRadius: 8,
         }}>
           <div style={{ padding: 0, minHeight: 360 }}>
@@ -295,34 +283,37 @@ export const MainLayout: React.FC = () => {
         </Content>
       </Layout>
       <style>{`
-        .ant-menu-light .ant-menu-item-selected {
-          background-color: #F1F5F9 !important;
-          color: #0F172A !important;
+        .ant-menu-dark .ant-menu-item-selected {
+          background-color: #334155 !important;
+          color: #F8FAFC !important;
           font-weight: 600;
           border-radius: 6px;
           margin: 4px 8px;
           width: calc(100% - 16px);
         }
-        .ant-menu-light .ant-menu-item {
+        .ant-menu-dark .ant-menu-item {
           margin: 4px 8px;
           width: calc(100% - 16px);
           border-radius: 6px;
-          color: #64748B;
+          color: #94A3B8;
         }
-        .ant-menu-light .ant-menu-item:hover {
-          color: #0F172A !important;
-          background-color: #F8FAFC !important;
+        .ant-menu-dark .ant-menu-item:hover {
+          color: #F8FAFC !important;
+          background-color: #1E293B !important;
         }
-        .ant-menu-submenu-title {
-          color: #64748B !important;
+        .ant-menu-dark .ant-menu-submenu-title {
+          color: #94A3B8 !important;
         }
-        .ant-menu-submenu-title:hover {
-          color: #0F172A !important;
+        .ant-menu-dark .ant-menu-submenu-title:hover {
+          color: #F8FAFC !important;
+        }
+        .ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+          background: #0F172A !important;
         }
         .ant-layout-sider-trigger {
-          background: #ffffff !important;
-          color: #0F172A !important;
-          border-top: 1px solid #E2E8F0;
+          background: #0F172A !important;
+          color: #F8FAFC !important;
+          border-top: 1px solid #334155;
         }
       `}</style>
     </Layout>

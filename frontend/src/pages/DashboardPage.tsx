@@ -39,7 +39,7 @@ import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
-const COLORS = ['#dc2626', '#ea580c', '#d97706', '#16a34a', '#334155'];
+const COLORS = ['#dc2626', '#ea580c', '#d97706', '#16a34a', '#60a5fa'];
 
 const severityColors: Record<string, string> = {
   critical: 'error',
@@ -54,7 +54,7 @@ const SEVERITY_HEX: Record<string, string> = {
   high: '#ea580c',
   medium: '#d97706',
   low: '#16a34a',
-  info: '#334155',
+  info: '#60a5fa',
 };
 
 const severityLabels: Record<string, string> = {
@@ -242,8 +242,8 @@ export const DashboardPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#fff',
-           border: '1px solid #e2e8f0',
+          background: '#1E293B',
+           border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -256,23 +256,23 @@ export const DashboardPage: React.FC = () => {
                 width: 48,
                 height: 48,
                 borderRadius: 8,
-                 background: '#f1f5f9',
+                 background: '#334155',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                 <SafetyCertificateOutlined style={{ fontSize: 24, color: '#334155' }} />
+                 <SafetyCertificateOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
               </div>
               <div>
-                <Title level={4} style={{ color: '#1f2937', margin: 0, fontWeight: 600 }}>云卫安全态势中心</Title>
-                <Text style={{ color: '#6b7280' }}>实时监控 • 智能分析 • 威胁预警</Text>
+                <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>云卫安全态势中心</Title>
+                <Text style={{ color: '#94A3B8' }}>实时监控 • 智能分析 • 威胁预警</Text>
               </div>
             </div>
           </Col>
           <Col>
             <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 4 }}>安全评分</div>
+                <div style={{ color: '#94A3B8', fontSize: 12, marginBottom: 4 }}>安全评分</div>
                 <Progress
                   type="circle"
                   percent={Math.round(securityScore)}
@@ -281,13 +281,13 @@ export const DashboardPage: React.FC = () => {
                     securityScore > 80 ? '#22c55e' : 
                     securityScore > 60 ? '#eab308' : '#ef4444'
                   }
-                  trailColor="#f3f4f6"
+                  trailColor="#334155"
                   strokeWidth={8}
-                  format={(percent) => <span style={{ color: '#1f2937', fontWeight: 600, fontSize: 14 }}>{percent}</span>}
+                  format={(percent) => <span style={{ color: '#F8FAFC', fontWeight: 600, fontSize: 14 }}>{percent}</span>}
                 />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 8 }}>系统状态</div>
+                <div style={{ color: '#94A3B8', fontSize: 12, marginBottom: 8 }}>系统状态</div>
                 <Tag color="success" style={{ margin: 0, padding: '4px 12px', borderRadius: 4 }}>
                   <CheckCircleOutlined /> 运行正常
                 </Tag>
@@ -302,56 +302,56 @@ export const DashboardPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#6b7280', fontSize: 13 }}>事件总数</span>}
+              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>事件总数</span>}
               value={stats.overview.total}
-               prefix={<AlertOutlined style={{ color: '#334155', background: '#f1f5f9', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#1f2937', fontWeight: 600, marginTop: 4 }}
+               prefix={<AlertOutlined style={{ color: '#60A5FA', background: '#334155', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#6b7280', fontSize: 13 }}>最近24小时</span>}
+              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>最近24小时</span>}
               value={stats.overview.last24Hours}
-               prefix={<ClockCircleOutlined style={{ color: SEVERITY_HEX.critical, background: '#fef2f2', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#1f2937', fontWeight: 600, marginTop: 4 }}
+               prefix={<ClockCircleOutlined style={{ color: SEVERITY_HEX.critical, background: 'rgba(220, 38, 38, 0.2)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#6b7280', fontSize: 13 }}>最近7天</span>}
+              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>最近7天</span>}
               value={stats.overview.last7Days}
-               prefix={<ArrowUpOutlined style={{ color: SEVERITY_HEX.high, background: '#fff7ed', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#1f2937', fontWeight: 600, marginTop: 4 }}
+               prefix={<ArrowUpOutlined style={{ color: SEVERITY_HEX.high, background: 'rgba(234, 88, 12, 0.2)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#6b7280', fontSize: 13 }}>最近30天</span>}
+              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>最近30天</span>}
               value={stats.overview.last30Days}
-               prefix={<GlobalOutlined style={{ color: SEVERITY_HEX.low, background: '#f0fdf4', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#1f2937', fontWeight: 600, marginTop: 4 }}
+               prefix={<GlobalOutlined style={{ color: SEVERITY_HEX.low, background: 'rgba(22, 163, 74, 0.2)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4 }}
             />
           </Card>
         </Col>
@@ -363,28 +363,28 @@ export const DashboardPage: React.FC = () => {
           <Card 
             title={
               <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
-                 <ThunderboltOutlined style={{ color: '#334155' }} />
+                 <ThunderboltOutlined style={{ color: '#60A5FA' }} />
                 威胁趋势分析
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: '12px 24px 0 0' }}
           >
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={timeSeriesData}>
-                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                 <XAxis 
                   dataKey="date" 
-                  stroke="#9ca3af" 
+                  stroke="#94A3B8" 
                   fontSize={12} 
                   tickLine={false}
-                   axisLine={{ stroke: '#e2e8f0' }}
+                   axisLine={{ stroke: '#334155' }}
                    tickMargin={8}
                 />
                 <YAxis 
-                  stroke="#9ca3af" 
+                  stroke="#94A3B8" 
                   fontSize={12} 
                   tickLine={false}
                   axisLine={false}
@@ -392,19 +392,20 @@ export const DashboardPage: React.FC = () => {
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }} 
-                  itemStyle={{ fontSize: 12, padding: 0 }}
+                  itemStyle={{ fontSize: 12, padding: 0, color: '#E2E8F0' }}
                 />
-                <Area type="monotone" dataKey="critical" name="严重" stroke={SEVERITY_HEX.critical} fill={SEVERITY_HEX.critical} fillOpacity={0.1} strokeWidth={2} />
-                <Area type="monotone" dataKey="high" name="高危" stroke={SEVERITY_HEX.high} fill={SEVERITY_HEX.high} fillOpacity={0.1} strokeWidth={2} />
-                <Area type="monotone" dataKey="medium" name="中危" stroke={SEVERITY_HEX.medium} fill={SEVERITY_HEX.medium} fillOpacity={0.1} strokeWidth={2} />
-                <Area type="monotone" dataKey="low" name="低危" stroke={SEVERITY_HEX.low} fill={SEVERITY_HEX.low} fillOpacity={0.1} strokeWidth={2} />
-                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10 }} />
+                <Area type="monotone" dataKey="critical" name="严重" stroke={SEVERITY_HEX.critical} fill={SEVERITY_HEX.critical} fillOpacity={0.2} strokeWidth={2} />
+                <Area type="monotone" dataKey="high" name="高危" stroke={SEVERITY_HEX.high} fill={SEVERITY_HEX.high} fillOpacity={0.2} strokeWidth={2} />
+                <Area type="monotone" dataKey="medium" name="中危" stroke={SEVERITY_HEX.medium} fill={SEVERITY_HEX.medium} fillOpacity={0.2} strokeWidth={2} />
+                <Area type="monotone" dataKey="low" name="低危" stroke={SEVERITY_HEX.low} fill={SEVERITY_HEX.low} fillOpacity={0.2} strokeWidth={2} />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: 10, color: '#94A3B8' }} />
               </AreaChart>
             </ResponsiveContainer>
           </Card>
@@ -418,29 +419,30 @@ export const DashboardPage: React.FC = () => {
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: 12 }}
           >
             <ResponsiveContainer width="100%" height={260}>
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={securityPostureData}>
-                 <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 12 }} />
+                 <PolarGrid stroke="#334155" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#94A3B8', fontSize: 12 }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                  <Radar
                    name="安全指数"
                    dataKey="A"
-                   stroke="#334155"
-                   fill="#334155"
-                   fillOpacity={0.12}
+                   stroke="#60A5FA"
+                   fill="#60A5FA"
+                   fillOpacity={0.2}
                  />
                 <Tooltip 
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }}
                 />
               </RadarChart>
@@ -460,8 +462,8 @@ export const DashboardPage: React.FC = () => {
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: 12 }}
           >
             <ResponsiveContainer width="100%" height={240}>
@@ -476,7 +478,7 @@ export const DashboardPage: React.FC = () => {
                   outerRadius={75}
                   paddingAngle={2}
                   label={({ severity, percent }) => `${severityLabels[severity] || severity}: ${(percent * 100).toFixed(0)}%`}
-                  labelLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  labelLine={{ stroke: '#94A3B8', strokeWidth: 1 }}
                 >
                   {stats.severityDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={SEVERITY_HEX[entry.severity] || COLORS[index % COLORS.length]} />
@@ -485,11 +487,12 @@ export const DashboardPage: React.FC = () => {
                 <Tooltip 
                   formatter={(value: number, name: string) => [value, severityLabels[name] || name]}
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }}
                 />
               </PieChart>
@@ -500,31 +503,32 @@ export const DashboardPage: React.FC = () => {
           <Card 
             title={
               <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
-                 <GlobalOutlined style={{ color: '#334155' }} />
+                 <GlobalOutlined style={{ color: '#60A5FA' }} />
                 威胁类别分布
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: '12px 24px 0 0' }}
           >
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={stats.categoryDistribution} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-                 <XAxis type="number" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} />
-                <YAxis dataKey="category" type="category" width={100} stroke="#4b5563" fontSize={12} tickLine={false} axisLine={false} />
+                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={false} />
+                 <XAxis type="number" stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={{ stroke: '#334155' }} />
+                <YAxis dataKey="category" type="category" width={100} stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip 
-                  cursor={{ fill: '#f9fafb' }}
+                  cursor={{ fill: 'rgba(96, 165, 250, 0.1)' }}
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }}
                 />
-                 <Bar dataKey="count" name="数量" fill="#334155" radius={[0, 4, 4, 0]} barSize={16} />
+                 <Bar dataKey="count" name="数量" fill="#60A5FA" radius={[0, 4, 4, 0]} barSize={16} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
@@ -537,42 +541,43 @@ export const DashboardPage: React.FC = () => {
           <Card 
             title={
               <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
-                <ClockCircleOutlined style={{ color: '#0284c7' }} />
+                <ClockCircleOutlined style={{ color: '#38BDF8' }} />
                 24小时事件分布
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: '12px 24px 0 0' }}
           >
             <ResponsiveContainer width="100%" height={200}>
               <ComposedChart data={hourlyData}>
-                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                 <XAxis 
                   dataKey="hour" 
-                  stroke="#9ca3af" 
+                  stroke="#94A3B8" 
                   fontSize={10} 
                   tickLine={false}
-                   axisLine={{ stroke: '#e2e8f0' }}
+                   axisLine={{ stroke: '#334155' }}
                   interval={2}
                 />
                 <YAxis 
-                  stroke="#9ca3af" 
+                  stroke="#94A3B8" 
                   fontSize={12} 
                   tickLine={false}
                   axisLine={false}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }}
                 />
-                <Bar dataKey="events" name="事件数" fill="#94a3b8" radius={[2, 2, 0, 0]} barSize={10} />
+                <Bar dataKey="events" name="事件数" fill="#475569" radius={[2, 2, 0, 0]} barSize={10} />
                 <Line type="monotone" dataKey="alerts" name="告警数" stroke="#dc2626" strokeWidth={2} dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
@@ -587,8 +592,8 @@ export const DashboardPage: React.FC = () => {
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: 12 }}
           >
             <ResponsiveContainer width="100%" height={200}>
@@ -604,7 +609,7 @@ export const DashboardPage: React.FC = () => {
                   cy="50%"
                   outerRadius={70}
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  labelLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  labelLine={{ stroke: '#94A3B8', strokeWidth: 1 }}
                 >
                   {stats.statusDistribution.map((entry, index) => (
                     <Cell 
@@ -616,14 +621,15 @@ export const DashboardPage: React.FC = () => {
                 <Tooltip 
                   formatter={(value: number, name: string) => [value, name]}
                   contentStyle={{ 
-                    background: '#fff', 
-                    border: '1px solid #e2e8f0', 
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    background: '#1E293B', 
+                    border: '1px solid #334155', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
                     borderRadius: 6,
-                    fontSize: 12
+                    fontSize: 12,
+                    color: '#E2E8F0'
                   }}
                 />
-                <Legend iconType="circle" />
+                <Legend iconType="circle" wrapperStyle={{ color: '#94A3B8' }} />
               </PieChart>
             </ResponsiveContainer>
           </Card>
@@ -641,8 +647,8 @@ export const DashboardPage: React.FC = () => {
               </span>
             } 
             size="small"
-             style={{ border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: 'none' }}
-             headStyle={{ borderBottom: '1px solid #e2e8f0', minHeight: 40 }}
+             style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
+             headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
              bodyStyle={{ padding: 0 }}
           >
             <Table
