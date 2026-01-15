@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Modal, Form, Input, Select, message, Tag } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { Table, Card, Button, Space, Modal, Form, Input, Select, message, Tag, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
 import { usersService, User } from '../services/usersService';
 import dayjs from 'dayjs';
 
 const { Option } = Select;
+const { Title, Text } = Typography;
 
 export const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -145,9 +146,43 @@ export const UserManagementPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
       <Card
-        title="用户管理"
         size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <TeamOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>用户管理</Title>
+            <Text style={{ color: '#94A3B8' }}>管理系统用户和权限</Text>
+          </div>
+        </div>
+      </Card>
+
+      <Card
+        size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
             添加用户

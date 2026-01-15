@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { Table, Card, Button, Space, Modal, Form, Input, Switch, message, Select, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, ToolOutlined } from '@ant-design/icons';
 import { configService } from '../services/configService';
+
+const { Title, Text } = Typography;
 
 const categoryLabels: Record<string, string> = {
   retention: '数据保留',
@@ -150,14 +152,43 @@ export const OperationsConfigPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
       <Card
-        title={
-          <Space>
-            <SettingOutlined />
-            运维配置
-          </Space>
-        }
         size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <ToolOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>运维配置</Title>
+            <Text style={{ color: '#94A3B8' }}>配置数据保留、备份、维护和性能相关设置</Text>
+          </div>
+        </div>
+      </Card>
+
+      <Card
+        size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Space>
             <Select

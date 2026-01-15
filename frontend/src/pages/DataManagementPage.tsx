@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Button, Space, Modal, Form, InputNumber, message, DatePicker } from 'antd';
+import { Card, Row, Col, Statistic, Button, Space, Modal, Form, InputNumber, message, DatePicker, Typography } from 'antd';
 import {
   DatabaseOutlined,
   DeleteOutlined,
@@ -11,6 +11,7 @@ import { configService } from '../services/configService';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
+const { Title, Text } = Typography;
 
 export const DataManagementPage: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -113,41 +114,108 @@ export const DataManagementPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
+      <Card
+        size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <DatabaseOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>数据管理</Title>
+            <Text style={{ color: '#94A3B8' }}>管理数据库、导出数据和执行维护操作</Text>
+          </div>
+        </div>
+      </Card>
+
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <Card title={<><DatabaseOutlined /> 数据库统计</>} loading={loading} size="small">
+        <Card 
+          title={<><DatabaseOutlined style={{ color: '#60A5FA', marginRight: 8 }} />数据库统计</>} 
+          loading={loading} 
+          size="small"
+          style={{ 
+            border: '1px solid #334155', 
+            borderRadius: 8, 
+            background: '#1E293B' 
+          }}
+          headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
+        >
           <Row gutter={12}>
             <Col span={6}>
-              <Statistic title="事件总数" value={stats?.events.total} />
+              <Statistic 
+                title={<span style={{ color: '#94A3B8' }}>事件总数</span>} 
+                value={stats?.events.total} 
+                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              />
             </Col>
             <Col span={6}>
-              <Statistic title="用户总数" value={stats?.users.total} />
+              <Statistic 
+                title={<span style={{ color: '#94A3B8' }}>用户总数</span>} 
+                value={stats?.users.total} 
+                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              />
             </Col>
             <Col span={6}>
-              <Statistic title="告警规则数" value={stats?.alertRules.total} />
+              <Statistic 
+                title={<span style={{ color: '#94A3B8' }}>告警规则数</span>} 
+                value={stats?.alertRules.total} 
+                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              />
             </Col>
             <Col span={6}>
-              <Statistic title="系统设置数" value={stats?.settings.total} />
+              <Statistic 
+                title={<span style={{ color: '#94A3B8' }}>系统设置数</span>} 
+                value={stats?.settings.total} 
+                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              />
             </Col>
           </Row>
           {stats?.events.oldestTimestamp && (
             <Row gutter={12} style={{ marginTop: 12 }}>
               <Col span={12}>
                 <Statistic
-                  title="最早事件"
+                  title={<span style={{ color: '#94A3B8' }}>最早事件</span>}
                   value={dayjs(stats.events.oldestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
+                  valueStyle={{ color: '#F8FAFC', fontWeight: 600, fontSize: 16 }}
                 />
               </Col>
               <Col span={12}>
                 <Statistic
-                  title="最新事件"
+                  title={<span style={{ color: '#94A3B8' }}>最新事件</span>}
                   value={dayjs(stats.events.newestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
+                  valueStyle={{ color: '#F8FAFC', fontWeight: 600, fontSize: 16 }}
                 />
               </Col>
             </Row>
           )}
         </Card>
 
-        <Card title="数据管理操作" size="small">
+        <Card 
+          title={<><ToolOutlined style={{ color: '#22C55E', marginRight: 8 }} />数据管理操作</>} 
+          size="small"
+          style={{ 
+            border: '1px solid #334155', 
+            borderRadius: 8, 
+            background: '#1E293B' 
+          }}
+          headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
+        >
           <Space wrap>
             <Button
               type="primary"

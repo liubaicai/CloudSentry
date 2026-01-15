@@ -263,29 +263,50 @@ export const SecurityConfigPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      {/* Header Card */}
+      {/* Header Banner */}
       <Card
         size="small"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          border: 'none',
+          background: '#1E293B',
+          border: '1px solid #334155',
           marginBottom: 16,
+          borderRadius: 8,
         }}
+        bodyStyle={{ padding: '16px 24px' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <SafetyOutlined style={{ fontSize: 28, color: 'white' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <SafetyOutlined style={{ fontSize: 24, color: '#22C55E' }} />
+          </div>
           <div>
-            <Title level={4} style={{ color: 'white', margin: 0 }}>安全配置</Title>
-            <Text style={{ color: 'rgba(255,255,255,0.85)' }}>配置密码策略、会话管理、访问控制等安全相关设置</Text>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>安全配置</Title>
+            <Text style={{ color: '#94A3B8' }}>配置密码策略、会话管理、访问控制等安全相关设置</Text>
           </div>
         </div>
       </Card>
 
       {/* Quick Templates */}
-      <Card size="small" style={{ marginBottom: 16 }}>
-        <Title level={5} style={{ marginTop: 0 }}>
+      <Card 
+        size="small" 
+        style={{ 
+          marginBottom: 16,
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
+        headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
+      >
+        <Title level={5} style={{ marginTop: 0, color: '#F8FAFC' }}>
           <Space>
-            <KeyOutlined />
+            <KeyOutlined style={{ color: '#60A5FA' }} />
             快速添加常用配置
           </Space>
         </Title>
@@ -295,14 +316,15 @@ export const SecurityConfigPage: React.FC = () => {
               <Card 
                 size="small" 
                 style={{ 
-                  background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+                  background: '#334155',
+                  border: '1px solid #475569',
                   height: '100%',
                 }}
               >
                 <div style={{ marginBottom: 8 }}>
                   <Space>
                     {categoryIcons[category]}
-                    <Text strong>{categoryLabels[category] || category}</Text>
+                    <Text strong style={{ color: '#F8FAFC' }}>{categoryLabels[category] || category}</Text>
                   </Space>
                 </div>
                 {templates.map((template, idx) => (
@@ -311,7 +333,14 @@ export const SecurityConfigPage: React.FC = () => {
                     size="small" 
                     type="dashed" 
                     block 
-                    style={{ marginBottom: 4, textAlign: 'left', height: 'auto', padding: '4px 8px' }}
+                    style={{ 
+                      marginBottom: 4, 
+                      textAlign: 'left', 
+                      height: 'auto', 
+                      padding: '4px 8px',
+                      borderColor: '#475569',
+                      color: '#94A3B8',
+                    }}
                     onClick={() => handleCreateFromTemplate(template)}
                   >
                     <div style={{ fontSize: 12 }}>{template.description}</div>
@@ -326,6 +355,11 @@ export const SecurityConfigPage: React.FC = () => {
       {/* Config Table */}
       <Card
         size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Space>
             <Select

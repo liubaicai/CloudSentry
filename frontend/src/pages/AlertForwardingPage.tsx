@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, Modal, Form, Input, Switch, Select, message, Space } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Table, Button, Modal, Form, Input, Switch, Select, message, Space, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons';
 import api from '../services/api';
 import { AlertForwardingRule } from '../types';
 
 const { TextArea } = Input;
 const { Option } = Select;
+const { Title, Text } = Typography;
 
 export const AlertForwardingPage: React.FC = () => {
   const [rules, setRules] = useState<AlertForwardingRule[]>([]);
@@ -145,9 +146,43 @@ export const AlertForwardingPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Header Banner */}
       <Card
-        title="告警转发规则"
         size="small"
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+        bodyStyle={{ padding: '16px 24px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <SendOutlined style={{ fontSize: 24, color: '#22C55E' }} />
+          </div>
+          <div>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>告警转发</Title>
+            <Text style={{ color: '#94A3B8' }}>配置告警转发规则，实现自动化告警通知</Text>
+          </div>
+        </div>
+      </Card>
+
+      <Card
+        size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
             创建规则

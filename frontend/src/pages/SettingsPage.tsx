@@ -285,24 +285,44 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      <Card 
+      {/* Header Banner */}
+      <Card
         size="small"
-        style={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          border: 'none',
+        style={{
+          background: '#1E293B',
+          border: '1px solid #334155',
           marginBottom: 16,
+          borderRadius: 8,
         }}
+        bodyStyle={{ padding: '16px 24px' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <SettingOutlined style={{ fontSize: 28, color: 'white' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: 8,
+            background: '#334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <SettingOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+          </div>
           <div>
-            <Title level={4} style={{ color: 'white', margin: 0 }}>系统设置</Title>
-            <Text style={{ color: 'rgba(255,255,255,0.85)' }}>配置系统参数、Syslog接收、OpenAI集成及品牌信息</Text>
+            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>系统设置</Title>
+            <Text style={{ color: '#94A3B8' }}>配置系统参数、Syslog接收、OpenAI集成及品牌信息</Text>
           </div>
         </div>
       </Card>
 
-      <Card size="small">
+      <Card 
+        size="small"
+        style={{ 
+          border: '1px solid #334155', 
+          borderRadius: 8, 
+          background: '#1E293B' 
+        }}
+      >
         <Tabs defaultActiveKey="basic" size="small">
           <TabPane tab={<span><SettingOutlined /> 基本设置</span>} key="basic">
             <Form
@@ -497,29 +517,29 @@ export const SettingsPage: React.FC = () => {
           </TabPane>
 
           <TabPane tab={<span><SafetyOutlined /> 安全策略</span>} key="security">
-            <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-              安全策略配置请前往 <a href="#/security">安全配置</a> 页面进行详细设置
+            <Text style={{ display: 'block', marginBottom: 16, color: '#94A3B8' }}>
+              安全策略配置请前往 <a href="#/security" style={{ color: '#60A5FA' }}>安全配置</a> 页面进行详细设置
             </Text>
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
-                  <SafetyOutlined style={{ fontSize: 32, color: '#52c41a', marginBottom: 8 }} />
-                  <div>密码策略</div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>最小长度、复杂度要求</Text>
+                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
+                  <SafetyOutlined style={{ fontSize: 32, color: '#22C55E', marginBottom: 8 }} />
+                  <div style={{ color: '#F8FAFC' }}>密码策略</div>
+                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>最小长度、复杂度要求</Text>
                 </Card>
               </Col>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
-                  <SafetyOutlined style={{ fontSize: 32, color: '#1890ff', marginBottom: 8 }} />
-                  <div>会话管理</div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>超时时间、并发控制</Text>
+                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
+                  <SafetyOutlined style={{ fontSize: 32, color: '#60A5FA', marginBottom: 8 }} />
+                  <div style={{ color: '#F8FAFC' }}>会话管理</div>
+                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>超时时间、并发控制</Text>
                 </Card>
               </Col>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
-                  <SafetyOutlined style={{ fontSize: 32, color: '#faad14', marginBottom: 8 }} />
-                  <div>访问控制</div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>IP白名单、登录限制</Text>
+                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
+                  <SafetyOutlined style={{ fontSize: 32, color: '#F59E0B', marginBottom: 8 }} />
+                  <div style={{ color: '#F8FAFC' }}>访问控制</div>
+                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>IP白名单、登录限制</Text>
                 </Card>
               </Col>
             </Row>
