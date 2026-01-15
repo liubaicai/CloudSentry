@@ -209,7 +209,20 @@ export const SecurityConfigPage: React.FC = () => {
       dataIndex: 'key',
       key: 'key',
       width: 150,
-      render: (key: string) => <code style={{ background: '#f5f5f5', padding: '2px 6px', borderRadius: 2 }}>{key}</code>,
+      render: (key: string) => (
+        <code
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '2px 6px',
+            borderRadius: 4,
+            color: '#63a4f5',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}
+        >
+          {key}
+        </code>
+      ),
     },
     {
       title: '值',
@@ -267,10 +280,9 @@ export const SecurityConfigPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
-          borderRadius: 8,
+          background: 'linear-gradient(90deg, rgba(99, 164, 245, 0.1) 0%, rgba(11, 17, 33, 0) 100%)',
+          border: '1px solid rgba(99, 164, 245, 0.2)',
         }}
         bodyStyle={{ padding: '16px 24px' }}
       >
@@ -278,13 +290,14 @@ export const SecurityConfigPage: React.FC = () => {
           <div style={{
             width: 48,
             height: 48,
-            borderRadius: 8,
-            background: '#334155',
+            borderRadius: 12,
+            background: 'rgba(99, 164, 245, 0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            border: '1px solid rgba(99, 164, 245, 0.2)',
           }}>
-            <SafetyOutlined style={{ fontSize: 24, color: '#22C55E' }} />
+            <SafetyOutlined style={{ fontSize: 24, color: '#63a4f5' }} />
           </div>
           <div>
             <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>安全配置</Title>
@@ -294,30 +307,26 @@ export const SecurityConfigPage: React.FC = () => {
       </Card>
 
       {/* Quick Templates */}
-      <Card 
-        size="small" 
-        style={{ 
-          marginBottom: 16,
-          border: '1px solid #334155', 
-          borderRadius: 8, 
-          background: '#1E293B' 
-        }}
-        headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
-      >
-        <Title level={5} style={{ marginTop: 0, color: '#F8FAFC' }}>
+      <Card
+        size="small"
+        title={
           <Space>
-            <KeyOutlined style={{ color: '#60A5FA' }} />
-            快速添加常用配置
+            <KeyOutlined style={{ color: '#63a4f5' }} />
+            <span style={{ color: '#F8FAFC' }}>快速添加常用配置</span>
           </Space>
-        </Title>
+        }
+        style={{
+          marginBottom: 16,
+        }}
+      >
         <Row gutter={[16, 16]}>
           {Object.entries(groupedTemplates).map(([category, templates]) => (
             <Col xs={24} sm={12} md={8} lg={6} key={category}>
-              <Card 
-                size="small" 
-                style={{ 
-                  background: '#334155',
-                  border: '1px solid #475569',
+              <Card
+                size="small"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
                   height: '100%',
                 }}
               >
@@ -328,22 +337,23 @@ export const SecurityConfigPage: React.FC = () => {
                   </Space>
                 </div>
                 {templates.map((template, idx) => (
-                  <Button 
+                  <Button
                     key={idx}
-                    size="small" 
-                    type="dashed" 
-                    block 
-                    style={{ 
-                      marginBottom: 4, 
-                      textAlign: 'left', 
-                      height: 'auto', 
-                      padding: '4px 8px',
-                      borderColor: '#475569',
+                    size="small"
+                    type="text"
+                    block
+                    style={{
+                      marginBottom: 4,
+                      textAlign: 'left',
+                      height: 'auto',
+                      padding: '6px 10px',
                       color: '#94A3B8',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#F1F5F9')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#94A3B8')}
                     onClick={() => handleCreateFromTemplate(template)}
                   >
-                    <div style={{ fontSize: 12 }}>{template.description}</div>
+                    <div style={{ fontSize: 13 }}>{template.description}</div>
                   </Button>
                 ))}
               </Card>

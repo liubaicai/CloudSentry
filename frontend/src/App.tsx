@@ -26,73 +26,94 @@ function App() {
     <ConfigProvider
       locale={zhCN}
       theme={{
-        algorithm: undefined, // We use custom dark colors instead of algorithm.darkAlgorithm
+        algorithm: undefined, // We use custom dark colors
         token: {
-          // Dark theme: dark neutrals, minimal decoration
-          colorPrimary: '#60A5FA',
+          // Exquisite Dark Theme: Deep Space Glass
+          // Base Colors
+          colorPrimary: '#63a4f5', // Softer, refined blue as requested
           colorInfo: '#38BDF8',
           colorLink: '#38BDF8',
+          colorSuccess: '#10B981',
+          colorWarning: '#F59E0B',
+          colorError: '#EF4444',
 
-          colorBgLayout: '#0F172A',
-          colorBgContainer: '#1E293B',
-          colorBgElevated: '#334155',
+          // Layout & Surfaces
+          colorBgLayout: '#0B1121', // Deepest navy/black
+          colorBgContainer: '#151e32', // Slightly lighter for base containers
+          colorBgElevated: '#1E293B',
 
-          colorText: '#E2E8F0',
-          colorTextHeading: '#F8FAFC',
-          colorTextSecondary: '#94A3B8',
+          // Typography
+          colorText: '#F1F5F9', // Slate 100 - High contrast
+          colorTextHeading: '#FFFFFF', // Pure white for headings
+          colorTextSecondary: '#94A3B8', // Slate 400
 
-          colorBorder: '#334155',
-          colorBorderSecondary: '#1E293B',
+          // Borders & Dividers
+          colorBorder: 'rgba(255, 255, 255, 0.08)', // Subtle translucent border
+          colorBorderSecondary: 'rgba(255, 255, 255, 0.04)',
 
-          borderRadius: 4,
-          borderRadiusSM: 2,
-          borderRadiusLG: 6,
+          // Metrics
+          borderRadius: 6, // Slightly softer corners
+          borderRadiusSM: 4,
+          borderRadiusLG: 12, // Larger radius for cards
 
+          // Fonts
           fontFamily:
-            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+            "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           fontFamilyCode:
-            "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
+            "'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
 
-          fontSize: 13,
+          fontSize: 14, // Increased base size for readability
         },
         components: {
           Button: {
-            controlHeight: 32,
-            contentFontSize: 13,
+            controlHeight: 36, // Taller, more tactile buttons
+            contentFontSize: 14,
             fontWeight: 500,
+            primaryShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.4)', // Glow effect
+            defaultBorderColor: 'rgba(255,255,255,0.1)',
+            defaultBg: 'rgba(255,255,255,0.02)',
           },
           Card: {
-            paddingLG: 12,
-            headerFontSize: 14,
-            colorBgContainer: '#1E293B',
+            paddingLG: 24, // More breathing room
+            headerFontSize: 16,
+            fontWeightStrong: 600,
+            colorBgContainer: 'transparent', // Handled by CSS for glass effect
           },
           Table: {
-            cellPaddingBlock: 8,
-            cellPaddingInline: 12,
-            headerBg: '#0F172A',
+            headerBg: 'rgba(15, 23, 42, 0.6)', // Semi-transparent header
             headerColor: '#94A3B8',
-            borderColor: '#334155',
-            fontSize: 13,
-            colorBgContainer: '#1E293B',
+            rowHoverBg: 'rgba(59, 130, 246, 0.05)',
+            borderColor: 'rgba(255, 255, 255, 0.06)',
+            fontSize: 14,
+            colorBgContainer: 'transparent',
           },
           Menu: {
-            itemSelectedBg: '#334155',
-            itemSelectedColor: '#F8FAFC',
-            darkItemBg: '#0F172A',
-            darkSubMenuItemBg: '#0F172A',
+            itemSelectedBg: 'rgba(59, 130, 246, 0.1)',
+            itemSelectedColor: '#60A5FA',
+            itemHoverBg: 'rgba(255, 255, 255, 0.03)',
+            darkItemBg: 'transparent',
+            darkSubMenuItemBg: 'transparent',
+            iconSize: 16,
           },
           Input: {
-            activeBorderColor: '#60A5FA',
-            hoverBorderColor: '#475569',
-            colorBgContainer: '#1E293B',
+            activeBorderColor: '#3B82F6',
+            hoverBorderColor: 'rgba(255, 255, 255, 0.2)',
+            colorBgContainer: 'rgba(0, 0, 0, 0.2)', // Dark input background
+            colorBorder: 'rgba(255, 255, 255, 0.1)',
           },
           Select: {
-            colorBgContainer: '#1E293B',
-            colorBgElevated: '#334155',
+            colorBgContainer: 'rgba(0, 0, 0, 0.2)',
+            colorBgElevated: '#1E293B',
+            colorBorder: 'rgba(255, 255, 255, 0.1)',
           },
           Modal: {
-            contentBg: '#1E293B',
-            headerBg: '#1E293B',
+            contentBg: '#151e32',
+            headerBg: '#151e32',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.5)',
+          },
+          Tag: {
+            defaultBg: 'rgba(255, 255, 255, 0.05)',
+            defaultColor: '#E2E8F0',
           },
         },
       }}

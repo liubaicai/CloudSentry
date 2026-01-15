@@ -4,21 +4,24 @@
 */
 
 :root {
-  --cs-bg-layout: #0f172a;
-  --cs-bg-container: #1e293b;
-  --cs-bg-elevated: #334155;
-  --cs-text: #e2e8f0;
-  --cs-text-heading: #f8fafc;
+  --cs-bg-layout: #0b1121;
+  --cs-bg-container: #151e32;
+  --cs-bg-elevated: #1e293b;
+  --cs-text: #f1f5f9;
+  --cs-text-heading: #ffffff;
   --cs-text-secondary: #94a3b8;
-  --cs-border: #334155;
-  --cs-border-subtle: #1e293b;
-  --cs-primary: #60a5fa;
+  --cs-border: rgba(255, 255, 255, 0.08);
+  --cs-border-subtle: rgba(255, 255, 255, 0.04);
+  --cs-primary: #63a4f5;
   --cs-info: #38bdf8;
+  --cs-success: #10b981;
+  --cs-error: #ef4444;
+  --cs-warning: #f59e0b;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -28,7 +31,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
@@ -38,8 +41,8 @@ code {
 
 /* Subtle, dark scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -47,74 +50,151 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Flat cards: border defines structure, avoid hover “lift” */
+/*
+  Exquisite Glass Cards
+  - Semi-transparent gradient background
+  - Blur backdrop (Glassmorphism)
+  - Subtle top-light border
+*/
 .ant-card {
-  border-color: var(--cs-border);
-  box-shadow: none;
-  transition: none;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--cs-border) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .ant-card:hover {
-  box-shadow: none;
+  /* Subtle lift and glow on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
 }
 
-/* Table head: flat, dark background */
-.ant-table-thead > tr > th {
-  background: var(--cs-bg-layout) !important;
+/* Card Headings */
+.ant-card-head {
+  border-bottom: 1px solid var(--cs-border) !important;
+  min-height: 48px;
+}
+
+.ant-card-head-title {
+  color: var(--cs-text-heading) !important;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* Primary button: solid dark style */
+/* Table Head: Transparent with bottom border */
+.ant-table-thead > tr > th {
+  background: transparent !important;
+  color: var(--cs-text-secondary) !important;
+  font-weight: 600;
+  border-bottom: 1px solid var(--cs-border) !important;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--cs-border-subtle) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: rgba(59, 130, 246, 0.05) !important;
+}
+
+/* Primary button: Modern gradient and glow */
 .ant-btn-primary {
-  background: var(--cs-primary);
-  border-color: var(--cs-primary);
-  box-shadow: none;
+  background: linear-gradient(180deg, #63a4f5 0%, #3b82f6 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 .ant-btn-primary:hover {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  box-shadow: none;
+  background: linear-gradient(180deg, #82b9fa 0%, #63a4f5 100%);
 }
 
-/* Reduce excessive motion */
+/* Reduce excessive motion but keep smooth interaction */
 .ant-menu-item {
-  transition: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Modal: dark theme */
+/* Modal: Glass effect */
 .ant-modal-content {
-  border-radius: 8px;
-  background: var(--cs-bg-container);
+  background: #151e32 !important;
+  border: 1px solid var(--cs-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
 }
 
 .ant-modal-header {
-  background: var(--cs-bg-container);
+  background: transparent !important;
+  border-bottom: 1px solid var(--cs-border);
 }
 
-/* Input focus: no glow ring. crisp border only */
+/* Input focus: Glow */
 .ant-input:focus,
 .ant-input-affix-wrapper:focus,
 .ant-select-focused .ant-select-selector {
   border-color: var(--cs-primary) !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
 }
 
-/* Tabs: no gradient ink bar */
+/* Tag Visibility Fix: Transparent backgrounds instead of solid white blocks */
+.ant-tag {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--cs-text);
+  font-weight: 500;
+}
+
+/* Semantic Tags - Outline style for readability */
+.ant-tag-success, .ant-tag-green {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+}
+
+.ant-tag-processing, .ant-tag-blue {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+  color: #60a5fa !important;
+}
+
+.ant-tag-error, .ant-tag-red {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+  color: #f87171 !important;
+}
+
+.ant-tag-warning, .ant-tag-gold, .ant-tag-orange {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
+}
+
+.ant-tag-purple {
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(139, 92, 246, 0.2) !important;
+  color: #a78bfa !important;
+}
+
+/* Tabs */
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: var(--cs-info) !important;
+  color: var(--cs-primary) !important;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
 .ant-tabs-ink-bar {
-  background: var(--cs-info) !important;
+  background: var(--cs-primary) !important;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
 }
 
 /* Icons: keep monochrome by default (components can override intentionally) */
