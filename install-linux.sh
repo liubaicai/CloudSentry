@@ -399,6 +399,8 @@ print_instructions() {
     echo "  - API: http://localhost/api"
     echo "  - Syslog TCP/UDP: localhost:514"
     echo ""
+    echo -e "${YELLOW}NOTE: Port 514 requires root privileges. The backend service runs as root.${NC}"
+    echo ""
     echo "Service management:"
     echo "  - Backend: systemctl {start|stop|restart|status} cloudsentry-backend"
     echo "  - Caddy: systemctl {start|stop|restart|status} caddy"

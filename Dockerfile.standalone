@@ -7,6 +7,7 @@
 # Usage:
 #   docker build -f Dockerfile.standalone -t cloudsentry-standalone .
 #   docker run -d -p 80:80 -p 514:514/tcp -p 514:514/udp \
+#     --cap-add=NET_BIND_SERVICE \
 #     -e POSTGRES_PASSWORD="your-secure-password" \
 #     -e JWT_SECRET="your-secure-jwt-secret-at-least-32-chars" \
 #     -v cloudsentry-data:/var/lib/postgresql/14/main \
@@ -16,6 +17,7 @@
 #   - Always set JWT_SECRET to a secure random string (at least 32 characters)
 #   - Always set POSTGRES_PASSWORD to a secure password in production
 #   - Use volumes for data persistence
+#   - Port 514 requires --cap-add=NET_BIND_SERVICE or --privileged flag
 #
 # Environment variables:
 #   JWT_SECRET - JWT secret key (REQUIRED - change from default!)
@@ -78,7 +80,8 @@ RUN curl -fsSL "https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz"
 RUN curl -fsSL "https://github.com/caddyserver/caddy/releases/download/v2.8.4/caddy_2.8.4_linux_amd64.tar.gz" -o /tmp/caddy.tar.gz \
     && tar -xzf /tmp/caddy.tar.gz -C /usr/bin caddy \
     && chmod +x /usr/bin/caddy \
-    && rm -f /tmp/caddy.tar.gz
+    && rm -f /tmp/caddy.tar.gz \
+    && caddy version
 
 # Set environment variables
 ENV POSTGRES_USER=cloudsentry
@@ -107,159 +110,154 @@ WORKDIR /app/backend
 RUN npm install --production && npm install prisma && npx prisma generate
 
 # Create Caddyfile for serving frontend and proxying API
-RUN mkdir -p /etc/caddy
-COPY <<'EOF' /etc/caddy/Caddyfile
-:80 {
-    # Set the document root
-    root * /app/frontend/dist
-
-    # Enable gzip compression
-    encode gzip
-
-    # Add security headers
-    header {
-        X-Frame-Options "SAMEORIGIN"
-        X-Content-Type-Options "nosniff"
-        X-XSS-Protection "1; mode=block"
-        Referrer-Policy "strict-origin-when-cross-origin"
-    }
-
-    # Proxy API requests to backend
-    handle /api/* {
-        reverse_proxy localhost:3000
-    }
-
-    # Handle static files and SPA routing
-    handle {
-        try_files {path} /index.html
-        file_server
-    }
-
-    log {
-        output stdout
-        format console
-    }
-}
-EOF
+RUN mkdir -p /etc/caddy && \
+    echo ':80 {' > /etc/caddy/Caddyfile && \
+    echo '    # Set the document root' >> /etc/caddy/Caddyfile && \
+    echo '    root * /app/frontend/dist' >> /etc/caddy/Caddyfile && \
+    echo '' >> /etc/caddy/Caddyfile && \
+    echo '    # Enable gzip compression' >> /etc/caddy/Caddyfile && \
+    echo '    encode gzip' >> /etc/caddy/Caddyfile && \
+    echo '' >> /etc/caddy/Caddyfile && \
+    echo '    # Add security headers' >> /etc/caddy/Caddyfile && \
+    echo '    header {' >> /etc/caddy/Caddyfile && \
+    echo '        X-Frame-Options "SAMEORIGIN"' >> /etc/caddy/Caddyfile && \
+    echo '        X-Content-Type-Options "nosniff"' >> /etc/caddy/Caddyfile && \
+    echo '        X-XSS-Protection "1; mode=block"' >> /etc/caddy/Caddyfile && \
+    echo '        Referrer-Policy "strict-origin-when-cross-origin"' >> /etc/caddy/Caddyfile && \
+    echo '    }' >> /etc/caddy/Caddyfile && \
+    echo '' >> /etc/caddy/Caddyfile && \
+    echo '    # Proxy API requests to backend' >> /etc/caddy/Caddyfile && \
+    echo '    handle /api/* {' >> /etc/caddy/Caddyfile && \
+    echo '        reverse_proxy localhost:3000' >> /etc/caddy/Caddyfile && \
+    echo '    }' >> /etc/caddy/Caddyfile && \
+    echo '' >> /etc/caddy/Caddyfile && \
+    echo '    # Handle static files and SPA routing' >> /etc/caddy/Caddyfile && \
+    echo '    handle {' >> /etc/caddy/Caddyfile && \
+    echo '        try_files {path} /index.html' >> /etc/caddy/Caddyfile && \
+    echo '        file_server' >> /etc/caddy/Caddyfile && \
+    echo '    }' >> /etc/caddy/Caddyfile && \
+    echo '' >> /etc/caddy/Caddyfile && \
+    echo '    log {' >> /etc/caddy/Caddyfile && \
+    echo '        output stdout' >> /etc/caddy/Caddyfile && \
+    echo '        format console' >> /etc/caddy/Caddyfile && \
+    echo '    }' >> /etc/caddy/Caddyfile && \
+    echo '}' >> /etc/caddy/Caddyfile
 
 # Create supervisor configuration
-RUN mkdir -p /var/log/supervisor
-COPY <<'EOF' /etc/supervisor/conf.d/cloudsentry.conf
-[supervisord]
-nodaemon=true
-logfile=/var/log/supervisor/supervisord.log
-pidfile=/var/run/supervisord.pid
-user=root
-
-[program:postgresql]
-command=/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/14/main -c config_file=/etc/postgresql/14/main/postgresql.conf
-user=postgres
-autostart=true
-autorestart=true
-priority=10
-stdout_logfile=/var/log/supervisor/postgresql.log
-stderr_logfile=/var/log/supervisor/postgresql.log
-
-[program:backend]
-command=/bin/bash -c "sleep 5 && cd /app/backend && npx prisma db push --skip-generate && node dist/index.js"
-directory=/app/backend
-user=root
-autostart=true
-autorestart=true
-priority=20
-environment=DATABASE_URL="%(ENV_DATABASE_URL)s",JWT_SECRET="%(ENV_JWT_SECRET)s",JWT_EXPIRES_IN="%(ENV_JWT_EXPIRES_IN)s",PORT="%(ENV_PORT)s",NODE_ENV="%(ENV_NODE_ENV)s",CORS_ORIGIN="%(ENV_CORS_ORIGIN)s"
-stdout_logfile=/var/log/supervisor/backend.log
-stderr_logfile=/var/log/supervisor/backend.log
-
-[program:caddy]
-command=/usr/bin/caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
-autostart=true
-autorestart=true
-priority=30
-stdout_logfile=/var/log/supervisor/caddy.log
-stderr_logfile=/var/log/supervisor/caddy.log
-EOF
+RUN mkdir -p /var/log/supervisor && \
+    echo '[supervisord]' > /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'nodaemon=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'logfile=/var/log/supervisor/supervisord.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'pidfile=/var/run/supervisord.pid' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'user=root' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '[program:postgresql]' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'command=/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/14/main -c config_file=/etc/postgresql/14/main/postgresql.conf' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'user=postgres' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autostart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autorestart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'priority=10' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stdout_logfile=/var/log/supervisor/postgresql.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stderr_logfile=/var/log/supervisor/postgresql.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '[program:backend]' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'command=/bin/bash -c "sleep 5 && cd /app/backend && npx prisma db push --skip-generate && node dist/index.js"' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'directory=/app/backend' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'user=root' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autostart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autorestart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'priority=20' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'environment=DATABASE_URL="%(ENV_DATABASE_URL)s",JWT_SECRET="%(ENV_JWT_SECRET)s",JWT_EXPIRES_IN="%(ENV_JWT_EXPIRES_IN)s",PORT="%(ENV_PORT)s",NODE_ENV="%(ENV_NODE_ENV)s",CORS_ORIGIN="%(ENV_CORS_ORIGIN)s"' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stdout_logfile=/var/log/supervisor/backend.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stderr_logfile=/var/log/supervisor/backend.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo '[program:caddy]' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'command=/usr/bin/caddy run --config /etc/caddy/Caddyfile --adapter caddyfile' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autostart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'autorestart=true' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'priority=30' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stdout_logfile=/var/log/supervisor/caddy.log' >> /etc/supervisor/conf.d/cloudsentry.conf && \
+    echo 'stderr_logfile=/var/log/supervisor/caddy.log' >> /etc/supervisor/conf.d/cloudsentry.conf
 
 # Create init script to setup PostgreSQL
-COPY <<'EOF' /app/init.sh
-#!/bin/bash
-set -e
-
-# Function to generate random string
-generate_random() {
-    tr -dc 'A-Za-z0-9' < /dev/urandom | head -c ${1:-32}
-}
-
-# Security warning and auto-generation for default secrets
-if [ "$JWT_SECRET" = "your-super-secret-jwt-key-change-in-production" ] || [ -z "$JWT_SECRET" ]; then
-    echo "================================================"
-    echo "WARNING: JWT_SECRET is not set or using default!"
-    echo "Generating a random JWT_SECRET for this session."
-    echo "For production, set JWT_SECRET environment variable."
-    echo "================================================"
-    export JWT_SECRET=$(generate_random 64)
-fi
-
-if [ "$POSTGRES_PASSWORD" = "cloudsentry" ] || [ -z "$POSTGRES_PASSWORD" ]; then
-    echo "================================================"
-    echo "WARNING: POSTGRES_PASSWORD is using default value!"
-    echo "Generating a random password for this session."
-    echo "For production, set POSTGRES_PASSWORD environment variable."
-    echo "================================================"
-    export POSTGRES_PASSWORD=$(generate_random 24)
-fi
-
-# Update DATABASE_URL with the actual password
-export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"
-
-# Initialize PostgreSQL if not already done
-if [ ! -f /var/lib/postgresql/14/main/PG_VERSION ]; then
-    echo "Initializing PostgreSQL database..."
-    mkdir -p /var/lib/postgresql/14/main
-    chown -R postgres:postgres /var/lib/postgresql/14
-    chmod 700 /var/lib/postgresql/14/main
-    su - postgres -c "/usr/lib/postgresql/14/bin/initdb -D /var/lib/postgresql/14/main"
-    
-    # Configure PostgreSQL to allow local connections
-    echo "host all all 127.0.0.1/32 md5" >> /var/lib/postgresql/14/main/pg_hba.conf
-    echo "host all all ::1/128 md5" >> /var/lib/postgresql/14/main/pg_hba.conf
-    echo "local all all trust" >> /var/lib/postgresql/14/main/pg_hba.conf
-    
-    # Update postgresql.conf
-    echo "listen_addresses = 'localhost'" >> /var/lib/postgresql/14/main/postgresql.conf
-fi
-
-# Start PostgreSQL temporarily to create user and database
-echo "Starting PostgreSQL to create database..."
-su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main -l /var/log/postgresql/postgresql.log start"
-
-# Wait for PostgreSQL to start
-sleep 3
-
-# Create user and database if they don't exist
-su - postgres -c "psql -c \"SELECT 1 FROM pg_roles WHERE rolname='${POSTGRES_USER}'\" | grep -q 1 || psql -c \"CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';\""
-su - postgres -c "psql -c \"SELECT 1 FROM pg_database WHERE datname='${POSTGRES_DB}'\" | grep -q 1 || psql -c \"CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};\""
-su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};\""
-
-# Stop PostgreSQL (supervisor will restart it)
-su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main stop"
-
-echo "Database initialization complete!"
-
-# Create PostgreSQL log directory
-mkdir -p /var/log/postgresql
-chown postgres:postgres /var/log/postgresql
-
-# Start supervisor
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
-EOF
-
-RUN chmod +x /app/init.sh
+RUN echo '#!/bin/bash' > /app/init.sh && \
+    echo 'set -e' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Function to generate random string' >> /app/init.sh && \
+    echo 'generate_random() {' >> /app/init.sh && \
+    echo '    tr -dc "A-Za-z0-9" < /dev/urandom | head -c ${1:-32}' >> /app/init.sh && \
+    echo '}' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Security warning and auto-generation for default secrets' >> /app/init.sh && \
+    echo 'if [ "$JWT_SECRET" = "your-super-secret-jwt-key-change-in-production" ] || [ -z "$JWT_SECRET" ]; then' >> /app/init.sh && \
+    echo '    echo "================================================"' >> /app/init.sh && \
+    echo '    echo "WARNING: JWT_SECRET is not set or using default!"' >> /app/init.sh && \
+    echo '    echo "Generating a random JWT_SECRET for this session."' >> /app/init.sh && \
+    echo '    echo "For production, set JWT_SECRET environment variable."' >> /app/init.sh && \
+    echo '    echo "================================================"' >> /app/init.sh && \
+    echo '    export JWT_SECRET=$(generate_random 64)' >> /app/init.sh && \
+    echo 'fi' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo 'if [ "$POSTGRES_PASSWORD" = "cloudsentry" ] || [ -z "$POSTGRES_PASSWORD" ]; then' >> /app/init.sh && \
+    echo '    echo "================================================"' >> /app/init.sh && \
+    echo '    echo "WARNING: POSTGRES_PASSWORD is using default value!"' >> /app/init.sh && \
+    echo '    echo "Generating a random password for this session."' >> /app/init.sh && \
+    echo '    echo "For production, set POSTGRES_PASSWORD environment variable."' >> /app/init.sh && \
+    echo '    echo "================================================"' >> /app/init.sh && \
+    echo '    export POSTGRES_PASSWORD=$(generate_random 24)' >> /app/init.sh && \
+    echo 'fi' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Update DATABASE_URL with the actual password' >> /app/init.sh && \
+    echo 'export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Initialize PostgreSQL if not already done' >> /app/init.sh && \
+    echo 'if [ ! -f /var/lib/postgresql/14/main/PG_VERSION ]; then' >> /app/init.sh && \
+    echo '    echo "Initializing PostgreSQL database..."' >> /app/init.sh && \
+    echo '    mkdir -p /var/lib/postgresql/14/main' >> /app/init.sh && \
+    echo '    chown -R postgres:postgres /var/lib/postgresql/14' >> /app/init.sh && \
+    echo '    chmod 700 /var/lib/postgresql/14/main' >> /app/init.sh && \
+    echo '    su - postgres -c "/usr/lib/postgresql/14/bin/initdb -D /var/lib/postgresql/14/main"' >> /app/init.sh && \
+    echo '    ' >> /app/init.sh && \
+    echo '    # Configure PostgreSQL to allow local connections' >> /app/init.sh && \
+    echo '    echo "host all all 127.0.0.1/32 md5" >> /var/lib/postgresql/14/main/pg_hba.conf' >> /app/init.sh && \
+    echo '    echo "host all all ::1/128 md5" >> /var/lib/postgresql/14/main/pg_hba.conf' >> /app/init.sh && \
+    echo '    echo "local all all trust" >> /var/lib/postgresql/14/main/pg_hba.conf' >> /app/init.sh && \
+    echo '    ' >> /app/init.sh && \
+    echo '    # Update postgresql.conf' >> /app/init.sh && \
+    echo '    echo "listen_addresses = '"'"'localhost'"'"'" >> /var/lib/postgresql/14/main/postgresql.conf' >> /app/init.sh && \
+    echo 'fi' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Start PostgreSQL temporarily to create user and database' >> /app/init.sh && \
+    echo 'echo "Starting PostgreSQL to create database..."' >> /app/init.sh && \
+    echo 'su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main -l /var/log/postgresql/postgresql.log start"' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Wait for PostgreSQL to start' >> /app/init.sh && \
+    echo 'sleep 3' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Create user and database if they do not exist' >> /app/init.sh && \
+    echo 'su - postgres -c "psql -c \"SELECT 1 FROM pg_roles WHERE rolname='"'"'${POSTGRES_USER}'"'"'\" | grep -q 1 || psql -c \"CREATE USER ${POSTGRES_USER} WITH PASSWORD '"'"'${POSTGRES_PASSWORD}'"'"';\""' >> /app/init.sh && \
+    echo 'su - postgres -c "psql -c \"SELECT 1 FROM pg_database WHERE datname='"'"'${POSTGRES_DB}'"'"'\" | grep -q 1 || psql -c \"CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};\""' >> /app/init.sh && \
+    echo 'su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};\""' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Stop PostgreSQL (supervisor will restart it)' >> /app/init.sh && \
+    echo 'su - postgres -c "/usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/main stop"' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo 'echo "Database initialization complete!"' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Create PostgreSQL log directory' >> /app/init.sh && \
+    echo 'mkdir -p /var/log/postgresql' >> /app/init.sh && \
+    echo 'chown postgres:postgres /var/log/postgresql' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Start supervisor' >> /app/init.sh && \
+    echo 'exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf' >> /app/init.sh && \
+    chmod +x /app/init.sh
 
 # Create volume for PostgreSQL data persistence
 VOLUME ["/var/lib/postgresql/14/main"]
 
 # Expose ports
+# Note: Port 514 requires privileged mode or CAP_NET_BIND_SERVICE capability
+# Run with: docker run --cap-add=NET_BIND_SERVICE or docker run --privileged
 EXPOSE 80
 EXPOSE 514/tcp
 EXPOSE 514/udp

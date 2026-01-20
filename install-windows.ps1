@@ -170,14 +170,22 @@ function Configure-PostgreSQL {
     $pgPaths = @(
         "C:\Program Files\PostgreSQL\16\bin",
         "C:\Program Files\PostgreSQL\15\bin",
-        "C:\Program Files\PostgreSQL\14\bin"
+        "C:\Program Files\PostgreSQL\14\bin",
+        "C:\Program Files\PostgreSQL\13\bin"
     )
     
-    $psqlPath = $null
-    foreach ($path in $pgPaths) {
-        if (Test-Path "$path\psql.exe") {
-            $psqlPath = $path
-            break
+    # Also check for PostgreSQL in PATH
+    $psqlInPath = Get-Command psql -ErrorAction SilentlyContinue
+    if ($psqlInPath) {
+        $psqlPath = Split-Path -Parent $psqlInPath.Source
+    }
+    else {
+        $psqlPath = $null
+        foreach ($path in $pgPaths) {
+            if (Test-Path "$path\psql.exe") {
+                $psqlPath = $path
+                break
+            }
         }
     }
     
