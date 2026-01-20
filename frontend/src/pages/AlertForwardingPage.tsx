@@ -150,8 +150,6 @@ export const AlertForwardingPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -162,7 +160,7 @@ export const AlertForwardingPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#F3F4F6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -170,8 +168,8 @@ export const AlertForwardingPage: React.FC = () => {
             <SendOutlined style={{ fontSize: 24, color: '#22C55E' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>告警转发</Title>
-            <Text style={{ color: '#94A3B8' }}>配置告警转发规则，实现自动化告警通知</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>告警转发</Title>
+            <Text type="secondary">配置告警转发规则，实现自动化告警通知</Text>
           </div>
         </div>
       </Card>
@@ -179,9 +177,7 @@ export const AlertForwardingPage: React.FC = () => {
       <Card
         size="small"
         style={{ 
-          border: '1px solid #334155', 
           borderRadius: 8, 
-          background: '#1E293B' 
         }}
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">

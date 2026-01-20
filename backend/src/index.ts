@@ -27,8 +27,9 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust proxy (required for express-rate-limit behind reverse proxy)
-app.set('trust proxy', 1);
+// Trust proxy - enable trusting all proxies for Docker environment
+// This ensures X-Forwarded-For headers are trusted regardless of hop count
+app.set('trust proxy', true);
 
 // Middleware
 app.use(cors({

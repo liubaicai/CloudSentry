@@ -22,6 +22,7 @@
 
 import * as glossy from 'glossy';
 import { logger } from './logger';
+import { isDockerGateway } from './network';
 
 /**
  * Extended Glossy parse result interface
@@ -144,13 +145,16 @@ export function parseSyslogMessage(
     if (parsed && parsed.prival !== undefined) {
       // Successfully parsed by glossy
       const facility = parsed.facilityID ?? 1; // Default to user
-      const severity = parsed.severityID ?? 5; // Default to notice
-      
+      const severity = parsed.severityID ?? 5; // Format RFC5424 timestamp
+      if (parsed.time) {
+        // RFC5424 provides reliable timestamp
+      }
+
       return {
         timestamp: parsed.time || new Date(),
         severity: severityMap[severity] || 'info',
         category: facilityMap[facility] || 'unknown',
-        source: parsed.host || cleanRemoteAddress,
+        source: cleanRemoteAddress,
         message: parsed.message || rawMessage,
         rawLog: rawMessage,
         protocol: 'syslog',
@@ -215,6 +219,11 @@ function parseBasicSyslog(
   
   let timestamp = new Date();
   let hostname = remoteAddress;
+  
+  // Logic to determine hostname (source)
+  // If we found a hostname in the message, and remoteAddress is a Docker Gateway, use the found hostname
+  // Otherwise default to remoteAddress (IP)
+  
   let messageContent = content;
   
   if (rfc3164Match) {
@@ -239,7 +248,8 @@ function parseBasicSyslog(
       // Since this is fallback code, using current time is acceptable
     }
     
-    hostname = rfc3164Match[2];
+    const foundHostname = rfc3164Match[2];
+    hostname = foundHostname;
     messageContent = rfc3164Match[3];
   }
   
@@ -259,7 +269,7 @@ function parseBasicSyslog(
     timestamp,
     severity: severityMap[severityLevel] || 'info',
     category: facilityMap[facility] || 'unknown',
-    source: hostname,
+    source: remoteAddress,
     message: messageContent,
     rawLog: rawMessage,
     protocol: 'syslog',

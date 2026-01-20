@@ -23,53 +23,131 @@ class SyslogServerService {
   private udpServer: dgram.Socket | null = null;
   private tcpServer: net.Server | null = null;
   private config: SyslogServerConfig = defaultConfig;
+  private channelCache: Map<string, string> = new Map();
+  private pendingCreations: Map<string, Promise<string>> = new Map();
 
+  // Helper to handle concurrent channel creation
+  private async getOrCreateChannel(sourceIdentifier: string): Promise<string> {
+    // 1. Check memory cache
+    if (this.channelCache.has(sourceIdentifier)) {
+      return this.channelCache.get(sourceIdentifier)!;
+    }
 
+    // 2. Check if a creation is already in progress for this source
+    if (this.pendingCreations.has(sourceIdentifier)) {
+      return this.pendingCreations.get(sourceIdentifier)!;
+    }
 
-  // Process and store syslog message
-  private async processMessage(message: string, remoteAddress: string): Promise<void> {
-    try {
-      const parsed = parseSyslogMessage(message, remoteAddress);
-      const sourceIdentifier = parsed.source;
+    // 3. Start new creation process
+    const creationPromise = (async () => {
+      try {
+        // Try to find existing first to avoid upsert overhead/conflicts
+        const existing = await prisma.syslogChannel.findUnique({
+          where: { sourceIdentifier },
+        });
 
-      // Get or create channel
-      let channel = await prisma.syslogChannel.findUnique({
-        where: { sourceIdentifier },
-      });
+        if (existing) {
+          this.channelCache.set(sourceIdentifier, existing.id);
+          return existing.id;
+        }
 
-      if (!channel) {
-        channel = await prisma.syslogChannel.create({
-          data: {
+        // Use upsert for atomic creation
+        const channel = await prisma.syslogChannel.upsert({
+          where: { sourceIdentifier },
+          update: {},
+          create: {
             name: `Syslog: ${sourceIdentifier}`,
             sourceIdentifier,
             description: 'Auto-created from syslog server',
             enabled: true,
           },
         });
-        logger.info(`Auto-created syslog channel for: ${sourceIdentifier}`);
-      }
 
-      // Create security event with enhanced metadata from parsed message
-      await prisma.securityEvent.create({
-        data: {
-          timestamp: parsed.timestamp,
-          severity: parsed.severity,
-          category: parsed.category,
-          source: parsed.source,
-          sourceIp: parsed.source,
-          message: parsed.message,
-          rawData: parsed.rawLog,
-          rawLog: parsed.rawLog,
-          tags: ['syslog'],
-          metadata: parsed.metadata,
-          sourceChannel: sourceIdentifier,
-          channelId: channel.id,
-        },
-      });
+        this.channelCache.set(sourceIdentifier, channel.id);
+        return channel.id;
+      } catch (error: any) {
+        // Handle P2002 (Unique constraint) - should be rare with findUnique check above
+        if (error.code === 'P2002') {
+          const existing = await prisma.syslogChannel.findUnique({
+            where: { sourceIdentifier },
+          });
+          if (existing) {
+            this.channelCache.set(sourceIdentifier, existing.id);
+            return existing.id;
+          }
+        }
+        throw error;
+      }
+    })();
+
+    // Store the promise
+    this.pendingCreations.set(sourceIdentifier, creationPromise);
+
+    try {
+      return await creationPromise;
+    } finally {
+      // Clean up pending promise
+      this.pendingCreations.delete(sourceIdentifier);
+    }
+  }
+
+  // Process and store syslog message
+  private async processMessage(message: string, remoteAddress: string): Promise<void> {
+    try {
+      const parsed = parseSyslogMessage(message, remoteAddress);
+      const sourceIdentifier = parsed.source;
+      
+      let channelId = await this.getOrCreateChannel(sourceIdentifier);
+
+      try {
+        // Create security event with enhanced metadata from parsed message
+        await prisma.securityEvent.create({
+          data: {
+            timestamp: parsed.timestamp,
+            severity: parsed.severity,
+            category: parsed.category,
+            source: parsed.source,
+            sourceIp: parsed.source,
+            message: parsed.message,
+            rawData: parsed.rawLog,
+            rawLog: parsed.rawLog,
+            tags: ['syslog'],
+            metadata: parsed.metadata,
+            sourceChannel: sourceIdentifier,
+            channelId: channelId,
+          },
+        });
+      } catch (error: any) {
+        // Handle P2003 (Foreign key constraint violation) - implies stale cache
+        if (error.code === 'P2003') {
+          logger.warn(`Stale channel ID for ${sourceIdentifier}, invalidating cache and retrying...`);
+          this.channelCache.delete(sourceIdentifier);
+          channelId = await this.getOrCreateChannel(sourceIdentifier);
+          
+          await prisma.securityEvent.create({
+            data: {
+              timestamp: parsed.timestamp,
+              severity: parsed.severity,
+              category: parsed.category,
+              source: parsed.source,
+              sourceIp: parsed.source,
+              message: parsed.message,
+              rawData: parsed.rawLog,
+              rawLog: parsed.rawLog,
+              tags: ['syslog'],
+              metadata: parsed.metadata,
+              sourceChannel: sourceIdentifier,
+              channelId: channelId,
+            },
+          });
+        } else {
+          throw error;
+        }
+      }
 
       // Update channel statistics
       await prisma.syslogChannel.update({
-        where: { id: channel.id },
+        where: { id: channelId },
         data: {
           eventCount: { increment: 1 },
           lastEventAt: new Date(),

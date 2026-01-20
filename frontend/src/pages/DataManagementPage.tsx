@@ -118,8 +118,6 @@ export const DataManagementPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -130,7 +128,7 @@ export const DataManagementPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#F3F4F6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -138,8 +136,8 @@ export const DataManagementPage: React.FC = () => {
             <DatabaseOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>数据管理</Title>
-            <Text style={{ color: '#94A3B8' }}>管理数据库、导出数据和执行维护操作</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>数据管理</Title>
+            <Text type="secondary">管理数据库、导出数据和执行维护操作</Text>
           </div>
         </div>
       </Card>
@@ -150,39 +148,32 @@ export const DataManagementPage: React.FC = () => {
           loading={loading} 
           size="small"
           style={{ 
-            border: '1px solid #334155', 
             borderRadius: 8, 
-            background: '#1E293B' 
           }}
-          headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
         >
           <Row gutter={12}>
             <Col span={6}>
               <Statistic 
-                title={<span style={{ color: '#94A3B8' }}>事件总数</span>} 
+                title="事件总数" 
                 value={stats?.events.total} 
-                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
               />
             </Col>
             <Col span={6}>
               <Statistic 
-                title={<span style={{ color: '#94A3B8' }}>用户总数</span>} 
+                title="用户总数" 
                 value={stats?.users.total} 
-                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
               />
             </Col>
             <Col span={6}>
               <Statistic 
-                title={<span style={{ color: '#94A3B8' }}>告警规则数</span>} 
+                title="告警规则数" 
                 value={stats?.alertRules.total} 
-                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
               />
             </Col>
             <Col span={6}>
               <Statistic 
-                title={<span style={{ color: '#94A3B8' }}>系统设置数</span>} 
+                title="系统设置数" 
                 value={stats?.settings.total} 
-                valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
               />
             </Col>
           </Row>
@@ -190,16 +181,16 @@ export const DataManagementPage: React.FC = () => {
             <Row gutter={12} style={{ marginTop: 12 }}>
               <Col span={12}>
                 <Statistic
-                  title={<span style={{ color: '#94A3B8' }}>最早事件</span>}
+                  title="最早事件"
                   value={dayjs(stats.events.oldestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
-                  valueStyle={{ color: '#F8FAFC', fontWeight: 600, fontSize: 16 }}
+                  valueStyle={{ fontSize: 16 }}
                 />
               </Col>
               <Col span={12}>
                 <Statistic
-                  title={<span style={{ color: '#94A3B8' }}>最新事件</span>}
+                  title="最新事件"
                   value={dayjs(stats.events.newestTimestamp).format('YYYY-MM-DD HH:mm:ss')}
-                  valueStyle={{ color: '#F8FAFC', fontWeight: 600, fontSize: 16 }}
+                  valueStyle={{ fontSize: 16 }}
                 />
               </Col>
             </Row>
@@ -210,11 +201,8 @@ export const DataManagementPage: React.FC = () => {
           title={<><ToolOutlined style={{ color: '#22C55E', marginRight: 8 }} />数据管理操作</>} 
           size="small"
           style={{ 
-            border: '1px solid #334155', 
             borderRadius: 8, 
-            background: '#1E293B' 
           }}
-          headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
         >
           <Space wrap>
             <Button

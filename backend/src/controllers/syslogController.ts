@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
 import { logger } from '../utils/logger';
+import { getClientIp, isDockerGateway } from '../utils/network';
+
+// In-memory cache for channel IDs to reduce DB load and race conditions
+const channelCache: Map<string, string> = new Map();
+const pendingCreations: Map<string, Promise<string>> = new Map();
 
 interface SyslogMessage {
   timestamp?: string;
@@ -19,25 +24,64 @@ interface SyslogMessage {
 // Helper function to get or create channel based on source identifier
 async function getOrCreateChannel(sourceIdentifier: string): Promise<string> {
   try {
-    // Try to find existing channel
-    let channel = await prisma.syslogChannel.findUnique({
-      where: { sourceIdentifier },
-    });
-
-    // If channel doesn't exist, create it
-    if (!channel) {
-      channel = await prisma.syslogChannel.create({
-        data: {
-          name: `Auto-created: ${sourceIdentifier}`,
-          sourceIdentifier,
-          description: 'Automatically created on first syslog receipt',
-          enabled: true,
-        },
-      });
-      logger.info(`Auto-created channel for source: ${sourceIdentifier}`);
+    // 1. Check cache first
+    let channelId = channelCache.get(sourceIdentifier);
+    if (channelId) {
+      return channelId;
     }
 
-    return channel.id;
+    // 2. Check pending creations
+    if (pendingCreations.has(sourceIdentifier)) {
+      return pendingCreations.get(sourceIdentifier)!;
+    }
+
+    // 3. Start new creation process
+    const creationPromise = (async () => {
+      try {
+        // Try to find existing first
+        const existing = await prisma.syslogChannel.findUnique({
+          where: { sourceIdentifier },
+        });
+
+        if (existing) {
+          channelCache.set(sourceIdentifier, existing.id);
+          return existing.id;
+        }
+
+        // Upsert
+        const channel = await prisma.syslogChannel.upsert({
+          where: { sourceIdentifier },
+          update: {},
+          create: {
+            name: `Auto-created: ${sourceIdentifier}`,
+            sourceIdentifier,
+            description: 'Automatically created on first syslog receipt',
+            enabled: true,
+          },
+        });
+        channelCache.set(sourceIdentifier, channel.id);
+        return channel.id;
+      } catch (error: any) {
+        if (error.code === 'P2002') {
+          const existing = await prisma.syslogChannel.findUnique({
+            where: { sourceIdentifier },
+          });
+          if (existing) {
+            channelCache.set(sourceIdentifier, existing.id);
+            return existing.id;
+          }
+        }
+        throw error;
+      }
+    })();
+
+    pendingCreations.set(sourceIdentifier, creationPromise);
+
+    try {
+      return await creationPromise;
+    } finally {
+      pendingCreations.delete(sourceIdentifier);
+    }
   } catch (error) {
     logger.error('Failed to get/create channel:', error);
     throw error;
@@ -117,11 +161,20 @@ async function processSyslogMessage(
   rawData: any,
   clientIp?: string
 ): Promise<any> {
-  // Determine source identifier (prefer explicit source, fallback to client IP)
-  const sourceIdentifier = rawData.source || rawData.host || clientIp || 'unknown';
+  // Determine source identifier
+  // 1. Try to use clientIp if it's available and valid
+  // 2. Fallback to payload source/host
+  
+  let sourceIdentifier = 'unknown';
+  
+  if (clientIp && clientIp !== 'unknown') {
+     sourceIdentifier = clientIp;
+  } else {
+    sourceIdentifier = rawData.source || rawData.host || 'unknown';
+  }
 
   // Get or create channel
-  const channelId = await getOrCreateChannel(sourceIdentifier);
+  let channelId = await getOrCreateChannel(sourceIdentifier);
 
   // Apply field mappings
   const mappedData = await applyFieldMappings(rawData, channelId);
@@ -139,74 +192,144 @@ async function processSyslogMessage(
     metadata: mappedData.metadata || rawData.metadata || rawData,
   };
 
-  // Create security event with enhanced fields
-  const event = await prisma.securityEvent.create({
-    data: {
-      timestamp: rawData.timestamp ? new Date(rawData.timestamp) : new Date(),
-      
-      // Enhanced threat fields
-      threatName: mappedData.threatName || rawData.threatName || rawData.threat_name,
-      threatLevel: mappedData.threatLevel || rawData.threatLevel || rawData.threat_level || finalData.severity,
-      severity: finalData.severity,
-      category: finalData.category,
-      attackType: mappedData.attackType || rawData.attackType || rawData.attack_type,
-      
-      // Network information - enhanced fields
-      sourceIp: mappedData.sourceIp || rawData.sourceIp || rawData.src_ip || rawData.source_ip || finalData.source,
-      destinationIp: mappedData.destinationIp || rawData.destinationIp || rawData.dst_ip || rawData.destination_ip || finalData.destination,
-      sourcePort: mappedData.sourcePort || rawData.sourcePort || rawData.src_port || rawData.source_port,
-      destinationPort: mappedData.destinationPort || rawData.destinationPort || rawData.dst_port || rawData.destination_port || finalData.port,
-      protocol: finalData.protocol,
-      
-      // Geographic information
-      country: mappedData.country || rawData.country,
-      city: mappedData.city || rawData.city,
-      region: mappedData.region || rawData.region,
-      isp: mappedData.isp || rawData.isp,
-      
-      // User and device information
-      userName: mappedData.userName || rawData.userName || rawData.user_name || rawData.username,
-      deviceType: mappedData.deviceType || rawData.deviceType || rawData.device_type,
-      
-      // Action information
-      action: mappedData.action || rawData.action,
-      
-      // Legacy fields for backward compatibility
-      source: finalData.source,
-      destination: finalData.destination,
-      port: finalData.port,
-      
-      // Content
-      message: finalData.message,
-      rawData: JSON.stringify(rawData),
-      rawLog: JSON.stringify(rawData),
-      
-      // Management
-      tags: finalData.tags,
-      metadata: finalData.metadata,
-      
-      // Source tracking
-      sourceChannel: rawData.sourceChannel || rawData.source_channel || sourceIdentifier,
-      channelId: channelId,
-    },
-  });
+  try {
+    // Create security event with enhanced fields
+    const event = await prisma.securityEvent.create({
+      data: {
+        timestamp: rawData.timestamp ? new Date(rawData.timestamp) : new Date(),
+        
+        // Enhanced threat fields
+        threatName: mappedData.threatName || rawData.threatName || rawData.threat_name,
+        threatLevel: mappedData.threatLevel || rawData.threatLevel || rawData.threat_level || finalData.severity,
+        severity: finalData.severity,
+        category: finalData.category,
+        attackType: mappedData.attackType || rawData.attackType || rawData.attack_type,
+        
+        // Network information - enhanced fields
+        sourceIp: mappedData.sourceIp || rawData.sourceIp || rawData.src_ip || rawData.source_ip || finalData.source,
+        destinationIp: mappedData.destinationIp || rawData.destinationIp || rawData.dst_ip || rawData.destination_ip || finalData.destination,
+        sourcePort: mappedData.sourcePort || rawData.sourcePort || rawData.src_port || rawData.source_port,
+        destinationPort: mappedData.destinationPort || rawData.destinationPort || rawData.dst_port || rawData.destination_port || finalData.port,
+        protocol: finalData.protocol,
+        
+        // Geographic information
+        country: mappedData.country || rawData.country,
+        city: mappedData.city || rawData.city,
+        region: mappedData.region || rawData.region,
+        isp: mappedData.isp || rawData.isp,
+        
+        // User and device information
+        userName: mappedData.userName || rawData.userName || rawData.user_name || rawData.username,
+        deviceType: mappedData.deviceType || rawData.deviceType || rawData.device_type,
+        
+        // Action information
+        action: mappedData.action || rawData.action,
+        
+        // Legacy fields for backward compatibility
+        source: finalData.source,
+        destination: finalData.destination,
+        port: finalData.port,
+        
+        // Content
+        message: finalData.message,
+        rawData: JSON.stringify(rawData),
+        rawLog: JSON.stringify(rawData),
+        
+        // Management
+        tags: finalData.tags,
+        metadata: finalData.metadata,
+        
+        // Source tracking
+        sourceChannel: rawData.sourceChannel || rawData.source_channel || sourceIdentifier,
+        channelId: channelId,
+      },
+    });
 
-  // Update channel statistics
-  await prisma.syslogChannel.update({
-    where: { id: channelId },
-    data: {
-      eventCount: { increment: 1 },
-      lastEventAt: new Date(),
-    },
-  });
+    // Update channel statistics
+    await prisma.syslogChannel.update({
+      where: { id: channelId },
+      data: {
+        eventCount: { increment: 1 },
+        lastEventAt: new Date(),
+      },
+    });
 
-  return event;
+    return event;
+  } catch (error: any) {
+    if (error.code === 'P2003') {
+       logger.warn(`Stale channel ID for ${sourceIdentifier}, invalidating cache and retrying...`);
+       channelCache.delete(sourceIdentifier);
+       channelId = await getOrCreateChannel(sourceIdentifier);
+       
+       const event = await prisma.securityEvent.create({
+        data: {
+          timestamp: rawData.timestamp ? new Date(rawData.timestamp) : new Date(),
+          
+          // Enhanced threat fields
+          threatName: mappedData.threatName || rawData.threatName || rawData.threat_name,
+          threatLevel: mappedData.threatLevel || rawData.threatLevel || rawData.threat_level || finalData.severity,
+          severity: finalData.severity,
+          category: finalData.category,
+          attackType: mappedData.attackType || rawData.attackType || rawData.attack_type,
+          
+          // Network information - enhanced fields
+          sourceIp: mappedData.sourceIp || rawData.sourceIp || rawData.src_ip || rawData.source_ip || finalData.source,
+          destinationIp: mappedData.destinationIp || rawData.destinationIp || rawData.dst_ip || rawData.destination_ip || finalData.destination,
+          sourcePort: mappedData.sourcePort || rawData.sourcePort || rawData.src_port || rawData.source_port,
+          destinationPort: mappedData.destinationPort || rawData.destinationPort || rawData.dst_port || rawData.destination_port || finalData.port,
+          protocol: finalData.protocol,
+          
+          // Geographic information
+          country: mappedData.country || rawData.country,
+          city: mappedData.city || rawData.city,
+          region: mappedData.region || rawData.region,
+          isp: mappedData.isp || rawData.isp,
+          
+          // User and device information
+          userName: mappedData.userName || rawData.userName || rawData.user_name || rawData.username,
+          deviceType: mappedData.deviceType || rawData.deviceType || rawData.device_type,
+          
+          // Action information
+          action: mappedData.action || rawData.action,
+          
+          // Legacy fields for backward compatibility
+          source: finalData.source,
+          destination: finalData.destination,
+          port: finalData.port,
+          
+          // Content
+          message: finalData.message,
+          rawData: JSON.stringify(rawData),
+          rawLog: JSON.stringify(rawData),
+          
+          // Management
+          tags: finalData.tags,
+          metadata: finalData.metadata,
+          
+          // Source tracking
+          sourceChannel: rawData.sourceChannel || rawData.source_channel || sourceIdentifier,
+          channelId: channelId,
+        },
+       });
+       
+       await prisma.syslogChannel.update({
+         where: { id: channelId },
+         data: {
+           eventCount: { increment: 1 },
+           lastEventAt: new Date(),
+         },
+       });
+       
+       return event;
+    }
+    throw error;
+  }
 }
 
 export const receiveSyslog = async (req: Request, res: Response): Promise<void> => {
   try {
     const rawData = req.body;
-    const clientIp = req.ip || req.connection.remoteAddress;
+    const clientIp = getClientIp(req);
 
     const event = await processSyslogMessage(rawData, clientIp);
 
@@ -235,7 +358,7 @@ export const bulkReceiveSyslog = async (req: Request, res: Response): Promise<vo
       return;
     }
 
-    const clientIp = req.ip || req.connection.remoteAddress;
+    const clientIp = getClientIp(req);
     const createdEvents = [];
 
     for (const rawData of events) {

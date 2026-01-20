@@ -206,8 +206,6 @@ const ChannelManagementPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -218,7 +216,7 @@ const ChannelManagementPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#F3F4F6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -226,35 +224,35 @@ const ChannelManagementPage: React.FC = () => {
             <GlobalOutlined style={{ fontSize: 24, color: '#8B5CF6' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>通道管理</Title>
-            <Text style={{ color: '#94A3B8' }}>管理Syslog日志接收通道</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>通道管理</Title>
+            <Text type="secondary">管理Syslog日志接收通道</Text>
           </div>
         </div>
       </Card>
 
       <Row gutter={12} style={{ marginBottom: 12 }}>
         <Col span={8}>
-          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
-              title={<span style={{ color: '#94A3B8' }}>通道总数</span>}
+              title="通道总数"
               value={stats.totalChannels}
               valueStyle={{ color: '#60A5FA', fontWeight: 600 }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
-              title={<span style={{ color: '#94A3B8' }}>活跃通道</span>}
+              title="活跃通道"
               value={stats.activeChannels}
               valueStyle={{ color: '#22C55E', fontWeight: 600 }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small" style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
-              title={<span style={{ color: '#94A3B8' }}>接收事件总数</span>}
+              title="接收事件总数"
               value={stats.totalEvents}
               valueStyle={{ color: '#8B5CF6', fontWeight: 600 }}
             />
@@ -265,9 +263,7 @@ const ChannelManagementPage: React.FC = () => {
       <Card
         size="small"
         style={{ 
-          border: '1px solid #334155', 
           borderRadius: 8, 
-          background: '#1E293B' 
         }}
         extra={
           <Space>

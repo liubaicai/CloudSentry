@@ -381,8 +381,6 @@ const FieldMappingPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -393,7 +391,7 @@ const FieldMappingPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#F3F4F6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -401,8 +399,8 @@ const FieldMappingPage: React.FC = () => {
             <BranchesOutlined style={{ fontSize: 24, color: '#8B5CF6' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>字段映射配置</Title>
-            <Text style={{ color: '#94A3B8' }}>配置Syslog数据字段到安全事件的映射规则，支持嵌套对象和AI自动生成</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>字段映射配置</Title>
+            <Text type="secondary">配置Syslog数据字段到安全事件的映射规则，支持嵌套对象和AI自动生成</Text>
           </div>
         </div>
       </Card>
@@ -410,9 +408,7 @@ const FieldMappingPage: React.FC = () => {
       <Card
         size="small"
         style={{ 
-          border: '1px solid #334155', 
           borderRadius: 8, 
-          background: '#1E293B' 
         }}
         extra={
           <Space>
