@@ -31,6 +31,15 @@
 	# Logging
 	log {
 		output stdout
-		format console
+		format filter {
+			wrap console
+			fields {
+				request>headers delete
+				request>tls delete
+				request>remote_port delete
+				request>proto delete
+				resp_headers delete
+			}
+		}
 	}
 }

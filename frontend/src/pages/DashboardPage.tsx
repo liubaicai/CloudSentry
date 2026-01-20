@@ -172,8 +172,8 @@ export const DashboardPage: React.FC = () => {
       
       // Generate security posture based on status distribution
       setSecurityPostureData(generateSecurityPostureData(data.statusDistribution || []));
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+    } catch {
+      console.error('Failed to load dashboard data');
       // Use fallback mock data
       setTimeSeriesData(generateTimeSeriesData());
     } finally {

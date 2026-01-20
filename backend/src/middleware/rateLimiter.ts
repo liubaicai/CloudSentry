@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 // General API rate limiter
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 10000, // Limit each IP to 10000 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -22,7 +22,7 @@ export const authLimiter = rateLimit({
 // Rate limiter for syslog ingestion
 export const syslogLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 1000, // Allow up to 1000 events per minute
+  max: 10000, // Allow up to 10000 events per minute
   message: 'Too many events, please slow down.',
   standardHeaders: true,
   legacyHeaders: false,

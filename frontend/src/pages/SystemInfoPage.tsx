@@ -67,8 +67,8 @@ export const SystemInfoPage: React.FC = () => {
       const data = await systemInfoService.getSystemInfo();
       setSystemInfo(data);
       setError(null);
-    } catch (err) {
-      console.error('Failed to load system info:', err);
+    } catch {
+      console.error('Failed to load system info');
       if (!isRefresh) {
         setError('无法加载系统信息');
       } else {
