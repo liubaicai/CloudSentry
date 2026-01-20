@@ -11,8 +11,6 @@ export const AnalysisPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -23,16 +21,16 @@ export const AnalysisPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#f0f0f0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <BarChartOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+            <BarChartOutlined style={{ fontSize: 24, color: '#1677ff' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>聚合分析</Title>
-            <Text style={{ color: '#94A3B8' }}>安全事件的高级聚合和关联分析</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>聚合分析</Title>
+            <Text type="secondary">安全事件的高级聚合和关联分析</Text>
           </div>
         </div>
       </Card>
@@ -42,18 +40,16 @@ export const AnalysisPage: React.FC = () => {
           <Card 
             size="small"
             style={{ 
-              border: '1px solid #334155', 
               borderRadius: 8, 
-              background: '#1E293B' 
             }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8' }}>分析功能</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>分析功能</span>}
               value="即将推出"
-              prefix={<BarChartOutlined style={{ color: '#60A5FA' }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              prefix={<BarChartOutlined style={{ color: '#1677ff' }} />}
+              valueStyle={{ fontWeight: 600 }}
             />
-            <p style={{ marginTop: 12, fontSize: 13, color: '#94A3B8' }}>
+            <p style={{ marginTop: 12, fontSize: 13, color: 'rgba(0, 0, 0, 0.45)' }}>
               安全事件的高级聚合和关联分析功能将在此处提供。
               包括模式检测、异常检测和威胁情报关联等功能。
             </p>
@@ -63,18 +59,16 @@ export const AnalysisPage: React.FC = () => {
           <Card 
             size="small"
             style={{ 
-              border: '1px solid #334155', 
               borderRadius: 8, 
-              background: '#1E293B' 
             }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8' }}>威胁情报</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>威胁情报</span>}
               value="即将推出"
-              prefix={<BulbOutlined style={{ color: '#F59E0B' }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600 }}
+              prefix={<BulbOutlined style={{ color: '#faad14' }} />}
+              valueStyle={{ fontWeight: 600 }}
             />
-            <p style={{ marginTop: 12, fontSize: 13, color: '#94A3B8' }}>
+            <p style={{ marginTop: 12, fontSize: 13, color: 'rgba(0, 0, 0, 0.45)' }}>
               威胁情报源集成和IOC匹配功能将在此处提供。
             </p>
           </Card>

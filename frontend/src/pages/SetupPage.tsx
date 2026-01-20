@@ -93,11 +93,11 @@ export const SetupPage: React.FC = () => {
 
   const renderWelcome = () => (
     <div style={{ textAlign: 'center', padding: '40px 0' }}>
-      <SafetyOutlined style={{ fontSize: 64, color: '#60A5FA', marginBottom: 24 }} />
-      <Title level={2} style={{ color: '#F8FAFC', marginBottom: 16 }}>
+      <SafetyOutlined style={{ fontSize: 64, color: '#1677ff', marginBottom: 24 }} />
+      <Title level={2} style={{ color: 'rgba(0, 0, 0, 0.88)', marginBottom: 16 }}>
         欢迎使用云卫安全平台
       </Title>
-      <Paragraph style={{ color: '#94A3B8', fontSize: 16, marginBottom: 32 }}>
+      <Paragraph style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 16, marginBottom: 32 }}>
         这是一个安全事件管理系统，帮助您收集、分析和响应安全威胁。
         <br />
         在开始使用之前，我们需要完成一些基本配置。
@@ -110,10 +110,10 @@ export const SetupPage: React.FC = () => {
 
   const renderAdminForm = () => (
     <div style={{ maxWidth: 400, margin: '0 auto' }}>
-      <Title level={4} style={{ color: '#F8FAFC', marginBottom: 8 }}>
+      <Title level={4} style={{ color: 'rgba(0, 0, 0, 0.88)', marginBottom: 8 }}>
         创建管理员账户
       </Title>
-      <Paragraph style={{ color: '#94A3B8', marginBottom: 24 }}>
+      <Paragraph style={{ color: 'rgba(0, 0, 0, 0.45)', marginBottom: 24 }}>
         请设置管理员账户信息，该账户将拥有系统的最高权限。
       </Paragraph>
       <Form
@@ -124,7 +124,7 @@ export const SetupPage: React.FC = () => {
       >
         <Form.Item
           name="username"
-          label={<span style={{ color: '#94A3B8' }}>用户名</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>用户名</span>}
           rules={[
             { required: true, message: '请输入用户名' },
             { min: 3, message: '用户名至少3个字符' },
@@ -135,7 +135,7 @@ export const SetupPage: React.FC = () => {
 
         <Form.Item
           name="email"
-          label={<span style={{ color: '#94A3B8' }}>邮箱</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>邮箱</span>}
           rules={[
             { required: true, message: '请输入邮箱' },
             { type: 'email', message: '请输入有效的邮箱地址' },
@@ -146,7 +146,7 @@ export const SetupPage: React.FC = () => {
 
         <Form.Item
           name="password"
-          label={<span style={{ color: '#94A3B8' }}>密码</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>密码</span>}
           rules={[
             { required: true, message: '请输入密码' },
             { min: 6, message: '密码至少6个字符' },
@@ -157,7 +157,7 @@ export const SetupPage: React.FC = () => {
 
         <Form.Item
           name="confirmPassword"
-          label={<span style={{ color: '#94A3B8' }}>确认密码</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>确认密码</span>}
           rules={[
             { required: true, message: '请再次输入密码' },
             ({ getFieldValue }) => ({
@@ -189,10 +189,10 @@ export const SetupPage: React.FC = () => {
 
   const renderSettingsForm = () => (
     <div style={{ maxWidth: 400, margin: '0 auto' }}>
-      <Title level={4} style={{ color: '#F8FAFC', marginBottom: 8 }}>
+      <Title level={4} style={{ color: 'rgba(0, 0, 0, 0.88)', marginBottom: 8 }}>
         基本设置
       </Title>
-      <Paragraph style={{ color: '#94A3B8', marginBottom: 24 }}>
+      <Paragraph style={{ color: 'rgba(0, 0, 0, 0.45)', marginBottom: 24 }}>
         配置系统的基本参数，这些设置可以在之后修改。
       </Paragraph>
       <Form
@@ -207,14 +207,14 @@ export const SetupPage: React.FC = () => {
       >
         <Form.Item
           name="siteName"
-          label={<span style={{ color: '#94A3B8' }}>系统名称</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>系统名称</span>}
         >
           <Input placeholder="系统名称" size="large" />
         </Form.Item>
 
         <Form.Item
           name="syslogPort"
-          label={<span style={{ color: '#94A3B8' }}>Syslog 端口</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>Syslog 端口</span>}
           tooltip="接收syslog日志的端口号"
         >
           <InputNumber 
@@ -228,7 +228,7 @@ export const SetupPage: React.FC = () => {
 
         <Form.Item
           name="dataRetentionDays"
-          label={<span style={{ color: '#94A3B8' }}>数据保留天数</span>}
+          label={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>数据保留天数</span>}
           tooltip="安全事件数据的保留时间"
         >
           <InputNumber 
@@ -258,10 +258,10 @@ export const SetupPage: React.FC = () => {
   const renderComplete = () => (
     <div style={{ textAlign: 'center', padding: '40px 0' }}>
       <CheckCircleOutlined style={{ fontSize: 64, color: '#22C55E', marginBottom: 24 }} />
-      <Title level={2} style={{ color: '#F8FAFC', marginBottom: 16 }}>
+      <Title level={2} style={{ color: 'rgba(0, 0, 0, 0.88)', marginBottom: 16 }}>
         配置完成！
       </Title>
-      <Paragraph style={{ color: '#94A3B8', fontSize: 16, marginBottom: 32 }}>
+      <Paragraph style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 16, marginBottom: 32 }}>
         系统已成功初始化，您现在可以开始使用云卫安全平台了。
       </Paragraph>
       <Button type="primary" size="large" onClick={handleComplete}>
@@ -291,16 +291,15 @@ export const SetupPage: React.FC = () => {
       justifyContent: 'center', 
       alignItems: 'center', 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
+      background: 'linear-gradient(135deg, #e6f7ff 0%, #ffffff 100%)',
       padding: '40px 20px',
     }}>
       <Card 
         style={{ 
           width: '100%', 
           maxWidth: 600, 
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)', 
-          background: '#1E293B', 
-          border: '1px solid #334155',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)', 
+          borderRadius: 8,
         }} 
         bordered={false}
       >

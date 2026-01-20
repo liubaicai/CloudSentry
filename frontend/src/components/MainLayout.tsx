@@ -127,10 +127,9 @@ export const MainLayout: React.FC = () => {
         collapsible 
         collapsed={collapsed} 
         width={200}
-        theme="dark"
+        theme="light"
         style={{
-          background: '#0F172A',
-          borderRight: '1px solid #334155',
+          borderRight: '1px solid #f0f0f0',
         }}
       >
         <div style={{ 
@@ -139,7 +138,7 @@ export const MainLayout: React.FC = () => {
           alignItems: 'center', 
           justifyContent: 'center',
           padding: '0 12px',
-          borderBottom: '1px solid #334155',
+          borderBottom: '1px solid #f0f0f0',
         }}>
           <div style={{
             display: 'flex',
@@ -150,17 +149,17 @@ export const MainLayout: React.FC = () => {
               width: 32,
               height: 32,
               borderRadius: 6,
-              background: '#60A5FA',
+              background: '#1677ff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <SafetyCertificateOutlined style={{ fontSize: 18, color: '#0F172A' }} />
+              <SafetyCertificateOutlined style={{ fontSize: 18, color: '#fff' }} />
             </div>
             {!collapsed && (
               <div>
                 <div style={{ 
-                  color: '#F8FAFC', 
+                  color: 'rgba(0, 0, 0, 0.88)', 
                   fontSize: 16, 
                   fontWeight: 600,
                   lineHeight: 1.2,
@@ -168,7 +167,7 @@ export const MainLayout: React.FC = () => {
                   云卫安全
                 </div>
                 <div style={{ 
-                  color: '#94A3B8', 
+                  color: 'rgba(0, 0, 0, 0.45)', 
                   fontSize: 10,
                   letterSpacing: 1,
                 }}>
@@ -179,7 +178,7 @@ export const MainLayout: React.FC = () => {
           </div>
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
@@ -187,20 +186,19 @@ export const MainLayout: React.FC = () => {
           style={{ 
             fontSize: 13,
             borderRight: 'none',
-            background: '#0F172A',
           }}
         />
       </Sider>
       <Layout>
         <Header style={{ 
           padding: '0 20px', 
-          background: '#1E293B',
+          background: '#fff',
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center',
           height: 56,
           lineHeight: '56px',
-          borderBottom: '1px solid #334155',
+          borderBottom: '1px solid #f0f0f0',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div 
@@ -212,19 +210,19 @@ export const MainLayout: React.FC = () => {
                 alignItems: 'center', 
                 justifyContent: 'center',
                 borderRadius: 8,
-                background: collapsed ? '#60A5FA' : '#334155',
+                background: collapsed ? '#1677ff' : '#f5f5f5',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
             >
               {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                style: { fontSize: 16, color: collapsed ? '#0F172A' : '#94A3B8' }
+                style: { fontSize: 16, color: collapsed ? '#fff' : 'rgba(0, 0, 0, 0.45)' }
               })}
             </div>
             <div style={{
               padding: '4px 12px',
-              background: 'rgba(34, 197, 94, 0.15)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
+              background: '#f6ffed',
+              border: '1px solid #b7eb8f',
               borderRadius: 16,
               display: 'flex',
               alignItems: 'center',
@@ -234,9 +232,9 @@ export const MainLayout: React.FC = () => {
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: '#22C55E',
+                background: '#52c41a',
               }} />
-              <Text style={{ fontSize: 12, color: '#22C55E' }}>系统运行正常</Text>
+              <Text style={{ fontSize: 12, color: '#52c41a' }}>系统运行正常</Text>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -245,13 +243,13 @@ export const MainLayout: React.FC = () => {
                 width: 36,
                 height: 36,
                 borderRadius: 8,
-                background: '#334155',
+                background: '#f5f5f5',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
               }}>
-                <BellOutlined style={{ fontSize: 16, color: '#94A3B8' }} />
+                <BellOutlined style={{ fontSize: 16, color: 'rgba(0, 0, 0, 0.45)' }} />
               </div>
             </Badge>
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -262,17 +260,17 @@ export const MainLayout: React.FC = () => {
                 gap: 8,
                 padding: '4px 12px',
                 borderRadius: 8,
-                background: '#334155',
+                background: '#f5f5f5',
               }}>
                 <Avatar 
                   size={28} 
                   icon={<UserOutlined />}
                   style={{
-                    background: '#475569',
-                    color: '#E2E8F0',
+                    background: '#bfbfbf',
+                    color: '#fff',
                   }}
                 />
-                <Text style={{ fontSize: 13, color: '#E2E8F0' }}>{user?.username}</Text>
+                <Text style={{ fontSize: 13, color: 'rgba(0, 0, 0, 0.88)' }}>{user?.username}</Text>
               </div>
             </Dropdown>
           </div>
@@ -280,7 +278,7 @@ export const MainLayout: React.FC = () => {
         <Content style={{ 
           margin: '12px', 
           overflow: 'initial',
-          background: '#0F172A',
+          background: '#f0f2f5',
           borderRadius: 8,
         }}>
           <div style={{ padding: 0, minHeight: 360 }}>
@@ -288,40 +286,6 @@ export const MainLayout: React.FC = () => {
           </div>
         </Content>
       </Layout>
-      <style>{`
-        .ant-menu-dark .ant-menu-item-selected {
-          background-color: #334155 !important;
-          color: #F8FAFC !important;
-          font-weight: 600;
-          border-radius: 6px;
-          margin: 4px 8px;
-          width: calc(100% - 16px);
-        }
-        .ant-menu-dark .ant-menu-item {
-          margin: 4px 8px;
-          width: calc(100% - 16px);
-          border-radius: 6px;
-          color: #94A3B8;
-        }
-        .ant-menu-dark .ant-menu-item:hover {
-          color: #F8FAFC !important;
-          background-color: #1E293B !important;
-        }
-        .ant-menu-dark .ant-menu-submenu-title {
-          color: #94A3B8 !important;
-        }
-        .ant-menu-dark .ant-menu-submenu-title:hover {
-          color: #F8FAFC !important;
-        }
-        .ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
-          background: #0F172A !important;
-        }
-        .ant-layout-sider-trigger {
-          background: #0F172A !important;
-          color: #F8FAFC !important;
-          border-top: 1px solid #334155;
-        }
-      `}</style>
     </Layout>
   );
 };

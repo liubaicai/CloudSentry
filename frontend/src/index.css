@@ -1,22 +1,21 @@
 /*
-  Global styling: Dark theme (dark neutrals, flat surfaces).
-  Constraints: no large colorful backgrounds/gradients, no glow, minimal motion.
+  Global styling: Light theme (clean, minimal, standard Ant Design).
 */
 
 :root {
-  --cs-bg-layout: #0b1121;
-  --cs-bg-container: #151e32;
-  --cs-bg-elevated: #1e293b;
-  --cs-text: #f1f5f9;
-  --cs-text-heading: #ffffff;
-  --cs-text-secondary: #94a3b8;
-  --cs-border: rgba(255, 255, 255, 0.08);
-  --cs-border-subtle: rgba(255, 255, 255, 0.04);
-  --cs-primary: #63a4f5;
-  --cs-info: #38bdf8;
-  --cs-success: #10b981;
-  --cs-error: #ef4444;
-  --cs-warning: #f59e0b;
+  --cs-bg-layout: #f0f2f5;
+  --cs-bg-container: #ffffff;
+  --cs-bg-elevated: #ffffff;
+  --cs-text: rgba(0, 0, 0, 0.88);
+  --cs-text-heading: rgba(0, 0, 0, 0.88);
+  --cs-text-secondary: rgba(0, 0, 0, 0.45);
+  --cs-border: #f0f0f0;
+  --cs-border-subtle: #f5f5f5;
+  --cs-primary: #1677ff;
+  --cs-info: #1677ff;
+  --cs-success: #52c41a;
+  --cs-error: #ff4d4f;
+  --cs-warning: #faad14;
 }
 
 body {
@@ -39,7 +38,7 @@ code {
   min-height: 100vh;
 }
 
-/* Subtle, dark scrollbar */
+/* Scrollbar for light theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -50,34 +49,29 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
 }
 
-/*
-  Exquisite Glass Cards
-  - Semi-transparent gradient background
-  - Blur backdrop (Glassmorphism)
-  - Subtle top-light border
+/* 
+  Card Styles
+  - Clean white background
+  - Subtle shadow
 */
 .ant-card {
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff !important;
   border: 1px solid var(--cs-border) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .ant-card:hover {
-  /* Subtle lift and glow on hover */
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Card Headings */
@@ -92,124 +86,10 @@ code {
   letter-spacing: -0.01em;
 }
 
-/* Table Head: Transparent with bottom border */
+/* Table Head */
 .ant-table-thead > tr > th {
-  background: transparent !important;
+  background: #fafafa !important;
   color: var(--cs-text-secondary) !important;
   font-weight: 600;
   border-bottom: 1px solid var(--cs-border) !important;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-}
-
-.ant-table-tbody > tr > td {
-  border-bottom: 1px solid var(--cs-border-subtle) !important;
-}
-
-.ant-table-tbody > tr.ant-table-row:hover > td {
-  background: rgba(59, 130, 246, 0.05) !important;
-}
-
-/* Primary button: Modern gradient and glow */
-.ant-btn-primary {
-  background: linear-gradient(180deg, #63a4f5 0%, #3b82f6 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
-}
-
-.ant-btn-primary:hover {
-  background: linear-gradient(180deg, #82b9fa 0%, #63a4f5 100%);
-}
-
-/* Reduce excessive motion but keep smooth interaction */
-.ant-menu-item {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Modal: Glass effect */
-.ant-modal-content {
-  background: #151e32 !important;
-  border: 1px solid var(--cs-border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-}
-
-.ant-modal-header {
-  background: transparent !important;
-  border-bottom: 1px solid var(--cs-border);
-}
-
-/* Input focus: Glow */
-.ant-input:focus,
-.ant-input-affix-wrapper:focus,
-.ant-select-focused .ant-select-selector {
-  border-color: var(--cs-primary) !important;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
-}
-
-/* Tag Visibility Fix: Transparent backgrounds instead of solid white blocks */
-.ant-tag {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--cs-text);
-  font-weight: 500;
-}
-
-/* Semantic Tags - Outline style for readability */
-.ant-tag-success, .ant-tag-green {
-  background: rgba(16, 185, 129, 0.1) !important;
-  border-color: rgba(16, 185, 129, 0.2) !important;
-  color: #34d399 !important;
-}
-
-.ant-tag-processing, .ant-tag-blue {
-  background: rgba(59, 130, 246, 0.1) !important;
-  border-color: rgba(59, 130, 246, 0.2) !important;
-  color: #60a5fa !important;
-}
-
-.ant-tag-error, .ant-tag-red {
-  background: rgba(239, 68, 68, 0.1) !important;
-  border-color: rgba(239, 68, 68, 0.2) !important;
-  color: #f87171 !important;
-}
-
-.ant-tag-warning, .ant-tag-gold, .ant-tag-orange {
-  background: rgba(245, 158, 11, 0.1) !important;
-  border-color: rgba(245, 158, 11, 0.2) !important;
-  color: #fbbf24 !important;
-}
-
-.ant-tag-purple {
-  background: rgba(139, 92, 246, 0.1) !important;
-  border-color: rgba(139, 92, 246, 0.2) !important;
-  color: #a78bfa !important;
-}
-
-/* Tabs */
-.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: var(--cs-primary) !important;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
-}
-
-.ant-tabs-ink-bar {
-  background: var(--cs-primary) !important;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
-}
-
-/* Icons: keep monochrome by default (components can override intentionally) */
-.anticon {
-  color: inherit;
-}
-
-/* Accessibility: respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-  }
 }

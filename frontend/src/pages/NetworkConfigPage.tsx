@@ -236,8 +236,6 @@ export const NetworkConfigPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -248,16 +246,16 @@ export const NetworkConfigPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#f0f0f0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <GlobalOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+            <GlobalOutlined style={{ fontSize: 24, color: '#1677ff' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>网络配置</Title>
-            <Text style={{ color: '#94A3B8' }}>查看系统网卡信息和管理网络配置</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>网络配置</Title>
+            <Text type="secondary">查看系统网卡信息和管理网络配置</Text>
           </div>
         </div>
       </Card>
@@ -273,11 +271,9 @@ export const NetworkConfigPage: React.FC = () => {
             }
             size="small"
             style={{ 
-              border: '1px solid #334155', 
               borderRadius: 8, 
-              background: '#1E293B' 
             }}
-            headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
+            headStyle={{ borderBottom: '1px solid #f0f0f0' }}
             extra={
               <Button icon={<ReloadOutlined />} onClick={loadSystemInterfaces} loading={systemInterfacesLoading} size="small">
                 刷新
@@ -304,11 +300,9 @@ export const NetworkConfigPage: React.FC = () => {
             }
             size="small"
             style={{ 
-              border: '1px solid #334155', 
               borderRadius: 8, 
-              background: '#1E293B' 
             }}
-            headStyle={{ borderBottom: '1px solid #334155', color: '#F8FAFC' }}
+            headStyle={{ borderBottom: '1px solid #f0f0f0' }}
             extra={
               <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="small">
                 添加配置

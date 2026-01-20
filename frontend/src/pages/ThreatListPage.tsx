@@ -193,8 +193,6 @@ export const ThreatListPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -205,7 +203,7 @@ export const ThreatListPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#f0f0f0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -213,8 +211,8 @@ export const ThreatListPage: React.FC = () => {
             <WarningOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>威胁管理</Title>
-            <Text style={{ color: '#94A3B8' }}>查看、筛选和管理安全事件</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>威胁管理</Title>
+            <Text type="secondary">查看、筛选和管理安全事件</Text>
           </div>
         </div>
       </Card>
@@ -222,16 +220,14 @@ export const ThreatListPage: React.FC = () => {
       <Card 
         size="small"
         style={{ 
-          border: '1px solid #334155', 
           borderRadius: 8, 
-          background: '#1E293B' 
         }}
       >
         <Space style={{ marginBottom: 12, width: '100%' }} direction="vertical">
           <Space wrap>
             <Input
               placeholder="搜索事件..."
-              prefix={<SearchOutlined style={{ color: '#64748B' }} />}
+              prefix={<SearchOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />}
               style={{ width: 250 }}
               onChange={(e) => handleSearch(e.target.value)}
               allowClear
@@ -259,7 +255,7 @@ export const ThreatListPage: React.FC = () => {
               <Option value="resolved">已解决</Option>
               <Option value="false_positive">误报</Option>
             </Select>
-            <Button icon={<ReloadOutlined style={{ color: '#64748B' }} />} onClick={loadEvents}>
+            <Button icon={<ReloadOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />} onClick={loadEvents}>
               刷新
             </Button>
           </Space>
@@ -311,7 +307,7 @@ export const ThreatListPage: React.FC = () => {
             <p><strong>消息:</strong> {selectedEvent.message}</p>
             <p><strong>标签:</strong> {selectedEvent.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}</p>
             <p><strong>原始日志:</strong></p>
-            <pre style={{ background: '#0F172A', border: '1px solid #334155', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300, color: '#E2E8F0' }}>
+            <pre style={{ background: '#f5f5f5', border: '1px solid #d9d9d9', padding: 12, borderRadius: 4, overflow: 'auto', maxHeight: 300, color: 'rgba(0, 0, 0, 0.88)' }}>
               {selectedEvent.rawLog}
             </pre>
           </div>

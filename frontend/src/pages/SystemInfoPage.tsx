@@ -158,8 +158,7 @@ export const SystemInfoPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
-          border: '1px solid #334155',
+          background: 'linear-gradient(135deg, #e6f7ff 0%, #ffffff 100%)',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -172,16 +171,16 @@ export const SystemInfoPage: React.FC = () => {
                 width: 48,
                 height: 48,
                 borderRadius: 8,
-                background: '#334155',
+                background: '#f0f0f0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <CloudServerOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+                <CloudServerOutlined style={{ fontSize: 24, color: '#1677ff' }} />
               </div>
               <div>
-                <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>系统信息监控</Title>
-                <Text style={{ color: '#94A3B8' }}>实时监控系统配置、资源使用和运行状态</Text>
+                <Title level={4} style={{ margin: 0, fontWeight: 600 }}>系统信息监控</Title>
+                <Text type="secondary">实时监控系统配置、资源使用和运行状态</Text>
               </div>
             </div>
           </Col>
@@ -195,7 +194,7 @@ export const SystemInfoPage: React.FC = () => {
                   type="text" 
                   icon={<ReloadOutlined spin={refreshing} />} 
                   onClick={() => loadSystemInfo(true)}
-                  style={{ color: '#94A3B8' }}
+                  style={{ color: 'rgba(0, 0, 0, 0.45)' }}
                 />
               </Tooltip>
             </div>
@@ -208,62 +207,62 @@ export const SystemInfoPage: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
+            style={{ borderRadius: 8 }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>操作系统</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 13 }}>操作系统</span>}
               value={platformLabels[systemInfo.os.platform] || systemInfo.os.platform}
-              prefix={<DesktopOutlined style={{ color: '#60A5FA', background: '#334155', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4, fontSize: 18 }}
+              prefix={<DesktopOutlined style={{ color: '#1677ff', background: '#f0f0f0', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ fontWeight: 600, marginTop: 4, fontSize: 18 }}
             />
-            <Text style={{ color: '#64748B', fontSize: 12 }}>{systemInfo.os.release}</Text>
+            <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>{systemInfo.os.release}</Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
+            style={{ borderRadius: 8 }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>主机名</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 13 }}>主机名</span>}
               value={systemInfo.os.hostname}
-              prefix={<ApiOutlined style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.2)', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4, fontSize: 18 }}
+              prefix={<ApiOutlined style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ fontWeight: 600, marginTop: 4, fontSize: 18 }}
             />
-            <Text style={{ color: '#64748B', fontSize: 12 }}>{archLabels[systemInfo.os.arch] || systemInfo.os.arch}</Text>
+            <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>{archLabels[systemInfo.os.arch] || systemInfo.os.arch}</Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
+            style={{ borderRadius: 8 }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>系统运行时间</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 13 }}>系统运行时间</span>}
               value={formatUptime(systemInfo.uptime)}
-              prefix={<ClockCircleOutlined style={{ color: '#22c55e', background: 'rgba(34, 197, 94, 0.2)', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4, fontSize: 18 }}
+              prefix={<ClockCircleOutlined style={{ color: '#22c55e', background: 'rgba(34, 197, 94, 0.1)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ fontWeight: 600, marginTop: 4, fontSize: 18 }}
             />
-            <Text style={{ color: '#64748B', fontSize: 12 }}>自上次启动</Text>
+            <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>自上次启动</Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Card 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, background: '#1E293B' }}
+            style={{ borderRadius: 8 }}
             bodyStyle={{ padding: 16 }}
           >
             <Statistic
-              title={<span style={{ color: '#94A3B8', fontSize: 13 }}>CPU核心数</span>}
+              title={<span style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 13 }}>CPU核心数</span>}
               value={systemInfo.cpu.cores}
               suffix="核"
-              prefix={<HddOutlined style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.2)', padding: 4, borderRadius: 4 }} />}
-              valueStyle={{ color: '#F8FAFC', fontWeight: 600, marginTop: 4, fontSize: 18 }}
+              prefix={<HddOutlined style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)', padding: 4, borderRadius: 4 }} />}
+              valueStyle={{ fontWeight: 600, marginTop: 4, fontSize: 18 }}
             />
-            <Text style={{ color: '#64748B', fontSize: 12 }}>{systemInfo.cpu.speed} MHz</Text>
+            <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>{systemInfo.cpu.speed} MHz</Text>
           </Card>
         </Col>
       </Row>
@@ -274,13 +273,13 @@ export const SystemInfoPage: React.FC = () => {
           <Card 
             title={
               <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}>
-                <HddOutlined style={{ color: '#60A5FA' }} />
+                <HddOutlined style={{ color: '#1677ff' }} />
                 CPU 使用率
               </span>
             } 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
-            headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
+            style={{ borderRadius: 8, boxShadow: 'none' }}
+            headStyle={{ minHeight: 40 }}
             bodyStyle={{ padding: 24 }}
           >
             <Row gutter={24} align="middle">
@@ -290,30 +289,30 @@ export const SystemInfoPage: React.FC = () => {
                   percent={systemInfo.cpu.usage}
                   size={120}
                   strokeColor={getCpuStatusColor(systemInfo.cpu.usage)}
-                  trailColor="#334155"
+                  trailColor="#f0f0f0"
                   format={(percent) => (
-                    <span style={{ color: '#F8FAFC', fontWeight: 600, fontSize: 20 }}>{percent}%</span>
+                    <span style={{ fontWeight: 600, fontSize: 20 }}>{percent}%</span>
                   )}
                 />
               </Col>
               <Col span={16}>
                 <div style={{ marginBottom: 12 }}>
-                  <Text style={{ color: '#94A3B8', fontSize: 12 }}>CPU型号</Text>
-                  <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>{systemInfo.cpu.model}</div>
+                  <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>CPU型号</Text>
+                  <div style={{ fontSize: 14, marginTop: 4 }}>{systemInfo.cpu.model}</div>
                 </div>
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>核心数量</Text>
-                    <div style={{ color: '#F8FAFC', fontSize: 16, fontWeight: 600 }}>{systemInfo.cpu.cores} 核</div>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>核心数量</Text>
+                    <div style={{ fontSize: 16, fontWeight: 600 }}>{systemInfo.cpu.cores} 核</div>
                   </Col>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>主频</Text>
-                    <div style={{ color: '#F8FAFC', fontSize: 16, fontWeight: 600 }}>{systemInfo.cpu.speed} MHz</div>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>主频</Text>
+                    <div style={{ fontSize: 16, fontWeight: 600 }}>{systemInfo.cpu.speed} MHz</div>
                   </Col>
                 </Row>
                 <div style={{ marginTop: 16 }}>
-                  <Text style={{ color: '#94A3B8', fontSize: 12 }}>系统负载 (1/5/15分钟)</Text>
-                  <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>
+                  <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>系统负载 (1/5/15分钟)</Text>
+                  <div style={{ fontSize: 14, marginTop: 4 }}>
                     {systemInfo.loadAverage.map(l => l.toFixed(2)).join(' / ')}
                   </div>
                 </div>
@@ -330,8 +329,8 @@ export const SystemInfoPage: React.FC = () => {
               </span>
             } 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
-            headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
+            style={{ borderRadius: 8, boxShadow: 'none' }}
+            headStyle={{ minHeight: 40 }}
             bodyStyle={{ padding: 24 }}
           >
             <Row gutter={24} align="middle">
@@ -341,28 +340,28 @@ export const SystemInfoPage: React.FC = () => {
                   percent={systemInfo.memory.usagePercent}
                   size={120}
                   strokeColor={getMemoryStatusColor(systemInfo.memory.usagePercent)}
-                  trailColor="#334155"
+                  trailColor="#f0f0f0"
                   format={(percent) => (
-                    <span style={{ color: '#F8FAFC', fontWeight: 600, fontSize: 20 }}>{percent}%</span>
+                    <span style={{ fontWeight: 600, fontSize: 20 }}>{percent}%</span>
                   )}
                 />
               </Col>
               <Col span={16}>
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>总内存</Text>
-                    <div style={{ color: '#F8FAFC', fontSize: 16, fontWeight: 600 }}>{formatBytes(systemInfo.memory.total)}</div>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>总内存</Text>
+                    <div style={{ fontSize: 16, fontWeight: 600 }}>{formatBytes(systemInfo.memory.total)}</div>
                   </Col>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>已使用</Text>
-                    <div style={{ color: '#F8FAFC', fontSize: 16, fontWeight: 600 }}>{formatBytes(systemInfo.memory.used)}</div>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>已使用</Text>
+                    <div style={{ fontSize: 16, fontWeight: 600 }}>{formatBytes(systemInfo.memory.used)}</div>
                   </Col>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>可用内存</Text>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>可用内存</Text>
                     <div style={{ color: '#22c55e', fontSize: 16, fontWeight: 600 }}>{formatBytes(systemInfo.memory.free)}</div>
                   </Col>
                   <Col span={12}>
-                    <Text style={{ color: '#94A3B8', fontSize: 12 }}>使用率</Text>
+                    <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>使用率</Text>
                     <div style={{ color: getMemoryStatusColor(systemInfo.memory.usagePercent), fontSize: 16, fontWeight: 600 }}>
                       {systemInfo.memory.usagePercent.toFixed(1)}%
                     </div>
@@ -372,7 +371,7 @@ export const SystemInfoPage: React.FC = () => {
                   <Progress 
                     percent={systemInfo.memory.usagePercent} 
                     strokeColor={getMemoryStatusColor(systemInfo.memory.usagePercent)}
-                    trailColor="#334155"
+                    trailColor="#f0f0f0"
                     showInfo={false}
                     size="small"
                   />
@@ -394,8 +393,8 @@ export const SystemInfoPage: React.FC = () => {
               </span>
             } 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
-            headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
+            style={{ borderRadius: 8, boxShadow: 'none' }}
+            headStyle={{ minHeight: 40 }}
             bodyStyle={{ padding: 0 }}
           >
             <Table
@@ -421,28 +420,28 @@ export const SystemInfoPage: React.FC = () => {
               </span>
             } 
             size="small"
-            style={{ border: '1px solid #334155', borderRadius: 8, boxShadow: 'none', background: '#1E293B' }}
-            headStyle={{ borderBottom: '1px solid #334155', minHeight: 40, color: '#F8FAFC' }}
+            style={{ borderRadius: 8, boxShadow: 'none' }}
+            headStyle={{ minHeight: 40 }}
             bodyStyle={{ padding: 16 }}
           >
             <Row gutter={[24, 16]}>
               <Col xs={24} sm={12} md={6}>
-                <Text style={{ color: '#94A3B8', fontSize: 12 }}>操作系统类型</Text>
-                <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>{systemInfo.os.type}</div>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>操作系统类型</Text>
+                <div style={{ fontSize: 14, marginTop: 4 }}>{systemInfo.os.type}</div>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Text style={{ color: '#94A3B8', fontSize: 12 }}>平台</Text>
-                <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>平台</Text>
+                <div style={{ fontSize: 14, marginTop: 4 }}>
                   {platformLabels[systemInfo.os.platform] || systemInfo.os.platform}
                 </div>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Text style={{ color: '#94A3B8', fontSize: 12 }}>内核版本</Text>
-                <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>{systemInfo.os.release}</div>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>内核版本</Text>
+                <div style={{ fontSize: 14, marginTop: 4 }}>{systemInfo.os.release}</div>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Text style={{ color: '#94A3B8', fontSize: 12 }}>系统架构</Text>
-                <div style={{ color: '#F8FAFC', fontSize: 14, marginTop: 4 }}>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>系统架构</Text>
+                <div style={{ fontSize: 14, marginTop: 4 }}>
                   {archLabels[systemInfo.os.arch] || systemInfo.os.arch}
                 </div>
               </Col>

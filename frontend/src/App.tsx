@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { AuthProvider } from './contexts/AuthContext';
 import { PrivateRoute } from './components/PrivateRoute';
@@ -26,94 +26,37 @@ function App() {
     <ConfigProvider
       locale={zhCN}
       theme={{
-        algorithm: undefined, // We use custom dark colors
+        algorithm: theme.defaultAlgorithm,
         token: {
-          // Exquisite Dark Theme: Deep Space Glass
-          // Base Colors
-          colorPrimary: '#63a4f5', // Softer, refined blue as requested
-          colorInfo: '#38BDF8',
-          colorLink: '#38BDF8',
-          colorSuccess: '#10B981',
-          colorWarning: '#F59E0B',
-          colorError: '#EF4444',
-
-          // Layout & Surfaces
-          colorBgLayout: '#0B1121', // Deepest navy/black
-          colorBgContainer: '#151e32', // Slightly lighter for base containers
-          colorBgElevated: '#1E293B',
-
-          // Typography
-          colorText: '#F1F5F9', // Slate 100 - High contrast
-          colorTextHeading: '#FFFFFF', // Pure white for headings
-          colorTextSecondary: '#94A3B8', // Slate 400
-
-          // Borders & Dividers
-          colorBorder: 'rgba(255, 255, 255, 0.08)', // Subtle translucent border
-          colorBorderSecondary: 'rgba(255, 255, 255, 0.04)',
-
+          // Light Theme
+          colorPrimary: '#1677ff',
+          
           // Metrics
-          borderRadius: 6, // Slightly softer corners
+          borderRadius: 6,
           borderRadiusSM: 4,
-          borderRadiusLG: 12, // Larger radius for cards
+          borderRadiusLG: 12,
 
           // Fonts
           fontFamily:
             "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           fontFamilyCode:
             "'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
-
-          fontSize: 14, // Increased base size for readability
         },
         components: {
           Button: {
-            controlHeight: 36, // Taller, more tactile buttons
-            contentFontSize: 14,
-            fontWeight: 500,
-            primaryShadow: '0 4px 14px 0 rgba(59, 130, 246, 0.4)', // Glow effect
-            defaultBorderColor: 'rgba(255,255,255,0.1)',
-            defaultBg: 'rgba(255,255,255,0.02)',
+            controlHeight: 36,
           },
           Card: {
-            paddingLG: 24, // More breathing room
+            paddingLG: 24,
             headerFontSize: 16,
             fontWeightStrong: 600,
-            colorBgContainer: 'transparent', // Handled by CSS for glass effect
           },
           Table: {
-            headerBg: 'rgba(15, 23, 42, 0.6)', // Semi-transparent header
-            headerColor: '#94A3B8',
-            rowHoverBg: 'rgba(59, 130, 246, 0.05)',
-            borderColor: 'rgba(255, 255, 255, 0.06)',
-            fontSize: 14,
-            colorBgContainer: 'transparent',
+            headerBg: '#fafafa',
+            headerColor: 'rgba(0, 0, 0, 0.88)',
           },
           Menu: {
-            itemSelectedBg: 'rgba(59, 130, 246, 0.1)',
-            itemSelectedColor: '#60A5FA',
-            itemHoverBg: 'rgba(255, 255, 255, 0.03)',
-            darkItemBg: 'transparent',
-            darkSubMenuItemBg: 'transparent',
             iconSize: 16,
-          },
-          Input: {
-            activeBorderColor: '#3B82F6',
-            hoverBorderColor: 'rgba(255, 255, 255, 0.2)',
-            colorBgContainer: 'rgba(0, 0, 0, 0.2)', // Dark input background
-            colorBorder: 'rgba(255, 255, 255, 0.1)',
-          },
-          Select: {
-            colorBgContainer: 'rgba(0, 0, 0, 0.2)',
-            colorBgElevated: '#1E293B',
-            colorBorder: 'rgba(255, 255, 255, 0.1)',
-          },
-          Modal: {
-            contentBg: '#151e32',
-            headerBg: '#151e32',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.5)',
-          },
-          Tag: {
-            defaultBg: 'rgba(255, 255, 255, 0.05)',
-            defaultColor: '#E2E8F0',
           },
         },
       }}

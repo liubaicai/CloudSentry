@@ -128,8 +128,6 @@ export const ThreatDetailPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -141,7 +139,7 @@ export const ThreatDetailPage: React.FC = () => {
               width: 48,
               height: 48,
               borderRadius: 8,
-              background: '#334155',
+              background: '#f0f0f0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -149,8 +147,8 @@ export const ThreatDetailPage: React.FC = () => {
               <WarningOutlined style={{ fontSize: 24, color: '#F59E0B' }} />
             </div>
             <div>
-              <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>威胁详情</Title>
-              <Text style={{ color: '#94A3B8' }}>查看和管理安全事件详细信息</Text>
+              <Title level={4} style={{ margin: 0, fontWeight: 600 }}>威胁详情</Title>
+              <Text type="secondary">查看和管理安全事件详细信息</Text>
             </div>
           </div>
           <Space>
@@ -181,14 +179,12 @@ export const ThreatDetailPage: React.FC = () => {
 
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <Card 
-          title={<span style={{ color: '#F8FAFC' }}>事件详情</span>} 
+          title={<span style={{ color: 'rgba(0, 0, 0, 0.88)' }}>事件详情</span>} 
           size="small"
           style={{ 
-            border: '1px solid #334155', 
             borderRadius: 8, 
-            background: '#1E293B' 
           }}
-          headStyle={{ borderBottom: '1px solid #334155' }}
+          headStyle={{ borderBottom: '1px solid #f0f0f0' }}
         >
           <Descriptions bordered column={2} size="small">
             <Descriptions.Item label="事件ID" span={2}>
@@ -256,24 +252,22 @@ export const ThreatDetailPage: React.FC = () => {
 
         {event.metadata && (
           <Card 
-            title={<span style={{ color: '#F8FAFC' }}>元数据</span>} 
+            title={<span style={{ color: 'rgba(0, 0, 0, 0.88)' }}>元数据</span>} 
             size="small"
             style={{ 
-              border: '1px solid #334155', 
               borderRadius: 8, 
-              background: '#1E293B' 
             }}
-            headStyle={{ borderBottom: '1px solid #334155' }}
+            headStyle={{ borderBottom: '1px solid #f0f0f0' }}
           >
                 <pre
                   style={{
-                    background: '#0F172A',
-                    border: '1px solid #334155',
+                    background: '#f5f5f5',
+                    border: '1px solid #d9d9d9',
                     padding: 12,
                     borderRadius: 4,
                     overflow: 'auto',
                     margin: 0,
-                    color: '#E2E8F0',
+                    color: 'rgba(0, 0, 0, 0.88)',
                   }}
                 >
               {JSON.stringify(event.metadata, null, 2)}
@@ -282,20 +276,18 @@ export const ThreatDetailPage: React.FC = () => {
         )}
 
         <Card 
-          title={<span style={{ color: '#F8FAFC' }}>原始日志</span>} 
+          title={<span style={{ color: 'rgba(0, 0, 0, 0.88)' }}>原始日志</span>} 
           size="small"
           style={{ 
-            border: '1px solid #334155', 
             borderRadius: 8, 
-            background: '#1E293B' 
           }}
-          headStyle={{ borderBottom: '1px solid #334155' }}
+          headStyle={{ borderBottom: '1px solid #f0f0f0' }}
         >
           <TextArea
             value={event.rawLog}
             readOnly
             autoSize={{ minRows: 4, maxRows: 12 }}
-            style={{ fontFamily: 'monospace', background: '#0F172A', border: '1px solid #334155', color: '#E2E8F0' }}
+            style={{ fontFamily: 'monospace', background: '#f5f5f5', border: '1px solid #d9d9d9', color: 'rgba(0, 0, 0, 0.88)' }}
           />
         </Card>
       </Space>

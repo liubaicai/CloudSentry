@@ -289,8 +289,6 @@ export const SettingsPage: React.FC = () => {
       <Card
         size="small"
         style={{
-          background: '#1E293B',
-          border: '1px solid #334155',
           marginBottom: 16,
           borderRadius: 8,
         }}
@@ -301,16 +299,16 @@ export const SettingsPage: React.FC = () => {
             width: 48,
             height: 48,
             borderRadius: 8,
-            background: '#334155',
+            background: '#f0f0f0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <SettingOutlined style={{ fontSize: 24, color: '#60A5FA' }} />
+            <SettingOutlined style={{ fontSize: 24, color: '#1677ff' }} />
           </div>
           <div>
-            <Title level={4} style={{ color: '#F8FAFC', margin: 0, fontWeight: 600 }}>系统设置</Title>
-            <Text style={{ color: '#94A3B8' }}>配置系统参数、Syslog接收、OpenAI集成及品牌信息</Text>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>系统设置</Title>
+            <Text type="secondary">配置系统参数、Syslog接收、OpenAI集成及品牌信息</Text>
           </div>
         </div>
       </Card>
@@ -318,9 +316,7 @@ export const SettingsPage: React.FC = () => {
       <Card 
         size="small"
         style={{ 
-          border: '1px solid #334155', 
           borderRadius: 8, 
-          background: '#1E293B' 
         }}
       >
         <Tabs defaultActiveKey="basic" size="small">
@@ -517,29 +513,29 @@ export const SettingsPage: React.FC = () => {
           </TabPane>
 
           <TabPane tab={<span><SafetyOutlined /> 安全策略</span>} key="security">
-            <Text style={{ display: 'block', marginBottom: 16, color: '#94A3B8' }}>
-              安全策略配置请前往 <a href="#/security" style={{ color: '#60A5FA' }}>安全配置</a> 页面进行详细设置
+            <Text style={{ display: 'block', marginBottom: 16, color: 'rgba(0, 0, 0, 0.45)' }}>
+              安全策略配置请前往 <a href="#/security" style={{ color: '#1677ff' }}>安全配置</a> 页面进行详细设置
             </Text>
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
+                <Card size="small" style={{ textAlign: 'center', background: '#f5f5f5', border: '1px solid #d9d9d9' }}>
                   <SafetyOutlined style={{ fontSize: 32, color: '#22C55E', marginBottom: 8 }} />
-                  <div style={{ color: '#F8FAFC' }}>密码策略</div>
-                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>最小长度、复杂度要求</Text>
+                  <div style={{ color: 'rgba(0, 0, 0, 0.88)' }}>密码策略</div>
+                  <Text style={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.45)' }}>最小长度、复杂度要求</Text>
                 </Card>
               </Col>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
-                  <SafetyOutlined style={{ fontSize: 32, color: '#60A5FA', marginBottom: 8 }} />
-                  <div style={{ color: '#F8FAFC' }}>会话管理</div>
-                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>超时时间、并发控制</Text>
+                <Card size="small" style={{ textAlign: 'center', background: '#f5f5f5', border: '1px solid #d9d9d9' }}>
+                  <SafetyOutlined style={{ fontSize: 32, color: '#1677ff', marginBottom: 8 }} />
+                  <div style={{ color: 'rgba(0, 0, 0, 0.88)' }}>会话管理</div>
+                  <Text style={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.45)' }}>超时时间、并发控制</Text>
                 </Card>
               </Col>
               <Col xs={24} sm={12} md={8}>
-                <Card size="small" style={{ textAlign: 'center', background: '#334155', border: '1px solid #475569' }}>
+                <Card size="small" style={{ textAlign: 'center', background: '#f5f5f5', border: '1px solid #d9d9d9' }}>
                   <SafetyOutlined style={{ fontSize: 32, color: '#F59E0B', marginBottom: 8 }} />
-                  <div style={{ color: '#F8FAFC' }}>访问控制</div>
-                  <Text style={{ fontSize: 12, color: '#94A3B8' }}>IP白名单、登录限制</Text>
+                  <div style={{ color: 'rgba(0, 0, 0, 0.88)' }}>访问控制</div>
+                  <Text style={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.45)' }}>IP白名单、登录限制</Text>
                 </Card>
               </Col>
             </Row>
